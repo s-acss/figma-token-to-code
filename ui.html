@@ -1,0 +1,23 @@
+<h2>Rectangle Creator</h2>
+<p>
+    <textarea name="" id="input" cols="30" rows="2"></textarea>
+</p>
+<p>
+    <textarea name="" id="msg" cols="30" rows="1"></textarea>
+</p>
+
+<button id="get">get</button>
+<button id="set">set</button>
+
+<script>
+document.getElementById('get').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'get'} }, '*')
+}
+document.getElementById('set').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'set'} }, '*')
+}
+onmessage=((event)=>{
+  const {text}=event.data.pluginMessage;
+  console.log('ui',text);
+});
+</script>
