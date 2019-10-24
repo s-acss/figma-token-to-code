@@ -1,23 +1,118 @@
-<h2>Rectangle Creator</h2>
-<p>
-    <textarea name="" id="input" cols="30" rows="2"></textarea>
-</p>
-<p>
-    <textarea name="" id="msg" cols="30" rows="1"></textarea>
-</p>
+<style>
+  body {
+    font-family: sans-serif;
+  }
 
-<button id="get">get</button>
-<button id="set">set</button>
+  textarea {
+    width: 100%;
+    resize: vertical;
+    margin-bottom: 0.5em;
+  }
+</style>
 
+<form id="formHtml">
+  <textarea id="htmlBody" placeholder="select text and generator" cols="30" readonly rows="10"></textarea>
+  <button type="submit">Generator</button>
+</form>
+
+<form id="formSetting">
+  <textarea id="settingBody" cols="30" rows="10"></textarea>
+  <button type="button" id="btnGetSetting">Get setting</button>
+  <button type="submit">Save</button>
+</form>
+
+<form id="formStyles">
+  <textarea id="styleBody" cols="30" rows="10"></textarea>
+  <button type="submit">Get Style</button>
+</form>
+
+<div id="msgBox"></div>
 <script>
-document.getElementById('get').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'get'} }, '*')
-}
-document.getElementById('set').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'set'} }, '*')
-}
-onmessage=((event)=>{
-  const {text}=event.data.pluginMessage;
-  console.log('ui',text);
-});
+  const objSettingBody = document.getElementById('settingBody');
+
+  //
+  const objFormHtml = document.getElementById('formHtml');
+  const objHtmlBody = document.getElementById('htmlBody');
+
+  //
+  const objFormSetting = document.getElementById('formSetting');
+  const objBtnGetSetting = document.getElementById('btnGetSetting');
+
+  //
+  const objFormStyles = document.getElementById('formStyles');
+  const objStyleBody = document.getElementById('styleBody');
+
+  // msg
+  const objMsgBox = document.getElementById('msgBox');
+
+  const _api = {
+    showStyleInfo: function (data) {
+      let text = '';
+      data.map(({ name, value }) => {
+        text += `${name}:${value}\n`;
+      });
+      objStyleBody.value = text;
+    },
+    showSetting: function (data) {
+      let text = '';
+      data.map(({ name, value }) => {
+        text += `${name}:${value}\n`;
+      });
+      objSettingBody.value = text;
+    },
+    showHtml: function (html) {
+      objHtmlBody.value = html;
+    },
+    showMsg: function (msg) {
+      objMsgBox.innerText = msg;
+      setTimeout(function () {
+        objMsgBox.innerText = "";
+      }, 3000);
+    }
+  };
+
+  // 获取设置
+  objBtnGetSetting.addEventListener('click', function () {
+    parent.postMessage({
+      pluginMessage: {
+        type: 'getSetting'
+      }
+    }, '*');
+  });
+
+  // 保存设置
+  objFormSetting.addEventListener('submit', function (e) {
+    e.preventDefault();
+    parent.postMessage({
+      pluginMessage: {
+        type: 'saveSetting',
+        data: objSettingBody.value
+      }
+    }, '*');
+  });
+
+  // 设置
+  objFormStyles.addEventListener('submit', function (e) {
+    e.preventDefault();
+    parent.postMessage({
+      pluginMessage: {
+        type: 'getStyleInfo'
+      }
+    }, '*');
+  });
+
+  // html
+  objFormHtml.addEventListener('submit', function (e) {
+    e.preventDefault();
+  });
+
+  onmessage = ((event) => {
+    const { type, data, msg } = event.data.pluginMessage;
+    if (type === 'showMsg') {
+      _api.showMsg(msg);
+    } else {
+      _api[type] && _api[type](data);
+      !!msg && _api.showMsg(msg);
+    }
+  });
 </script>

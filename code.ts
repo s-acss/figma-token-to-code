@@ -13,7 +13,7 @@ const _api = {
   },
   getNodesByType: function ({ type, nodes }) {
     let results = [];
-    nodes.map((node) => {
+    nodes.map((node: any) => {
       let walker = this.walkTree(node);
       let res: { value: any; };
       while (!(res = walker.next()).done) {
@@ -119,7 +119,6 @@ const _api = {
     const fontStyleClassArray = this.getTextFontStyleArrayClassByProp(fontName);
     classArray = classArray.concat(fontStyleClassArray);
 
-
     // fontSize 
     const fontSize = this.getPropByNode(node, 'fontSize');
     if (typeof fontSize === 'number' && fontSize > 11) {
@@ -190,10 +189,59 @@ const _api = {
       nodes: selections
     });
     const html = this.getHtmlByTextNodes(textNodes);
+    figma.ui.postMessage({ type: 'showHtml', data: html });
     console.log(html);
-    return '';
+  },
+  getStyleInfo: function () {
+    const names = [];
+    const paintStyles = figma.getLocalPaintStyles();
+    paintStyles.forEach((style: PaintStyle) => {
+      const name = style.name;
+      (name[0] !== '_') && names.push({ name, value: '' });
+    });
+    figma.ui.postMessage({ type: 'showStyleInfo', data: names, msg:'👏 Get styles success' });
+  },
+  saveSetting: function (data: String) {
+    const dataArray = data.split('\n');
+    const dataObj = {};
+    dataArray.map(item => {
+      const [name, value] = item.split(':');
+      if (!!name) {
+        dataObj[name] = value;
+      }
+    });
+    figma.clientStorage.setAsync('AcssSetting', dataObj);
+    figma.ui.postMessage({ type: 'showMsg', msg: '👏 Save setting success' });
+  },
+  data2array: function (data: {}) {
+    const result = Object.keys(data).map(key => {
+      return {
+        name: key,
+        value: data[key]
+      };
+    });
+    return result;
+  },
+  getSetting: function () {
+    // const colorNames = this.getColorNames();
+    // if (!(colorNames && colorNames.length > 0)) {
+    //   figma.closePlugin("😭 Plese Set Color Styles On Right Sidebar 👉");
+    //   return;
+    // }
+    figma.clientStorage.getAsync('AcssSetting').then((data) => {
+      console.log('AcssSetting', data);
+      figma.ui.postMessage({ type: 'showSetting', data: this.data2array(data), msg: '👏 Get setting success' });
+    }).catch(() => {
+      figma.ui.postMessage({ type: 'showSetting', data: [], msg: '👏 Get setting success' });
+    });
   }
-}
+};
 
-const msg = _api.start();
-// figma.closePlugin(msg);
+figma.showUI(__html__, {
+  width: 400,
+  height: 800
+});
+
+figma.ui.onmessage = ({ type, data }) => {
+  _api[type] && _api[type](data);
+};
