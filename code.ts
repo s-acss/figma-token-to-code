@@ -26,58 +26,70 @@ const _api = {
     });
     return results;
   },
-  getTextAlignClassByProp: function (textAlignHorizontal: string) {
-    const stringMap = {
-      "LEFT": false,
-      "CENTER": 'tac',
-      "RIGHT": 'tar',
-      "JUSTIFIED": 'taj'
-    };
-    return stringMap[textAlignHorizontal];
-  },
-  getTextDecorationClassByProp: function (textDecoration: string) {
-    const stringMap = {
-      "NONE": false,
-      "UNDERLINE": 'tdu',
-      "STRIKETHROUGH": 'td'
-    };
-    return stringMap[textDecoration];
-  },
-  getTextCaseClassByProp: function (textCase: string) {
-    const stringMap = {
-      "ORIGINAL": false,
-      "LOWER": 'tac',
-      "UPPER": 'tar',
-      "TITLE": 'taj'
-    };
-    return stringMap[textCase];
-  },
-  getTextFontStyleArrayClassByProp: function ({ style }) {
+  getNodeFontStyleArray: function (node: any) {
+    const { style } = this.getPropByNode(node, 'fontName');
     if (!style) {
       return [];
     }
-    const classArray = [];
     const fontStyleMap = {
-      "UltraLight": 'fw100',
-      "Thin": 'fw200',
-      "Light": 'fw300',
+      "UltraLight": {
+        name: 'font-weight',
+        value: '100',
+        className: 'fw100',
+      },
+      "Thin": {
+        name: 'font-weight',
+        value: '200',
+        className: 'fw200',
+      },
+      "Light": {
+        name: 'font-weight',
+        value: '300',
+        className: 'fw300',
+      },
       "Regular": false,
-      "Medium": 'fw500',
-      "SemiBold": 'fw600',
-      "Bold": 'fw700',
-      "Black": 'fw900',
-      "Italic": 'fsi',
-      "Oblique": 'fsi'
+      "Medium": {
+        name: 'font-weight',
+        value: '500',
+        className: 'fw500',
+      },
+      "SemiBold": {
+        name: 'font-weight',
+        value: '600',
+        className: 'fw600',
+      },
+      "Bold": {
+        name: 'font-weight',
+        value: '700',
+        className: 'fw700',
+      },
+      "Black": {
+        name: 'font-weight',
+        value: '900',
+        className: 'fw900',
+      },
+      "Italic": {
+        name: 'font-style',
+        value: 'italic',
+        className: 'fsi',
+      },
+      "Oblique": {
+        name: 'font-style',
+        value: 'italic',
+        className: 'fsi',
+      }
     };
+    // font family 有可能是两个字符 
     const fontStyleArray = style.split(' ');
+    const result = [];
     fontStyleArray.map((item: string) => {
-      const fontStyleClass = fontStyleMap[item];
-      fontStyleClass && classArray.push(fontStyleClass);
+      const result = fontStyleMap[item];
+      result && result.push(result);
       return item;
     });
-    return classArray;
+    return result;
   },
-  getPropByNode: function (node: any, name: string) {
+  getPropByNode: function (node: any, name: string): string {
     const nameMap = {
       'textCase': 'getRangeTextCase',
       'lineHeight': 'getRangeLineHeight',
@@ -87,53 +99,27 @@ const _api = {
       'fontName': 'getRangeFontName',
       'fills': 'getRangeFills'
     }
-
     if (typeof node[name] === 'symbol' && nameMap[name] && typeof node[nameMap[name]] === 'function') {
       return node[nameMap[name]](0, 1);
     }
     return node[name];
   },
-  getNodeClassArray: function (node: any) {
-    let classArray = [];
-
-    // textAlign
-    const textAlignClass = this.getTextAlignClassByProp(node.textAlignHorizontal);
-    textAlignClass && classArray.push(textAlignClass);
-
-    // textCase
-    const textCase = this.getPropByNode(node, 'textCase');
-    const textCaseClass = this.getTextCaseClassByProp(textCase);
-    textCaseClass && classArray.push(textCaseClass);
-
-    // textDecoration
-    const textDecoration = this.getPropByNode(node, 'textDecoration');
-    const textDecorationClass = this.getTextDecorationClassByProp(textDecoration);
-    textDecorationClass && classArray.push(textDecorationClass);
-
-    // color
-    const paintStyle = figma.getLocalPaintStyles().find((item) => item.id === node.fillStyleId);
-    paintStyle && classArray.push('c_' + paintStyle.name.toLowerCase());
-
-    // fontStyle 
-    const fontName = this.getPropByNode(node, 'fontName');
-    const fontStyleClassArray = this.getTextFontStyleArrayClassByProp(fontName);
-    classArray = classArray.concat(fontStyleClassArray);
-
-    // fontSize 
-    const fontSize = this.getPropByNode(node, 'fontSize');
-    if (typeof fontSize === 'number' && fontSize > 11) {
-      classArray.push('fs' + fontSize);
+  getColorValue: function (color: RGB, opacity: number): string {
+    // Convert color to web rgba format
+    const r = color.r * 255;
+    const g = color.g * 255;
+    const b = color.b * 255;
+    const a = opacity === 1 ? 1 : parseFloat(Number(opacity).toFixed(3));
+    const rgba = `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${a})`;
+    return rgba;
+  },
+  getNodeColor: function (node: any) {
+    const { fills = [] } = node;
+    const { color, opacity = 1 } = fills[0];
+    if (!color) {
+      return false;
     }
-
-    // lineHeight 
-    const lineHeight = this.getPropByNode(node, 'lineHeight');
-    if (lineHeight.unit === "PIXELS" && lineHeight.value > fontSize) {
-      classArray.push('lh' + lineHeight.value);
-    } else if (lineHeight.unit === "PERCENT" && lineHeight.value > 100) {
-      classArray.push('lh' + lineHeight.value + 'p');
-    }
-
-    return classArray;
+    return this.getColorValue(color, opacity);
   },
   getClassPropsString: function (classArray: any[]) {
     if (!classArray.length) {
@@ -144,10 +130,115 @@ const _api = {
     }
     return ` class="${classArray.join(' ')}"`;
   },
-  getHtmlByTextNode: function (node: { characters: string, paragraphSpacing: number }) {
-    console.log(node);
-    let containerClassArray = this.getNodeClassArray(node);
-    const containerClassString = this.getClassPropsString(containerClassArray);
+  getNodeTextAlignInfo: function (node: any) {
+    const value = node.textAlignHorizontal;
+    const stringMap = {
+      "LEFT": false,
+      "CENTER": { value: 'center', className: 'tac' },
+      "RIGHT": { value: 'right', className: 'tar' },
+      "JUSTIFIED": { value: 'justify', className: 'taj' },
+    };
+    if (!value || !stringMap[value]) {
+      return false;
+    }
+    return {
+      name: 'text-align',
+      ...stringMap[value]
+    };
+  },
+  getNodeTextTransformInfo: function (node: any) {
+    const value = this.getPropByNode(node, 'textCase');
+    const stringMap = {
+      "ORIGINAL": false,
+      "LOWER": { value: 'lowercase', className: 'ttl' },
+      "UPPER": { value: 'uppercase', className: 'ttu' },
+      "TITLE": { value: 'capitalize', className: 'ttc' }
+    };
+    if (!value || !stringMap[value]) {
+      return false;
+    }
+    return {
+      name: 'text-transform',
+      ...stringMap[value]
+    };
+  },
+  getNodeTextDecorationInfo: function (node: any) {
+    const value = this.getPropByNode(node, 'textDecoration');
+    const stringMap = {
+      "NONE": false,
+      "UNDERLINE": { value: 'underline', className: 'tdu' },
+      "STRIKETHROUGH": { value: 'line-through', className: 'tdlt' },
+    };
+    if (!value || !stringMap[value]) {
+      return false;
+    }
+    return {
+      name: 'text-decoration',
+      ...stringMap[value]
+    };
+  },
+  getNodeFontSizeInfo: function (node: any) {
+    const fontSize = this.getPropByNode(node, 'fontSize');
+    if (typeof fontSize === 'number' && fontSize > 11) {
+      return {
+        name: 'font-size',
+        value: fontSize + 'px',
+        className: 'fs' + fontSize
+      };
+    }
+    return false;
+  },
+  getNodeLineHeightInfo: function (node: any) {
+    const fontSize = this.getPropByNode(node, 'fontSize');
+    const lineHeight = this.getPropByNode(node, 'lineHeight');
+    if (lineHeight.unit === "PIXELS" && lineHeight.value > fontSize) {
+      return {
+        name: 'line-height',
+        value: lineHeight.value + 'px',
+        className: 'lh' + lineHeight.value
+      }
+    } else if (lineHeight.unit === "PERCENT" && lineHeight.value > 100) {
+      return {
+        name: 'line-height',
+        value: lineHeight.value + '%',
+        className: 'lh' + lineHeight.value + 'p'
+      };
+    }
+    return false;
+  },
+  getNodeStyleInfoArray: function (node: any) {
+    const { textStyleId } = node;
+    let styleInfoArray = [];
+
+    // fontStyle
+    const fontStyleArray = this.getNodeFontStyleArray(node);
+    if (fontStyleArray.length > 0) {
+      styleInfoArray = styleInfoArray.concat(fontStyleArray);
+    }
+
+    // textAlign
+    const textAlign = this.getNodeTextAlignInfo(node);
+    textAlign && styleInfoArray.push(textAlign);
+
+    // textCase
+    const textCase = this.getNodeTextTransformInfo(node);
+    textCase && styleInfoArray.push(textCase);
+
+    // textDecoration
+    const textDecoration = this.getNodeTextDecorationInfo(node);
+    textDecoration && styleInfoArray.push(textDecoration);
+
+    // fontSize 
+    const fontSize = this.getNodeFontSizeInfo(node);
+    fontSize && styleInfoArray.push(fontSize);
+
+    // lineHeight 
+    const lineHeight = this.getNodeLineHeightInfo(node);
+    lineHeight && styleInfoArray.push(lineHeight);
+    return styleInfoArray;
+  },
+  getHtmlByClassArray: function (node: any, classArray: []) {
+    const containerClassString = this.getClassPropsString(classArray);
     const pragraphs = node.characters.split('\n');
 
     // 只有一段
@@ -165,32 +256,93 @@ const _api = {
     // 多段
     let html = '';
     pragraphs.map((pragraph) => {
-      html += `    <p${pMarginClassString}>${pragraph}</p>\n`;
+      html += `  <p${pMarginClassString}>${pragraph}</p>\n`;
     });
 
     return `<div${containerClassString}>\n${html}</div>`;
   },
-  getHtmlByTextNodes: function (nodes: any[]) {
-    let html = "";
+  getSettingClassByStyleId: function (id: string, setting: {}) {
+    if (!id) {
+      return false;
+    }
+    const { name } = figma.getStyleById(id);
+    return setting[name];
+  },
+  getCSSByStyleArray: function (styleArray: []) {
+    const resultArray = styleArray.map(({ className, name, value, props = [] }) => {
+      if (!props.length) {
+        return `.${className}{ ${name}:${value}; }`
+      }
+      const propsStringArray = props.map(({ name, value }) => `${name}:${value};`);
+      return `.${className}{ \n  ${propsStringArray.join('\n  ')}\n}`;
+    });
+    return resultArray.join('\n');
+  },
+  getHtmlByTextNode: function (node: any, setting: {}) {
+    const { fillStyleId, textStyleId } = node;
+    const colorClass = this.getSettingClassByStyleId(fillStyleId, setting);
+    const textClass = this.getSettingClassByStyleId(textStyleId, setting);
+    const classArray = [];
+    const styleArray = [];
+    const styleInfoArray = this.getNodeStyleInfoArray(node);
+    if (colorClass) {
+      classArray.push(colorClass);
+      styleArray.push({
+        className: colorClass,
+        name: 'color',
+        value: this.getNodeColor(node)
+      });
+    }
+    if (textClass) {
+      classArray.push(textClass);
+      styleArray.push({
+        className: textClass,
+        props: styleInfoArray
+      });
+    } else {
+      styleInfoArray.map((item: { className: any; }) => {
+        classArray.push(item.className);
+        styleArray.push(item);
+      });
+    }
+    return {
+      html: this.getHtmlByClassArray(node, classArray),
+      css: this.getCSSByStyleArray(styleArray)
+    };
+  },
+  getHtmlByTextNodes: function (nodes: any[], setting: {}) {
+    let htmlText = "";
+    let cssText = '';
     nodes.map((node: SceneNode) => {
-      html += this.getHtmlByTextNode(node);
+      const { html = '', css = '' } = this.getHtmlByTextNode(node, setting);
+      htmlText += html;
+      cssText += css;
       return node;
     });
-    return html;
+    return {
+      html: htmlText,
+      css: cssText
+    };
   },
-  start: function () {
+  getHtml: function () {
     const selections = figma.currentPage.selection;
     const selectLength = selections.length;
     if (!selectLength) {
-      return '😢 Please select something';
+      const msg = '😢 Please select something';
+      figma.ui.postMessage({ type: 'showMsg', msg });
+      return msg;
     }
     const textNodes = this.getNodesByType({
       type: 'TEXT',
       nodes: selections
     });
-    const html = this.getHtmlByTextNodes(textNodes);
-    figma.ui.postMessage({ type: 'showHtml', data: html });
-    console.log(html);
+    figma.clientStorage.getAsync('AcssSetting').then((data) => {
+      const html = this.getHtmlByTextNodes(textNodes, data);
+      figma.ui.postMessage({ type: 'showHtml', data: html, msg: '😊 ctrl+c and get the html' });
+    }).catch(() => {
+      const html = this.getHtmlByTextNodes(textNodes);
+      figma.ui.postMessage({ type: 'showHtml', data: html, msg: '😊 ctrl+c and get the html' });
+    });
   },
   getStyleInfo: function () {
     const names = [];
@@ -199,7 +351,7 @@ const _api = {
       const name = style.name;
       (name[0] !== '_') && names.push({ name, value: '' });
     });
-    figma.ui.postMessage({ type: 'showStyleInfo', data: names, msg:'👏 Get styles success' });
+    figma.ui.postMessage({ type: 'showStyleInfo', data: names, msg: '👏 Get styles success' });
   },
   saveSetting: function (data: String) {
     const dataArray = data.split('\n');
@@ -223,11 +375,6 @@ const _api = {
     return result;
   },
   getSetting: function () {
-    // const colorNames = this.getColorNames();
-    // if (!(colorNames && colorNames.length > 0)) {
-    //   figma.closePlugin("😭 Plese Set Color Styles On Right Sidebar 👉");
-    //   return;
-    // }
     figma.clientStorage.getAsync('AcssSetting').then((data) => {
       console.log('AcssSetting', data);
       figma.ui.postMessage({ type: 'showSetting', data: this.data2array(data), msg: '👏 Get setting success' });

@@ -8,10 +8,32 @@
     resize: vertical;
     margin-bottom: 0.5em;
   }
+
+  .msg {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #4c5fe2;
+    color: #ffffff;
+    padding: 8px 16px;
+    text-transform: capitalize;
+    transition: 200ms;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  .msg._on {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
 </style>
 
 <form id="formHtml">
-  <textarea id="htmlBody" placeholder="select text and generator" cols="30" readonly rows="10"></textarea>
+  <textarea id="htmlBody" placeholder="select text and generator" cols="30" rows="10"></textarea>
+  <textarea id="cssBody" placeholder="css" cols="30" rows="10"></textarea>
   <button type="submit">Generator</button>
 </form>
 
@@ -33,6 +55,7 @@
   //
   const objFormHtml = document.getElementById('formHtml');
   const objHtmlBody = document.getElementById('htmlBody');
+  const objCSSBody = document.getElementById('cssBody');
 
   //
   const objFormSetting = document.getElementById('formSetting');
@@ -44,6 +67,7 @@
 
   // msg
   const objMsgBox = document.getElementById('msgBox');
+  const objBody = document.body;
 
   const _api = {
     showStyleInfo: function (data) {
@@ -60,14 +84,25 @@
       });
       objSettingBody.value = text;
     },
-    showHtml: function (html) {
+    showHtml: function ({ html, css }) {
       objHtmlBody.value = html;
+      objCSSBody.value = css;
+      objHtmlBody.select();
     },
     showMsg: function (msg) {
-      objMsgBox.innerText = msg;
+      const objMsg = document.createElement('div');
+      objMsg.classList.add('msg');
+      objMsg.innerText = msg;
+      objBody.append(objMsg);
       setTimeout(function () {
-        objMsgBox.innerText = "";
-      }, 3000);
+        objMsg.classList.add('_on');
+        setTimeout(function () {
+          objMsg.classList.remove('_on');
+          setTimeout(function () {
+            objMsg.remove();
+          }, 201);
+        }, 3000);
+      }, 16);
     }
   };
 
@@ -76,6 +111,16 @@
     parent.postMessage({
       pluginMessage: {
         type: 'getSetting'
+      }
+    }, '*');
+  });
+
+  // 获取html
+  objFormHtml.addEventListener('submit', function (e) {
+    e.preventDefault();
+    parent.postMessage({
+      pluginMessage: {
+        type: 'getHtml'
       }
     }, '*');
   });
