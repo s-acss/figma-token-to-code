@@ -1,12 +1,53 @@
 <style>
   body {
-    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
   }
 
-  textarea {
+  .wrap {
+    margin: 0 16px;
+  }
+
+  .btn,
+  textarea,
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif;
+  }
+
+  .btn {
+    background-color: #18a0fb;
+    color: #ffffff;
+    border: none 0;
+    font-size: 16px;
+    padding: 0.75em 1em;
+    cursor: pointer;
+    border-radius: 0.25em;
+    text-transform: capitalize;
+  }
+
+  .btn._block {
+    display: block;
     width: 100%;
-    resize: vertical;
-    margin-bottom: 0.5em;
+  }
+
+  .btn:hover {
+    background-color: #1a8bd6;
+  }
+
+  .btn-group {
+    display: flex;
+  }
+
+  .textarea {
+    display: block;
+    border: none 0;
+    width: 100%;
+    resize: none;
+    padding: 8px 16px;
+  }
+
+  .textarea+.textarea {
+    border-top: 1px solid #e5e5e5;
   }
 
   .msg {
@@ -32,23 +73,22 @@
 </style>
 
 <form id="formHtml">
-  <textarea id="htmlBody" placeholder="select text and generator" cols="30" rows="10"></textarea>
-  <textarea id="cssBody" placeholder="css" cols="30" rows="10"></textarea>
-  <button type="submit">Generator</button>
+  <textarea class="textarea" id="cssBody" placeholder="CSS here" cols="30" rows="10"></textarea>
+  <textarea class="textarea" id="htmlBody" placeholder="select text and generator" cols="30" rows="10"></textarea>
+  <div class="wrap">
+    <button type="submit" class="btn _block">Generator</button>
+  </div>
 </form>
 
 <form id="formSetting">
-  <textarea id="settingBody" cols="30" rows="10"></textarea>
-  <button type="button" id="btnGetSetting">Get setting</button>
-  <button type="submit">Save</button>
+  <textarea class="textarea" id="settingBody" cols="30" rows="10" placeholder="enter your setting here"></textarea>
+  <div class="wrap">
+    <button type="button" id="btnGetAllStyle" class="btn _block">Get Local Styles Name</button>
+    <button type="button" id="btnGetSetting" class="btn _block">Get setting</button>
+    <button type="submit" class="btn _block">Save</button>
+  </div>
 </form>
 
-<form id="formStyles">
-  <textarea id="styleBody" cols="30" rows="10"></textarea>
-  <button type="submit">Get Style</button>
-</form>
-
-<div id="msgBox"></div>
 <script>
   const objSettingBody = document.getElementById('settingBody');
 
@@ -60,10 +100,8 @@
   //
   const objFormSetting = document.getElementById('formSetting');
   const objBtnGetSetting = document.getElementById('btnGetSetting');
-
   //
-  const objFormStyles = document.getElementById('formStyles');
-  const objStyleBody = document.getElementById('styleBody');
+  const btnGetAllStyle = document.getElementById('btnGetAllStyle');
 
   // msg
   const objMsgBox = document.getElementById('msgBox');
@@ -75,7 +113,7 @@
       data.map(({ name, value }) => {
         text += `${name}:${value}\n`;
       });
-      objStyleBody.value = text;
+      objSettingBody.value = text;
     },
     showSetting: function (data) {
       let text = '';
@@ -106,21 +144,23 @@
     }
   };
 
+  // 获取html
+  objFormHtml.addEventListener('submit', function (e) {
+    e.preventDefault();
+    htmlBody.value = "";
+    cssBody.value = "";
+    parent.postMessage({
+      pluginMessage: {
+        type: 'getHtml'
+      }
+    }, '*');
+  });
+
   // 获取设置
   objBtnGetSetting.addEventListener('click', function () {
     parent.postMessage({
       pluginMessage: {
         type: 'getSetting'
-      }
-    }, '*');
-  });
-
-  // 获取html
-  objFormHtml.addEventListener('submit', function (e) {
-    e.preventDefault();
-    parent.postMessage({
-      pluginMessage: {
-        type: 'getHtml'
       }
     }, '*');
   });
@@ -136,19 +176,14 @@
     }, '*');
   });
 
-  // 设置
-  objFormStyles.addEventListener('submit', function (e) {
+  // 获取所有的样式名称
+  btnGetAllStyle.addEventListener('click', function (e) {
     e.preventDefault();
     parent.postMessage({
       pluginMessage: {
         type: 'getStyleInfo'
       }
     }, '*');
-  });
-
-  // html
-  objFormHtml.addEventListener('submit', function (e) {
-    e.preventDefault();
   });
 
   onmessage = ((event) => {

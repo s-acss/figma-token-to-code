@@ -26,10 +26,10 @@ const _api = {
     });
     return results;
   },
-  getNodeFontStyleArray: function (node: any) {
+  getNodeFontStyleInfo: function (node: any) {
     const { style } = this.getPropByNode(node, 'fontName');
     if (!style) {
-      return [];
+      return false;
     }
     const fontStyleMap = {
       "UltraLight": {
@@ -81,10 +81,12 @@ const _api = {
     };
     // font family 有可能是两个字符 
     const fontStyleArray = style.split(' ');
-    const result = [];
+    const result = {};
     fontStyleArray.map((item: string) => {
-      const result = fontStyleMap[item];
-      result && result.push(result);
+      const { name, value, className } = fontStyleMap[item];
+      if (!!className) {
+        result[className] = { name, value };
+      }
       return item;
     });
     return result;
@@ -131,59 +133,66 @@ const _api = {
     return ` class="${classArray.join(' ')}"`;
   },
   getNodeTextAlignInfo: function (node: any) {
-    const value = node.textAlignHorizontal;
     const stringMap = {
       "LEFT": false,
       "CENTER": { value: 'center', className: 'tac' },
       "RIGHT": { value: 'right', className: 'tar' },
       "JUSTIFIED": { value: 'justify', className: 'taj' },
     };
-    if (!value || !stringMap[value]) {
+    const { value = '', className = '' } = stringMap[node.textAlignHorizontal];
+    if (!value || !className) {
       return false;
     }
     return {
-      name: 'text-align',
-      ...stringMap[value]
+      [className]: {
+        name: 'text-align',
+        value
+      }
     };
   },
   getNodeTextTransformInfo: function (node: any) {
-    const value = this.getPropByNode(node, 'textCase');
     const stringMap = {
       "ORIGINAL": false,
       "LOWER": { value: 'lowercase', className: 'ttl' },
       "UPPER": { value: 'uppercase', className: 'ttu' },
       "TITLE": { value: 'capitalize', className: 'ttc' }
     };
-    if (!value || !stringMap[value]) {
+    const { value = '', className = '' } = stringMap[this.getPropByNode(node, 'textCase')];
+    if (!value || !className) {
       return false;
     }
     return {
-      name: 'text-transform',
-      ...stringMap[value]
+      [className]: {
+        name: 'text-transform',
+        value
+      }
     };
   },
   getNodeTextDecorationInfo: function (node: any) {
-    const value = this.getPropByNode(node, 'textDecoration');
     const stringMap = {
       "NONE": false,
       "UNDERLINE": { value: 'underline', className: 'tdu' },
       "STRIKETHROUGH": { value: 'line-through', className: 'tdlt' },
     };
-    if (!value || !stringMap[value]) {
+    const { value = '', className = '' } = stringMap[this.getPropByNode(node, 'textDecoration')];
+    if (!value || !className) {
       return false;
     }
     return {
-      name: 'text-decoration',
-      ...stringMap[value]
+      [className]: {
+        name: 'text-decoration',
+        value
+      }
     };
   },
   getNodeFontSizeInfo: function (node: any) {
     const fontSize = this.getPropByNode(node, 'fontSize');
     if (typeof fontSize === 'number' && fontSize > 11) {
       return {
-        name: 'font-size',
-        value: fontSize + 'px',
-        className: 'fs' + fontSize
+        ['fs' + fontSize]: {
+          name: 'font-size',
+          value: fontSize + 'px'
+        }
       };
     }
     return false;
@@ -191,137 +200,121 @@ const _api = {
   getNodeLineHeightInfo: function (node: any) {
     const fontSize = this.getPropByNode(node, 'fontSize');
     const lineHeight = this.getPropByNode(node, 'lineHeight');
+    let className: string;
+    let value: string;
     if (lineHeight.unit === "PIXELS" && lineHeight.value > fontSize) {
-      return {
-        name: 'line-height',
-        value: lineHeight.value + 'px',
-        className: 'lh' + lineHeight.value
-      }
+      className = 'lh' + lineHeight.value;
+      value = lineHeight.value + 'px';
     } else if (lineHeight.unit === "PERCENT" && lineHeight.value > 100) {
-      return {
+      value = lineHeight.value + '%';
+      className = 'lh' + lineHeight.value + 'p'
+    }
+    if (!className) {
+      return false;
+    }
+    return {
+      [className]: {
         name: 'line-height',
-        value: lineHeight.value + '%',
-        className: 'lh' + lineHeight.value + 'p'
-      };
-    }
-    return false;
-  },
-  getNodeStyleInfoArray: function (node: any) {
-    const { textStyleId } = node;
-    let styleInfoArray = [];
-
-    // fontStyle
-    const fontStyleArray = this.getNodeFontStyleArray(node);
-    if (fontStyleArray.length > 0) {
-      styleInfoArray = styleInfoArray.concat(fontStyleArray);
-    }
-
-    // textAlign
-    const textAlign = this.getNodeTextAlignInfo(node);
-    textAlign && styleInfoArray.push(textAlign);
-
-    // textCase
-    const textCase = this.getNodeTextTransformInfo(node);
-    textCase && styleInfoArray.push(textCase);
-
-    // textDecoration
-    const textDecoration = this.getNodeTextDecorationInfo(node);
-    textDecoration && styleInfoArray.push(textDecoration);
-
-    // fontSize 
-    const fontSize = this.getNodeFontSizeInfo(node);
-    fontSize && styleInfoArray.push(fontSize);
-
-    // lineHeight 
-    const lineHeight = this.getNodeLineHeightInfo(node);
-    lineHeight && styleInfoArray.push(lineHeight);
-    return styleInfoArray;
-  },
-  getHtmlByClassArray: function (node: any, classArray: []) {
-    const containerClassString = this.getClassPropsString(classArray);
-    const pragraphs = node.characters.split('\n');
-
-    // 只有一段
-    if (pragraphs.length === 1) {
-      return `<p${containerClassString}>${pragraphs[0]}</p>`;
-    }
-
-    // 段间距
-    let pMarginClassString = '';
-    const paragraphSpacing = this.getPropByNode(node, 'paragraphSpacing');
-    if (paragraphSpacing > 0) {
-      pMarginClassString = ` class="mb${paragraphSpacing}"`;
-    }
-
-    // 多段
-    let html = '';
-    pragraphs.map((pragraph) => {
-      html += `  <p${pMarginClassString}>${pragraph}</p>\n`;
-    });
-
-    return `<div${containerClassString}>\n${html}</div>`;
+        value
+      }
+    };
   },
   getSettingClassByStyleId: function (id: string, setting: {}) {
-    if (!id) {
+    if (typeof id !== 'string' || !id) {
       return false;
     }
     const { name } = figma.getStyleById(id);
-    return setting[name];
+    if (typeof name === 'string') {
+      return setting[name];
+    }
+    return false;
   },
-  getCSSByStyleArray: function (styleArray: []) {
-    const resultArray = styleArray.map(({ className, name, value, props = [] }) => {
-      if (!props.length) {
-        return `.${className}{ ${name}:${value}; }`
+  getCSSStringByCSSObject: function (cssObj: {}) {
+    const resultArray = Object.keys(cssObj).sort().map((className) => {
+      const item = cssObj[className];
+      if (!item.length) {
+        return `.${className}{ ${item.name}:${item.value}; }`;
       }
-      const propsStringArray = props.map(({ name, value }) => `${name}:${value};`);
+      const propsStringArray = item.map(({ name, value }) => `${name}:${value};`);
       return `.${className}{ \n  ${propsStringArray.join('\n  ')}\n}`;
     });
-    return resultArray.join('\n');
+    return resultArray.join('\n') + '\n';
   },
   getHtmlByTextNode: function (node: any, setting: {}) {
     const { fillStyleId, textStyleId } = node;
     const colorClass = this.getSettingClassByStyleId(fillStyleId, setting);
     const textClass = this.getSettingClassByStyleId(textStyleId, setting);
-    const classArray = [];
-    const styleArray = [];
-    const styleInfoArray = this.getNodeStyleInfoArray(node);
+    const styleInfo = {
+      ...this.getNodeFontStyleInfo(node),
+      ...this.getNodeTextAlignInfo(node),
+      ...this.getNodeTextTransformInfo(node),
+      ...this.getNodeTextDecorationInfo(node),
+      ...this.getNodeFontSizeInfo(node),
+      ...this.getNodeLineHeightInfo(node)
+    };
+    let cssObj = {};
+
     if (colorClass) {
-      classArray.push(colorClass);
-      styleArray.push({
-        className: colorClass,
+      cssObj[colorClass] = {
         name: 'color',
         value: this.getNodeColor(node)
-      });
+      };
     }
+
     if (textClass) {
-      classArray.push(textClass);
-      styleArray.push({
-        className: textClass,
-        props: styleInfoArray
+      cssObj[textClass] = Object.keys(styleInfo).map((key) => {
+        return styleInfo[key];
       });
     } else {
-      styleInfoArray.map((item: { className: any; }) => {
-        classArray.push(item.className);
-        styleArray.push(item);
-      });
+      cssObj = { ...cssObj, ...styleInfo };
     }
+
+    const classArray = Object.keys(cssObj);
+    let html = '';
+    const containerClassString = this.getClassPropsString(classArray);
+    const pragraphs = node.characters.split('\n');
+
+    // 只有一段
+    if (pragraphs.length === 1) {
+      return {
+        html: `<p${containerClassString}>${pragraphs[0]}</p>`,
+        cssObj
+      }
+    }
+
+    // 多段
+    let pMarginClassString = '';
+    const paragraphSpacing = this.getPropByNode(node, 'paragraphSpacing');
+    if (paragraphSpacing > 0) {
+      cssObj[`mb${paragraphSpacing}`] = {
+        name: 'margin-bottom',
+        value: paragraphSpacing + 'px',
+      }
+      pMarginClassString = ` class="mb${paragraphSpacing}"`;
+    }
+    // 多段
+    const pragraphsHtml = pragraphs.map((pragraph: string) => {
+      return `<p${pMarginClassString}>${pragraph}</p>`;
+    });
+    html = `<div${containerClassString}>\n  ${pragraphsHtml.join('\n  ')} \n</div>`;
+
     return {
-      html: this.getHtmlByClassArray(node, classArray),
-      css: this.getCSSByStyleArray(styleArray)
+      html,
+      cssObj
     };
   },
   getHtmlByTextNodes: function (nodes: any[], setting: {}) {
     let htmlText = "";
-    let cssText = '';
+    let cssAllObj = {};
     nodes.map((node: SceneNode) => {
-      const { html = '', css = '' } = this.getHtmlByTextNode(node, setting);
-      htmlText += html;
-      cssText += css;
+      const { html = '', cssObj = {} } = this.getHtmlByTextNode(node, setting);
+      htmlText += html + '\n';
+      cssAllObj = { ...cssAllObj, ...cssObj };
       return node;
     });
     return {
       html: htmlText,
-      css: cssText
+      css: this.getCSSStringByCSSObject(cssAllObj)
     };
   },
   getHtml: function () {
@@ -376,7 +369,6 @@ const _api = {
   },
   getSetting: function () {
     figma.clientStorage.getAsync('AcssSetting').then((data) => {
-      console.log('AcssSetting', data);
       figma.ui.postMessage({ type: 'showSetting', data: this.data2array(data), msg: '👏 Get setting success' });
     }).catch(() => {
       figma.ui.postMessage({ type: 'showSetting', data: [], msg: '👏 Get setting success' });
