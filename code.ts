@@ -31,49 +31,50 @@ const _api = {
     if (!style) {
       return false;
     }
+
     const fontStyleMap = {
-      "UltraLight": {
+      "ULTRALIGHT": {
         name: 'font-weight',
         value: '100',
         className: 'fw100',
       },
-      "Thin": {
+      "THIN": {
         name: 'font-weight',
         value: '200',
         className: 'fw200',
       },
-      "Light": {
+      "LIGHT": {
         name: 'font-weight',
         value: '300',
         className: 'fw300',
       },
-      "Regular": false,
-      "Medium": {
+      "REGULAR": false,
+      "MEDIUM": {
         name: 'font-weight',
         value: '500',
         className: 'fw500',
       },
-      "SemiBold": {
+      "SEMIBOLD": {
         name: 'font-weight',
         value: '600',
         className: 'fw600',
       },
-      "Bold": {
+      "BOLD": {
         name: 'font-weight',
         value: '700',
         className: 'fw700',
       },
-      "Black": {
+      "BLACK": {
         name: 'font-weight',
         value: '900',
         className: 'fw900',
       },
-      "Italic": {
+      "ITALIC": {
         name: 'font-style',
         value: 'italic',
         className: 'fsi',
       },
-      "Oblique": {
+      "OBLIQUE": {
         name: 'font-style',
         value: 'italic',
         className: 'fsi',
@@ -83,9 +84,9 @@ const _api = {
     const fontStyleArray = style.split(' ');
     const result = {};
     fontStyleArray.map((item: string) => {
-      const { name, value, className } = fontStyleMap[item];
-      if (!!className) {
-        result[className] = { name, value };
+      const matchStyle = fontStyleMap[item.toUpperCase()];
+      if (matchStyle && matchStyle.className) {
+        result[matchStyle.className] = { name: matchStyle.name, value: matchStyle.value };
       }
       return item;
     });
@@ -244,6 +245,7 @@ const _api = {
     const { fillStyleId, textStyleId } = node;
     const colorClass = this.getSettingClassByStyleId(fillStyleId, setting);
     const textClass = this.getSettingClassByStyleId(textStyleId, setting);
+
     const styleInfo = {
       ...this.getNodeFontStyleInfo(node),
       ...this.getNodeTextAlignInfo(node),
@@ -321,8 +323,13 @@ const _api = {
     const selections = figma.currentPage.selection;
     const selectLength = selections.length;
     if (!selectLength) {
-      const msg = '😢 Please select something';
-      figma.ui.postMessage({ type: 'showMsg', msg });
+      const msg = '😢 Please select text first';
+      figma.ui.postMessage({
+        type: 'showHtml', data: {
+          html: '',
+          css: ''
+        }, msg
+      });
       return msg;
     }
     const textNodes = this.getNodesByType({
@@ -331,32 +338,39 @@ const _api = {
     });
     figma.clientStorage.getAsync('AcssSetting').then((data) => {
       const html = this.getHtmlByTextNodes(textNodes, data);
-      figma.ui.postMessage({ type: 'showHtml', data: html, msg: '😊 ctrl+c and get the html' });
+      figma.ui.postMessage({ type: 'showHtml', data: html });
     }).catch(() => {
       const html = this.getHtmlByTextNodes(textNodes);
-      figma.ui.postMessage({ type: 'showHtml', data: html, msg: '😊 ctrl+c and get the html' });
+      figma.ui.postMessage({ type: 'showHtml', data: html });
     });
   },
   getStyleInfo: function () {
-    const names = [];
+    const textStyles = figma.getLocalTextStyles();
     const paintStyles = figma.getLocalPaintStyles();
-    paintStyles.forEach((style: PaintStyle) => {
-      const name = style.name;
-      (name[0] !== '_') && names.push({ name, value: '' });
+    const textNames = [{ name: '/* Text style names */', value: '' }];
+    textStyles.forEach(({ name = '' }) => {
+      !!name && (name[0] !== '_') && textNames.push({ name, value: '' });
     });
-    figma.ui.postMessage({ type: 'showStyleInfo', data: names, msg: '👏 Get styles success' });
+
+    const paintNames = [{ name: '/* Color style names */', value: '' }];
+    paintStyles.forEach(({ name = '' }) => {
+      !!name && (name[0] !== '_') && paintNames.push({ name, value: '' });
+    });
+    const names = [].concat(textNames, paintNames);
+    figma.ui.postMessage({ type: 'showStyleInfo', data: names, msg: '👏 Get local styles success' });
   },
   saveSetting: function (data: String) {
     const dataArray = data.split('\n');
     const dataObj = {};
     dataArray.map(item => {
       const [name, value] = item.split(':');
-      if (!!name) {
-        dataObj[name] = value;
+      if (!!name && !!value) {
+        dataObj[name.trim()] = value.trim();
       }
     });
+
     figma.clientStorage.setAsync('AcssSetting', dataObj);
-    figma.ui.postMessage({ type: 'showMsg', msg: '👏 Save setting success' });
+    figma.ui.postMessage({ type: 'showSetting', data: this.data2array(dataObj), msg: '👏 Save setting success' });
   },
   data2array: function (data: {}) {
     const result = Object.keys(data).map(key => {
@@ -378,7 +392,7 @@ const _api = {
 
 figma.showUI(__html__, {
   width: 400,
-  height: 800
+  height: 592
 });
 
 figma.ui.onmessage = ({ type, data }) => {

@@ -1,22 +1,18 @@
-This plugin template uses Typescript. If you are familiar with Javascript, Typescript will
-look very familiar. In fact, valid Javascript code is already valid Typescript code.
+Generate the text element to Html with css.
 
-Typescript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
+The plugin reads the text styles and color styles on text element and let you export them into Html with css.
 
-For more information, visit https://www.typescriptlang.org/
+You can custome css selector rely on the defined Figma style's name.
 
-Using Typescript requires a compiler to convert Typescript (code.ts) into Javascript (code.js)
-for the browser to run.
+The text styles blow you don't define will transform to the ACSS.
 
-To get the TypeScript compiler working:
+- `font-size`： `.fs12{ font-size: 12px; }` ...;
+- `font-weight`：`.fw700{ font-weight: 700; }`...;
+- `font-style`：`.fsi{ font-style: italic; }` ...;
+- `line-height`：`.lh16{ line-height: 16px; }`...;
+- `text-align`：`.tac{ text-align: center; }; }`...;
+- `text-transform`：`.ttc{ text-transform: capitalize; }`...;
 
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Install the TypeScript compiler globally: `sudo npm install -g typescript`.
-3. Open this directory in Visual Studio Code.
-4. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "tsc: watch - tsconfig.json". You will have to do this again every time
-    you reopen Visual Studio Code.
+If the text you selecte with mutiple lines the `paragraphSpacing` will transform to the `margin-bottom`: `.mb16{ margin-bottom: 16px; }`...;
 
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+* ACSS「 Atomic css 」: Each css selector with only one css rules.
