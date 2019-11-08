@@ -17,7 +17,7 @@ const _api = {
             let res;
             while (!(res = walker.next()).done) {
                 const matchNode = res.value;
-                if (matchNode.type === 'TEXT') {
+                if (matchNode.type === type) {
                     results.push(matchNode);
                 }
             }
@@ -220,6 +220,9 @@ const _api = {
         };
     },
     getSettingClassByStyleId: function (id, setting) {
+        if (!setting) {
+            return false;
+        }
         if (typeof id !== 'string' || !id) {
             return false;
         }
@@ -330,19 +333,71 @@ const _api = {
             figma.ui.postMessage({ type: 'showHtml', data: html });
         });
     },
+    getNameById: function (id) {
+        if (typeof id !== 'string' || !id) {
+            return false;
+        }
+        const { name } = figma.getStyleById(id);
+        if (typeof name === 'string') {
+            return name;
+        }
+        return false;
+    },
     getStyleInfo: function () {
-        const textStyles = figma.getLocalTextStyles();
-        const paintStyles = figma.getLocalPaintStyles();
-        const textNames = [{ name: '/* Text style names */', value: '' }];
-        textStyles.forEach(({ name = '' }) => {
-            !!name && (name[0] !== '_') && textNames.push({ name, value: '' });
+        const _it = this;
+        const textNames = {};
+        figma.getLocalTextStyles().forEach(({ name = '' }) => {
+            if (!!name && (name[0] !== '_')) {
+                textNames[name] = '';
+            }
         });
-        const paintNames = [{ name: '/* Color style names */', value: '' }];
-        paintStyles.forEach(({ name = '' }) => {
-            !!name && (name[0] !== '_') && paintNames.push({ name, value: '' });
+        const paintNames = {};
+        figma.getLocalPaintStyles().forEach(({ name = '' }) => {
+            if (!!name && (name[0] !== '_')) {
+                paintNames[name] = '';
+            }
         });
-        const names = [].concat(textNames, paintNames);
-        figma.ui.postMessage({ type: 'showStyleInfo', data: names, msg: '👏 Get local styles success' });
+        let walker = this.walkTree(figma.currentPage);
+        let count = 0;
+        let res;
+        while (!(res = walker.next()).done) {
+            let node = res.value;
+            if (node.type === 'TEXT') {
+                const { fillStyleId, textStyleId } = node;
+                const matchPaintName = _it.getNameById(fillStyleId);
+                if (matchPaintName) {
+                    paintNames[matchPaintName] = '';
+                }
+                const matchTextName = _it.getNameById(textStyleId);
+                if (matchTextName) {
+                    textNames[matchTextName] = '';
+                }
+            }
+            if (++count === 10000) {
+                break;
+            }
+        }
+        const arrText = Object.keys(textNames);
+        const arryColor = Object.keys(paintNames);
+        let styleInfoString = '/*\n';
+        styleInfoString += ' * I walk thought ' + count + ' elements \n';
+        styleInfoString += ' * Find ' + arrText.length + ' Text style names width \'g_\' start\n';
+        styleInfoString += ' * And ' + arryColor.length + ' Text color names width \'c_\' start\n';
+        styleInfoString += ' * Copy text blow and paste them after setting \n';
+        styleInfoString += ' */ \n\n';
+        arrText.map((item) => {
+            const name = item.trim();
+            const value = 'g_' + name.toLocaleLowerCase().replace(/ /g, "_");
+            styleInfoString += name + ': ' + value + '\n';
+            return item;
+        });
+        arryColor.map((item) => {
+            const name = item.trim();
+            const value = 'c_' + name.toLocaleLowerCase().replace(/ /g, "_");
+            styleInfoString += name + ': ' + value + '\n';
+            return item;
+        });
+        figma.ui.postMessage({ type: 'showStyleInfo', data: styleInfoString, msg: '👏 Get local styles success' });
     },
     saveSetting: function (data) {
         const dataArray = data.split('\n');
@@ -367,9 +422,9 @@ const _api = {
     },
     getSetting: function () {
         figma.clientStorage.getAsync('AcssSetting').then((data) => {
-            figma.ui.postMessage({ type: 'showSetting', data: this.data2array(data), msg: '👏 Get setting success' });
+            figma.ui.postMessage({ type: 'showSetting', data: this.data2array(data) });
         }).catch(() => {
-            figma.ui.postMessage({ type: 'showSetting', data: [], msg: '👏 Get setting success' });
+            figma.ui.postMessage({ type: 'showSetting', data: [] });
         });
     }
 };
