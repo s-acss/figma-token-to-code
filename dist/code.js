@@ -379,24 +379,23 @@ const _api = {
         }
         const arrText = Object.keys(textNames);
         const arryColor = Object.keys(paintNames);
-        let styleInfoString = '/*\n';
-        styleInfoString += ' * I walk thought ' + count + ' elements \n';
-        styleInfoString += ' * Find ' + arrText.length + ' Text style names width \'g_\' start\n';
-        styleInfoString += ' * And ' + arryColor.length + ' Text color names width \'c_\' start\n';
-        styleInfoString += ' * Copy text blow and paste them after setting \n';
-        styleInfoString += ' */ \n\n';
-        arrText.map((item) => {
-            const name = item.trim();
-            const value = 'g_' + name.toLocaleLowerCase().replace(/ /g, "_");
-            styleInfoString += name + ': ' + value + '\n';
-            return item;
-        });
-        arryColor.map((item) => {
-            const name = item.trim();
-            const value = 'c_' + name.toLocaleLowerCase().replace(/ /g, "_");
-            styleInfoString += name + ': ' + value + '\n';
-            return item;
-        });
+        let styleInfoString = '';
+        if (arrText.length > 0) {
+            arrText.map((item) => {
+                const name = item.trim();
+                const value = 'g_' + name.toLocaleLowerCase().replace(/ /g, "_");
+                styleInfoString += name + ': ' + value + '\n';
+                return item;
+            });
+        }
+        if (arryColor.length > 0) {
+            arryColor.map((item) => {
+                const name = item.trim();
+                const value = 'c_' + name.toLocaleLowerCase().replace(/ /g, "_");
+                styleInfoString += name + ': ' + value + '\n';
+                return item;
+            });
+        }
         figma.ui.postMessage({ type: 'showStyleInfo', data: styleInfoString, msg: '👏 Get local styles success' });
     },
     saveSetting: function (data) {

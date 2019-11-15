@@ -395,23 +395,28 @@ const _api = {
     const arryColor = Object.keys(paintNames);
 
     let styleInfoString = '/*\n';
-    styleInfoString += ' * I walk thought ' + count + ' elements \n';
-    styleInfoString += ' * Find ' + arrText.length + ' Text style names width \'g_\' start\n';
-    styleInfoString += ' * And ' + arryColor.length + ' Text color names width \'c_\' start\n';
-    styleInfoString += ' * Copy text blow and paste them after setting \n';
+    styleInfoString += ' * Walking thought ' + count + ' elements\n';
+    styleInfoString += ' * Ctrl + a => Ctrl + c => Click Setting => Ctrl + v => Click Format\n';
+    styleInfoString += ' * Rename the className after colon as you like\n';
     styleInfoString += ' */ \n\n';
-    arrText.map((item) => {
-      const name = item.trim();
-      const value = 'g_' + name.toLocaleLowerCase().replace(/ /g, "_");
-      styleInfoString += name + ': ' + value + '\n';
-      return item;
-    });
-    arryColor.map((item) => {
-      const name = item.trim();
-      const value = 'c_' + name.toLocaleLowerCase().replace(/ /g, "_");
-      styleInfoString += name + ': ' + value + '\n';
-      return item;
-    });
+    if(arrText.length>0){
+      styleInfoString += ' /* Find ' + arrText.length + ' text style names, help you rename width \'g_\' start */\n';
+      arrText.map((item) => {
+        const name = item.trim();
+        const value = 'g_' + name.toLocaleLowerCase().replace(/ /g, "_");
+        styleInfoString += name + ': ' + value + '\n';
+        return item;
+      });
+    }
+    if(arryColor.length>0){
+      styleInfoString += '\n /* Find ' + arryColor.length + ' text color names find, help you rename width \'c_\' start */\n';
+      arryColor.map((item) => {
+        const name = item.trim();
+        const value = 'c_' + name.toLocaleLowerCase().replace(/ /g, "_");
+        styleInfoString += name + ': ' + value + '\n';
+        return item;
+      });
+    }
     figma.ui.postMessage({ type: 'showStyleInfo', data: styleInfoString, msg: '👏 Get local styles success' });
   },
   saveSetting: function (data: String) {
