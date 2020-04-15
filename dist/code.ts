@@ -401,14 +401,13 @@ const _api = {
         break
       }
     }
-
-    const styleString = Object.keys(textNames).map((item) => {
+    const styleString = Object.keys(textNames).sort().map((item) => {
       const name = item.trim();
       const value = name.toLocaleLowerCase().replace(/ /g, "_");
       return `"${name}" : "g_${value}"`;
     }).join('\n');
 
-    const colorString = Object.keys(paintNames).map((item) => {
+    const colorString = Object.keys(paintNames).sort().map((item) => {
       const name = item.trim();
       const value = name.toLocaleLowerCase().replace(/ /g, "_");
       return `"${name}" : "c_${value}"`;
