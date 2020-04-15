@@ -450,7 +450,7 @@ const _api = {
     const settingValue = data.settingValue;
     const dataArray = settingValue.replace(/"/g, "").replace(/;/g, "").replace(/,/g, "").split('\n');
     const dataObj = {};
-    dataArray.map(item => {
+    dataArray.sort().map(item => {
       const [name = '', value = ''] = item.split(':');
       const newName = name.trim();
       const newValue = value.trim().replace(/ /g, "_").toLowerCase();
