@@ -6,6 +6,8 @@
 <input class="pa vh" id="tabSwitch2" type="radio" name="tab">
 <input class="pa vh" id="tabSwitch3" type="radio" name="tab">
 
+
+<!-- Tab start -->
 <div class="tab-nav df aic jcsb row pf t0 l0 r0">
   <div>
     <label class="tab-nav-item" for="tabSwitch1">Generator</label>
@@ -19,55 +21,84 @@
     </svg>
   </a>
 </div>
+<!-- Tab end -->
 
+<!-- generate start -->
 <form class="tab-panel" id="formHtml">
-  <textarea readonly class="textarea" id="cssBody" cols="30" rows="8"></textarea>
-  <textarea style="height:329px;" readonly class="textarea" id="htmlBody" cols="30" rows="16"></textarea>
+  <div class="df pl8 pr16 pt8 pb8 hr">
+    <div class="mr8">
+      <i class="i _trans"></i>
+    </div>
+    <div class="f1 fs12 lh16 pt4 pb4 c_s">
+      <p>Current setting: "<strong id="htmlSettingText" class="c_success">default</strong>"</p>
+      <p>Change setting at 'setting tab'</p>
+    </div>
+  </div>
+  <textarea placeholder="CSS" class="textarea" id="cssBody" cols="30" rows="8"></textarea>
+  <textarea placeholder="HTML" style="height:329px;" class="textarea f3" id="htmlBody" cols="30"
+    rows="16"></textarea>
   <div class="footer">
     <button type="submit" class="btn _block">Select text & Click generate</button>
   </div>
 </form>
+<!-- generate end -->
 
+<!-- setting start -->
 <form class="tab-panel" id="formSetting">
   <div class="df pl8 pr16 pt8 pb8 hr">
     <div class="mr8">
       <i class="i _json"></i>
     </div>
     <div class="f1 fs12 lh16 pt4 pb4 c_s">
-        <p>Give each local style a alias as css selecter name</p>
-        <p>Split localStyleName and className with ':'  just like JSON</p>
-        <p>If you tired of type localStyleName by hand</p>
-        <p>you can copy from Design Token on the third tab</p>
+      <p>Give each local style a alias as className</p>
+      <p>Split localStyleName and className with ":" like JSON</p>
+      <p>Tired of type localStyleName by hand go to Design Token</p>
     </div>
   </div>
-  <textarea class="textarea" id="settingBody" cols="30" rows="23" placeholder="Plsease enter your settings one by one split with new line like blow:
-localStyleName:className
-localStyleName:className
-localStyleName:className
+  <div class="df pl16 pr16 pt8">
+    <div class="f1 mr8">
+      <label for="settingName" class="fs12 lh16 c_s mb4 db">Setting Name</label>
+      <input id="settingName" class="w100p input" type="text" value="default" placeholder="Setting name">
+    </div>
+    <div class="f1">
+      <label for="settingSelect" class="fs12 lh16 c_s mb4 db">Current Setting</label>
+      <select id="settingSelect" class="w100p select mr8" name="setting name">
+        <option value="default">default</option>
+      </select>
+    </div>
+  </div>
+  <textarea class="textarea" id="settingBody" cols="30" rows="23" placeholder="localStyleName : className
+localStyleName : className
+localStyleName : className
 ...
   "></textarea>
   <div class="footer df">
-    <button type="button" id="btnFormatSettting" class="btn _block mr8">Format</button>
-    <button type="submit" id="btnSaveSetting" class="btn _block" disabled>Save</button>
+    <button type="button" id="btnDelSetting" class="f1 btn _block mr8 _del">Delete</button>
+    <button type="submit" id="btnSaveSetting" class="btn f3 _block">Save</button>
   </div>
 </form>
+<!-- setting end -->
 
-<form class="tab-panel" id="formTocken">
+<!-- token start -->
+<form class="tab-panel" id="formToken">
   <div class="df pl8 pr16 pt8 pb8 hr">
     <div class="mr8">
       <i class="i _light"></i>
     </div>
     <div class="f1 fs12 lh16 pt4 pb4 c_s">
-        <p>Get all local style name in current page</p>
-        <p>And help you rename the style with `g_` start</p>
-        <p>The color with `c_` start</p>
+      <p>Help you find out all local style name in current page</p>
+      <p>And rename the style name with `g_` start</p>
+      <p>The color name with `c_` start</p>
+      <p>You can just copy into `setting` and rename them as you like</p>
     </div>
   </div>
-  <textarea class="textarea" id="styleNameBody" readonly cols="30" rows="24" placeholder=""></textarea>
+  <textarea class="textarea" id="styleNameBody" cols="30" rows="23"></textarea>
   <div class="footer">
     <button type="button" id="btnGetAllStyle" class="btn _block">Get All Text Local Style Name</button>
   </div>
 </form>
+<!-- token end -->
+
 
 <!-- build:inlinejs -->
 <script src="./script.js"></script>

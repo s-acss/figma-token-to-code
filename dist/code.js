@@ -275,26 +275,36 @@ const _api = {
             };
         }
         // 多段
-        let pMarginClassString = '';
         const paragraphSpacing = this.getPropByNode(node, 'paragraphSpacing');
+        // 有段间距代表是分段，不是列表
         if (paragraphSpacing > 0) {
             cssObj[`mb${paragraphSpacing}`] = {
                 name: 'margin-bottom',
                 value: paragraphSpacing + 'px',
             };
-            pMarginClassString = ` class="mb${paragraphSpacing}"`;
+            let pMarginClassString = ` class="mb${paragraphSpacing}"`;
+            // 多段
+            const pragraphsHtml = pragraphs.map((pragraph) => {
+                return `<p${pMarginClassString}>${pragraph}</p>`;
+            });
+            html = `<div${containerClassString}>\n  ${pragraphsHtml.join('\n  ')} \n</div>`;
+            return {
+                html,
+                cssObj
+            };
         }
-        // 多段
+        // 列表多段
+        let pMarginClassString = '';
         const pragraphsHtml = pragraphs.map((pragraph) => {
-            return `<p${pMarginClassString}>${pragraph}</p>`;
+            return `<li${pMarginClassString}>${pragraph}</li>`;
         });
-        html = `<div${containerClassString}>\n  ${pragraphsHtml.join('\n  ')} \n</div>`;
+        html = `<ul${containerClassString}>\n  ${pragraphsHtml.join('\n  ')} \n</ul>`;
         return {
             html,
             cssObj
         };
     },
-    getHtmlByTextNodes: function (nodes, setting) {
+    getHtmlByTextNodes: function (nodes, setting = {}) {
         let htmlText = "";
         let cssAllObj = {};
         nodes.map((node) => {
@@ -325,8 +335,8 @@ const _api = {
             type: 'TEXT',
             nodes: selections
         });
-        figma.clientStorage.getAsync('AcssSetting').then((data) => {
-            const html = this.getHtmlByTextNodes(textNodes, data);
+        figma.clientStorage.getAsync('ACSS').then(({ currentSetting = 'default', settings = {} }) => {
+            const html = this.getHtmlByTextNodes(textNodes, settings[currentSetting]);
             figma.ui.postMessage({ type: 'showHtml', data: html });
         }).catch(() => {
             const html = this.getHtmlByTextNodes(textNodes);
@@ -377,40 +387,19 @@ const _api = {
                 break;
             }
         }
-        const arrText = Object.keys(textNames);
-        const arryColor = Object.keys(paintNames);
-        let styleInfoString = '';
-        if (arrText.length > 0) {
-            arrText.map((item) => {
-                const name = item.trim();
-                const value = 'g_' + name.toLocaleLowerCase().replace(/ /g, "_");
-                styleInfoString += name + ': ' + value + '\n';
-                return item;
-            });
-        }
-        if (arryColor.length > 0) {
-            arryColor.map((item) => {
-                const name = item.trim();
-                const value = 'c_' + name.toLocaleLowerCase().replace(/ /g, "_");
-                styleInfoString += name + ': ' + value + '\n';
-                return item;
-            });
-        }
-        figma.ui.postMessage({ type: 'showStyleInfo', data: styleInfoString, msg: '👏 Get local styles success' });
+        const styleString = Object.keys(textNames).map((item) => {
+            const name = item.trim();
+            const value = name.toLocaleLowerCase().replace(/ /g, "_");
+            return `"${name}" : "g_${value}"`;
+        }).join('\n');
+        const colorString = Object.keys(paintNames).map((item) => {
+            const name = item.trim();
+            const value = name.toLocaleLowerCase().replace(/ /g, "_");
+            return `"${name}" : "c_${value}"`;
+        }).join('\n');
+        figma.ui.postMessage({ type: 'showStyleInfo', data: styleString + '\n' + colorString, msg: '👏 Get success' });
     },
-    saveSetting: function (data) {
-        const dataArray = data.split('\n');
-        const dataObj = {};
-        dataArray.map(item => {
-            const [name, value] = item.split(':');
-            if (!!name && !!value) {
-                dataObj[name.trim()] = value.trim();
-            }
-        });
-        figma.clientStorage.setAsync('AcssSetting', dataObj);
-        figma.ui.postMessage({ type: 'showSetting', data: this.data2array(dataObj), msg: '👏 Save setting success' });
-    },
-    data2array: function (data) {
+    data2array: function (data = {}) {
         const result = Object.keys(data).map(key => {
             return {
                 name: key,
@@ -419,11 +408,92 @@ const _api = {
         });
         return result;
     },
-    getSetting: function () {
-        figma.clientStorage.getAsync('AcssSetting').then((data) => {
-            figma.ui.postMessage({ type: 'showSetting', data: this.data2array(data) });
+    changeSetting: function (goSetting = 'default') {
+        figma.clientStorage.getAsync('ACSS').then(({ settings = {} }) => {
+            const dataObj = settings[goSetting];
+            const newSetting = { currentSetting: goSetting, settings };
+            figma.clientStorage.setAsync('ACSS', newSetting);
+            figma.ui.postMessage({
+                type: 'changeSetting',
+                data: {
+                    settingBody: this.data2array(dataObj),
+                    settingName: goSetting
+                }
+            });
         }).catch(() => {
-            figma.ui.postMessage({ type: 'showSetting', data: [] });
+            figma.ui.postMessage({
+                type: 'changeSettingBody', data: {
+                    settingBody: [],
+                    settingName: goSetting
+                }, msg: '😭 Something wrong try again'
+            });
+        });
+    },
+    saveSetting: function (data) {
+        let settingName = data.settingName || 'default';
+        const settingValue = data.settingValue;
+        const dataArray = settingValue.replace(/"/g, "").replace(/;/g, "").replace(/,/g, "").split('\n');
+        const dataObj = {};
+        dataArray.map(item => {
+            const [name = '', value = ''] = item.split(':');
+            const newName = name.trim();
+            const newValue = value.trim().replace(/ /g, "_").toLowerCase();
+            if (!!newName && !!newValue) {
+                dataObj[newName] = newValue;
+            }
+        });
+        const saveIt = ({ currentSetting = 'default', settings = {} }) => {
+            const newSeetings = Object.assign(Object.assign({}, settings), { [settingName]: dataObj });
+            figma.clientStorage.setAsync('ACSS', { currentSetting: settingName, settings: newSeetings });
+            figma.ui.postMessage({
+                type: 'changeSetting', data: {
+                    settingBody: this.data2array(dataObj),
+                    settingName: settingName,
+                    settingSelect: Object.keys(newSeetings)
+                }, msg: '👏 Save setting success'
+            });
+        };
+        figma.clientStorage.getAsync('ACSS').then(saveIt).catch(() => {
+            saveIt({ currentSetting: "default", settings: { "default": dataObj } });
+        });
+    },
+    getSetting: function () {
+        figma.clientStorage.getAsync('ACSS').then(({ currentSetting = 'default', settings = {} }) => {
+            let currentSettingValue = settings[currentSetting];
+            let currentSettingName = currentSetting;
+            if (!currentSettingValue) {
+                currentSettingValue = settings.default;
+                currentSettingName = 'default';
+            }
+            figma.ui.postMessage({
+                type: 'changeSetting',
+                data: {
+                    settingBody: this.data2array(currentSettingValue),
+                    settingName: currentSettingName,
+                    settingSelect: Object.keys(settings)
+                }
+            });
+        }).catch(() => {
+            figma.clientStorage.setAsync('ACSS', { currentSetting: 'defalut', settings: { default: {} } });
+        });
+    },
+    delCurrentSetting: function () {
+        figma.clientStorage.getAsync('ACSS').then(({ currentSetting = 'default', settings = {} }) => {
+            delete settings[currentSetting];
+            // 如果是删除 default 表示清空 default
+            const newSettings = Object.assign({ 'default': {} }, settings);
+            figma.clientStorage.setAsync('ACSS', { currentSetting: 'default', settings: newSettings });
+            figma.ui.postMessage({
+                type: 'changeSetting', data: {
+                    settingBody: this.data2array(newSettings.default),
+                    settingName: 'default',
+                    settingSelect: Object.keys(newSettings)
+                }, msg: '👏 Delete setting success'
+            });
+        }).catch(() => {
+            figma.ui.postMessage({
+                type: 'showMsg', msg: '😭 Delete error try again'
+            });
         });
     }
 };
@@ -431,6 +501,8 @@ figma.showUI(__html__, {
     width: 400,
     height: 592
 });
+// 打开的时候获取设置
+_api.getSetting();
 figma.ui.onmessage = ({ type, data }) => {
     _api[type] && _api[type](data);
 };

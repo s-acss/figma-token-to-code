@@ -1,13 +1,27 @@
 @import '../node_modules/@_nu/css-acss/lib/_acss.less';
 #ACSS; // ACSS 核心代码，等价于引用 `css/acss.css` 
-#ACSS.margin(8, 12, 16; 1px);      
-#ACSS.padding(4, 8, 12, 16; 1px); 
-#ACSS.fontSize(12, 16; 1px);  
-#ACSS.lineHeight(16, 24; 1px); 
-.c_s{
+#ACSS.margin(4, 8, 12, 16; 1px);
+#ACSS.padding(4, 8, 12, 16; 1px);
+#ACSS.fontSize(12, 16; 1px);
+#ACSS.lineHeight(16, 24; 1px);
+
+.f2 {
+  flex: 2;
+}
+
+.f3 {
+  flex: 3;
+}
+
+.c_success{
+  color: #1bc47d;
+}
+.c_s {
   color: rgba(0, 0, 0, 0.6);
 }
+
 @c_border: #E5E5E5;
+
 * {
   margin: 0;
   font-family: inherit;
@@ -15,6 +29,7 @@
   font-weight: inherit;
   box-sizing: border-box;
 }
+
 pre,
 li,
 ul,
@@ -40,6 +55,7 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
 /* module */
 .wrap {
   margin-left: 16px;
@@ -87,6 +103,22 @@ a {
 
 .tab-panel {
   display: none;
+  position: fixed;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  top: 41px;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tab-panel>.textarea {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.tab-panel>.textarea.f3 {
+  flex: 3;
 }
 
 .tab-nav-item:hover,
@@ -96,16 +128,10 @@ a {
   color: #333;
 }
 
-#tabSwitch1:checked~#formHtml {
-  display: block;
-}
-
-#tabSwitch2:checked~#formSetting {
-  display: block;
-}
-
-#tabSwitch3:checked~#formTocken {
-  display: block;
+#tabSwitch1:checked~#formHtml,
+#tabSwitch2:checked~#formSetting,
+#tabSwitch3:checked~#formToken {
+  display: flex;
 }
 
 /* button */
@@ -124,6 +150,7 @@ a {
   -webkit-transition: 200ms;
   transition: 200ms;
   outline: none;
+  background-color: #ffffff;
 }
 
 .btn:disabled {
@@ -135,6 +162,14 @@ a {
 .btn._block {
   display: block;
   width: 100%;
+}
+
+.btn._del {
+  opacity: 0.5;
+}
+
+.btn._del:hover {
+  color: #dc3545;
 }
 
 .btn:hover {
@@ -153,26 +188,35 @@ a {
 }
 
 /* textarea */
-.selected{
+.select,
+.input {
+  font-size: 12px;
+  border-radius: 4px;
   height: 24px;
+  background-color: #ffffff;
+  border: 1px solid #E0E5E5;
+}
+
+.input {
+  padding: 3px 8px;
 }
 
 .textarea {
   border: none 0;
   border-bottom: 1px solid #E0E5E5;
   padding: 4px 0;
-  line-height: 16px;
+  line-height: 1.8;
   background-color: #ffffff;
   font-size: 12px;
   border-radius: 0;
   transition: 200ms;
 }
 
-textarea.textarea{
+textarea.textarea {
   display: block;
   width: 100%;
   resize: none;
-  padding: 1em 16px;
+  padding: 8px 16px;
 }
 
 .textarea._reverse {
@@ -180,9 +224,19 @@ textarea.textarea{
   border-top: 1px solid #E0E5E5;
 }
 
-.textarea:focus {
-  outline: none;
-  border-color: #333333;
+.textarea,
+.input,
+.select {
+
+  &:hover,
+  &:focus {
+
+    border-color: #333333;
+  }
+
+  &:focus {
+    outline: none;
+  }
 }
 
 /* setting-demo */
@@ -194,7 +248,7 @@ textarea.textarea{
 }
 
 .setting-demo strong {
-  color: #905;
+  color: #f24822;
 }
 
 .setting-demo small {
@@ -202,11 +256,6 @@ textarea.textarea{
 }
 
 .footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  width: 100%;
-  bottom: 0;
   padding: 16px;
 }
 

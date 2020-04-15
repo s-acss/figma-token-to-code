@@ -11,7 +11,7 @@
     "build": "gulp build"
   },
   "devDependencies": {
-    "@_nu/css-acss": "^0.2.0",
+    "@_nu/css-acss": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^6.0.0",
     "gulp-clean-css": "^4.0.0",

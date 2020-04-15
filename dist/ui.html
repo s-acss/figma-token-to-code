@@ -295,6 +295,10 @@
         text-overflow: ellipsis
     }
 
+    .mt4 {
+        margin-top: 4px
+    }
+
     .mt8 {
         margin-top: 8px
     }
@@ -305,6 +309,10 @@
 
     .mt16 {
         margin-top: 16px
+    }
+
+    .mr4 {
+        margin-right: 4px
     }
 
     .mr8 {
@@ -319,6 +327,10 @@
         margin-right: 16px
     }
 
+    .mb4 {
+        margin-bottom: 4px
+    }
+
     .mb8 {
         margin-bottom: 8px
     }
@@ -329,6 +341,10 @@
 
     .mb16 {
         margin-bottom: 16px
+    }
+
+    .ml4 {
+        margin-left: 4px
     }
 
     .ml8 {
@@ -423,6 +439,22 @@
         line-height: 24px
     }
 
+    .f2 {
+        -webkit-box-flex: 2;
+        -ms-flex: 2;
+        flex: 2
+    }
+
+    .f3 {
+        -webkit-box-flex: 3;
+        -ms-flex: 3;
+        flex: 3
+    }
+
+    .c_success {
+        color: #1bc47d
+    }
+
     .c_s {
         color: rgba(0, 0, 0, .6)
     }
@@ -505,7 +537,32 @@
     }
 
     .tab-panel {
-        display: none
+        display: none;
+        position: fixed;
+        left: 0;
+        width: 100%;
+        bottom: 0;
+        top: 41px;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+        justify-content: space-between
+    }
+
+    .tab-panel>.textarea {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        white-space: nowrap
+    }
+
+    .tab-panel>.textarea.f3 {
+        -webkit-box-flex: 3;
+        -ms-flex: 3;
+        flex: 3
     }
 
     #tabSwitch1:checked~.tab-nav .tab-nav-item[for=tabSwitch1],
@@ -515,16 +572,12 @@
         color: #333
     }
 
-    #tabSwitch1:checked~#formHtml {
-        display: block
-    }
-
-    #tabSwitch2:checked~#formSetting {
-        display: block
-    }
-
-    #tabSwitch3:checked~#formTocken {
-        display: block
+    #tabSwitch1:checked~#formHtml,
+    #tabSwitch2:checked~#formSetting,
+    #tabSwitch3:checked~#formToken {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex
     }
 
     .btn {
@@ -540,7 +593,8 @@
         background-color: transparent;
         -webkit-transition: .2s;
         transition: .2s;
-        outline: 0
+        outline: 0;
+        background-color: #fff
     }
 
     .btn:disabled {
@@ -552,6 +606,14 @@
     .btn._block {
         display: block;
         width: 100%
+    }
+
+    .btn._del {
+        opacity: .5
+    }
+
+    .btn._del:hover {
+        color: #dc3545
     }
 
     .btn:hover {
@@ -570,15 +632,24 @@
         display: flex
     }
 
-    .selected {
-        height: 24px
+    .input,
+    .select {
+        font-size: 12px;
+        border-radius: 4px;
+        height: 24px;
+        background-color: #fff;
+        border: 1px solid #e0e5e5
+    }
+
+    .input {
+        padding: 3px 8px
     }
 
     .textarea {
         border: none 0;
         border-bottom: 1px solid #e0e5e5;
         padding: 4px 0;
-        line-height: 16px;
+        line-height: 1.8;
         background-color: #fff;
         font-size: 12px;
         border-radius: 0;
@@ -590,7 +661,7 @@
         display: block;
         width: 100%;
         resize: none;
-        padding: 1em 16px
+        padding: 8px 16px
     }
 
     .textarea._reverse {
@@ -598,9 +669,19 @@
         border-top: 1px solid #e0e5e5
     }
 
-    .textarea:focus {
-        outline: 0;
+    .input:focus,
+    .input:hover,
+    .select:focus,
+    .select:hover,
+    .textarea:focus,
+    .textarea:hover {
         border-color: #333
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+        outline: 0
     }
 
     .setting-demo {
@@ -611,7 +692,7 @@
     }
 
     .setting-demo strong {
-        color: #905
+        color: #f24822
     }
 
     .setting-demo small {
@@ -619,11 +700,6 @@
     }
 
     .footer {
-        position: fixed;
-        left: 0;
-        right: 0;
-        width: 100%;
-        bottom: 0;
         padding: 16px
     }
 
@@ -699,6 +775,7 @@
 <input class="pa vh" id="tabSwitch1" type="radio" name="tab" checked>
 <input class="pa vh" id="tabSwitch2" type="radio" name="tab">
 <input class="pa vh" id="tabSwitch3" type="radio" name="tab">
+<!-- Tab start -->
 <div class="tab-nav df aic jcsb row pf t0 l0 r0">
     <div>
         <label class="tab-nav-item" for="tabSwitch1">Generator</label>
@@ -711,91 +788,149 @@
         </svg>
     </a>
 </div>
+<!-- Tab end -->
+<!-- generate start -->
 <form class="tab-panel" id="formHtml">
-    <textarea readonly class="textarea" id="cssBody" cols="30" rows="8"></textarea>
-    <textarea style="height:329px;" readonly class="textarea" id="htmlBody" cols="30" rows="16"></textarea>
+    <div class="df pl8 pr16 pt8 pb8 hr">
+        <div class="mr8">
+            <i class="i _trans"></i>
+        </div>
+        <div class="f1 fs12 lh16 pt4 pb4 c_s">
+            <p>Current setting: "<strong id="htmlSettingText" class="c_success">default</strong>"</p>
+            <p>Change setting at 'setting tab'</p>
+        </div>
+    </div>
+    <textarea placeholder="CSS" class="textarea" id="cssBody" cols="30" rows="8"></textarea>
+    <textarea placeholder="HTML" style="height:329px;" class="textarea f3" id="htmlBody" cols="30" rows="16"></textarea>
     <div class="footer">
         <button type="submit" class="btn _block">Select text & Click generate</button>
     </div>
 </form>
+<!-- generate end -->
+<!-- setting start -->
 <form class="tab-panel" id="formSetting">
     <div class="df pl8 pr16 pt8 pb8 hr">
         <div class="mr8">
             <i class="i _json"></i>
         </div>
         <div class="f1 fs12 lh16 pt4 pb4 c_s">
-            <p>Give each local style a alias as css selecter name</p>
-            <p>Split localStyleName and className with ':' just like JSON</p>
-            <p>If you tired of type localStyleName by hand</p>
-            <p>you can copy from Design Token on the third tab</p>
+            <p>Give each local style a alias as className</p>
+            <p>Split localStyleName and className with ":" like JSON</p>
+            <p>Tired of type localStyleName by hand go to Design Token</p>
         </div>
     </div>
-    <textarea class="textarea" id="settingBody" cols="30" rows="23" placeholder="Plsease enter your settings one by one split with new line like blow:
-localStyleName:className
-localStyleName:className
-localStyleName:className
+    <div class="df pl16 pr16 pt8">
+        <div class="f1 mr8">
+            <label for="settingName" class="fs12 lh16 c_s mb4 db">Setting Name</label>
+            <input id="settingName" class="w100p input" type="text" value="default" placeholder="Setting name">
+        </div>
+        <div class="f1">
+            <label for="settingSelect" class="fs12 lh16 c_s mb4 db">Current Setting</label>
+            <select id="settingSelect" class="w100p select mr8" name="setting name">
+                <option value="default">default</option>
+            </select>
+        </div>
+    </div>
+    <textarea class="textarea" id="settingBody" cols="30" rows="23" placeholder="localStyleName : className
+localStyleName : className
+localStyleName : className
 ...
   "></textarea>
     <div class="footer df">
-        <button type="button" id="btnFormatSettting" class="btn _block mr8">Format</button>
-        <button type="submit" id="btnSaveSetting" class="btn _block" disabled>Save</button>
+        <button type="button" id="btnDelSetting" class="f1 btn _block mr8 _del">Delete</button>
+        <button type="submit" id="btnSaveSetting" class="btn f3 _block">Save</button>
     </div>
 </form>
-<form class="tab-panel" id="formTocken">
+<!-- setting end -->
+<!-- token start -->
+<form class="tab-panel" id="formToken">
     <div class="df pl8 pr16 pt8 pb8 hr">
         <div class="mr8">
             <i class="i _light"></i>
         </div>
         <div class="f1 fs12 lh16 pt4 pb4 c_s">
-            <p>Get all local style name in current page</p>
-            <p>And help you rename the style with `g_` start</p>
-            <p>The color with `c_` start</p>
+            <p>Help you find out all local style name in current page</p>
+            <p>And rename the style name with `g_` start</p>
+            <p>The color name with `c_` start</p>
+            <p>You can just copy into `setting` and rename them as you like</p>
         </div>
     </div>
-    <textarea class="textarea" id="styleNameBody" readonly cols="30" rows="24" placeholder=""></textarea>
+    <textarea class="textarea" id="styleNameBody" cols="30" rows="23"></textarea>
     <div class="footer">
         <button type="button" id="btnGetAllStyle" class="btn _block">Get All Text Local Style Name</button>
     </div>
 </form>
+<!-- token end -->
 <script>
-    const objSettingBody = document.getElementById('settingBody');
-    const formHtml = document.getElementById('formHtml');
-    const objHtmlBody = document.getElementById('htmlBody');
-    const objCSSBody = document.getElementById('cssBody');
-    const btnFormatSettting = document.getElementById('btnFormatSettting');
-    const btnSaveSetting = document.getElementById('btnSaveSetting');
-    const btnGetAllStyle = document.getElementById('btnGetAllStyle');
-    const objStyleNameBody = document.getElementById('styleNameBody');
-    const objMsgBox = document.getElementById('msgBox');
-    const objBody = document.body;
     const _api = {
-        showStyleInfo: function(data) {
-            objStyleNameBody.value = data || '';
+        doms: {
+            body: document.body,
+            settingBody: document.getElementById('settingBody'),
+            formHtml: document.getElementById('formHtml'),
+            htmlBody: document.getElementById('htmlBody'),
+            CSSBody: document.getElementById('cssBody'),
+            btnDelSetting: document.getElementById('btnDelSetting'),
+            btnSaveSetting: document.getElementById('btnSaveSetting'),
+            btnGetAllStyle: document.getElementById('btnGetAllStyle'),
+            styleNamesBody: document.getElementById('styleNameBody'),
+            settingSelect: document.getElementById('settingSelect'),
+            settingName: document.getElementById('settingName'),
+            htmlSettingText: document.getElementById('htmlSettingText')
         },
-        showSetting: function(data) {
+        showStyleInfo: function(data) {
+            _api.doms.styleNamesBody.value = data || '';
+        },
+        changeSetting: function(data) {
+            const settingBody = data.settingBody;
+            const settingName = data.settingName;
+            const settingSelect = data.settingSelect;
+            if (typeof settingName !== 'undefind') {
+                this.doms.settingName.value = settingName;
+                this.doms.htmlSettingText.innerText = settingName;
+            }
+            settingBody && this.changeSettingBody(settingBody);
+            settingSelect && this.changeSettingSelect({
+                settingNames: settingSelect,
+                currentSetting: settingName
+            });
+        },
+        changeSettingBody: function(data = []) {
             let text = '';
             data.map(({
                 name,
                 value
             }) => {
-                text += `${name}: ${value}\n`;
+                text += `"${name}" : "${value}"\n`;
             });
-            objSettingBody.value = text;
-            btnSaveSetting.disabled = true;
+            this.doms.settingBody.value = text;
         },
-        showHtml: function({
-            html,
-            css
-        }) {
-            objHtmlBody.value = html;
-            objCSSBody.value = css;
-            objHtmlBody.select();
+        changeSettingSelect: function(data) {
+            const settingNames = data.settingNames;
+            const currentName = data.currentSetting || 'default';
+            let baseHtml = '';
+            for (var i = 0; i < settingNames.length; i++) {
+                const itName = settingNames[i];
+                if (itName === currentName) {
+                    baseHtml += '<option value="' + itName + '" selected>' + itName + '</option>';
+                } else {
+                    baseHtml += '<option value="' + itName + '">' + itName + '</option>';
+                }
+            }
+            this.doms.settingSelect.innerHTML = baseHtml;
+        },
+        showHtml: function(data) {
+            const html = data.html;
+            const css = data.css;
+            const doms = this.doms;
+            doms.CSSBody.value = css;
+            doms.htmlBody.value = html;
+            doms.htmlBody.select();
         },
         showMsg: function(msg) {
             const objMsg = document.createElement('div');
             objMsg.classList.add('msg');
             objMsg.innerText = msg;
-            objBody.append(objMsg);
+            this.doms.body.append(objMsg);
             setTimeout(function() {
                 objMsg.classList.add('_on');
                 setTimeout(function() {
@@ -806,101 +941,93 @@ localStyleName:className
                 }, 3000);
             }, 16);
         },
-        getSetting: function() {
-            parent.postMessage({
-                pluginMessage: {
-                    type: 'getSetting'
-                }
-            }, '*');
-        },
-        formatSetting: function() {
-            const data = objSettingBody.value;
-            const dataArray = data.split('\n');
-            const objData = {};
-            dataArray.map(item => {
-                const [name, value] = item.split(':');
-                if (!!name && !!value) {
-                    objData[name.trim()] = value.trim();
+        init: function() {
+            const _doms = _api.doms;
+
+            // 全选文本
+            document.querySelectorAll('textarea').forEach((item) => {
+                return item.addEventListener('keydown', function(e) {
+                    const mac = !e.shiftKey && !e.ctrlKey && e.metaKey;
+                    const notMac = !e.shiftKey && !e.metaKey && e.ctrlKey;
+                    if (e.keyCode === 65 && (mac || notMac)) {
+                        e.preventDefault();
+                        this.select();
+                    }
+                });
+            });
+
+            // 获取html
+            _doms.formHtml.addEventListener('submit', function(e) {
+                e.preventDefault();
+                htmlBody.value = "Generating...";
+                cssBody.value = "";
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'getHtml'
+                    }
+                }, '*');
+            });
+
+            // 保存设置
+            _doms.btnSaveSetting.addEventListener('click', function(e) {
+                e.preventDefault();
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'saveSetting',
+                        data: {
+                            settingName: _doms.settingName.value.trim().toLowerCase(),
+                            settingValue: _doms.settingBody.value.trim()
+                        }
+                    }
+                }, '*');
+            });
+
+            _doms.btnDelSetting.addEventListener('click', function(e) {
+                e.preventDefault();
+                var result = confirm("Are you sure to delete current setting of " + _doms.settingName.value);
+                if (result) {
+                    parent.postMessage({
+                        pluginMessage: {
+                            type: 'delCurrentSetting'
+                        }
+                    }, '*');
                 }
             });
-            let dataString = '';
-            Object.keys(objData).map((name) => {
-                const value = objData[name];
-                dataString += name + ': ' + value + '\n';
-                return name;
+
+            // 获取所有的样式名称
+            _doms.btnGetAllStyle.addEventListener('click', function(e) {
+                e.preventDefault();
+                _doms.styleNamesBody.value = "Loading..."
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'getStyleInfo'
+                    }
+                }, '*');
             });
-            objSettingBody.value = dataString;
-            btnSaveSetting.disabled = false;
+
+            // setting 切换的事件
+            _doms.settingSelect.addEventListener('change', function() {
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'changeSetting',
+                        data: _doms.settingSelect.value
+                    }
+                }, '*');
+            });
+
+            onmessage = ((event) => {
+                const type = event.data.pluginMessage.type;
+                const data = event.data.pluginMessage.data;
+                const msg = event.data.pluginMessage.msg;
+                if (type === 'showMsg') {
+                    _api.showMsg(msg);
+                } else {
+                    _api[type] && _api[type](data);
+                    !!msg && _api.showMsg(msg);
+                }
+            });
         }
     };
 
-    // 全选文本
-    document.querySelectorAll('textarea').forEach((item) => {
-        return item.addEventListener('keydown', function(e) {
-            const mac = !e.shiftKey && !e.ctrlKey && e.metaKey;
-            const notMac = !e.shiftKey && !e.metaKey && e.ctrlKey;
-            if (e.keyCode === 65 && (mac || notMac)) {
-                e.preventDefault();
-                this.select();
-            }
-        });
-    });
-
-    // 获取html
-    formHtml.addEventListener('submit', function(e) {
-        e.preventDefault();
-        htmlBody.value = "Generating...";
-        cssBody.value = "";
-        parent.postMessage({
-            pluginMessage: {
-                type: 'getHtml'
-            }
-        }, '*');
-    });
-
-
-    document.getElementById('tabSwitch2').addEventListener('change', function() {
-        _api.getSetting();
-    });
-
-    btnFormatSettting.addEventListener('click', function(e) {
-        e.preventDefault();
-        _api.formatSetting();
-    });
-
-    // 保存设置
-    btnSaveSetting.addEventListener('click', function(e) {
-        e.preventDefault();
-        parent.postMessage({
-            pluginMessage: {
-                type: 'saveSetting',
-                data: objSettingBody.value.trim()
-            }
-        }, '*');
-    });
-
-    // 获取所有的样式名称
-    btnGetAllStyle.addEventListener('click', function(e) {
-        e.preventDefault();
-        objStyleNameBody.value = "Loading..."
-        parent.postMessage({
-            pluginMessage: {
-                type: 'getStyleInfo'
-            }
-        }, '*');
-    });
-
-    onmessage = ((event) => {
-        const {
-            type,
-            data,
-            msg
-        } = event.data.pluginMessage;
-        if (type === 'showMsg') {
-            _api.showMsg(msg);
-        } else {
-            _api[type] && _api[type](data);
-            !!msg && _api.showMsg(msg);
-        }
-    });
+    _api.init();
 </script>
