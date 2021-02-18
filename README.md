@@ -1,6 +1,10 @@
 
 ## ACSS / Figma plugin
 
+
+- Figma plugin [Home page](https://www.figma.com/community/plugin/759651077059504375).
+- ACSS: [NPM](https://www.npmjs.com/package/@_nu/css-acss)
+
 Generate the text element to Html with css.
 
 The plugin reads the text styles and color styles on text element and let you export them into Html with css.
