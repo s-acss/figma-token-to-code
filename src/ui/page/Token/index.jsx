@@ -45,7 +45,7 @@ const TokenItem = ({item, id}) => {
 const Token = () => {
   const [dataSelect, setDataSelect] = useState({});
   const [noSelection, setNoSelection] = useState(true);
-  const {type = '', token = {}} = dataSelect || {};
+  const {token = {}} = dataSelect || {};
   const tokenKeys = Object.keys(token) || [];
 
   useEffect(() => {
@@ -56,6 +56,7 @@ const Token = () => {
       noSelection !== null && setNoSelection(noSelection);
     });
   }, []);
+
   const onSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);

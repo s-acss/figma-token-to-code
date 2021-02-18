@@ -88,8 +88,8 @@ const API = {
       });
       return '';
     }
-
     const matchToken = {};
+    console.log(selection);
     //@ts-ignore
     [selection.fillStyleId, selection.textStyleId, selection.strokeStyleId, selection.effectStyleId, selection.gridStyleId].forEach((item, key) => {
       if (!item) {

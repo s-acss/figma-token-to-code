@@ -53,44 +53,53 @@ const Home = ({tabIndex}) => {
     });
   };
 
+  if (noSelection) {
+    return (
+      <div style={{color: 'rgba(255,255,255,0.8)', backgroundColor: '#282c34'}} className="f1 df aic jcc fs14">
+        Please Select Something!
+      </div>);
+  }
 
-  return (
-    <>
-      <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
-        {(() => {
-          if (noSelection) {
-            return (
-              <div style={{color: 'rgba(255,255,255,0.8)'}} className="h100% df aic jcc fs14">
-                Please Select Something!
-              </div>);
-          }
-          if (tabIndex === 0) {
-            return (
-              <Highlight language="javascript">
-                {html}
-              </Highlight>
-            );
-          }
-          if (tabIndex === 1) {
-            return (
-              <Highlight language="css">
-                {CSS}
-              </Highlight>
-            );
-          }
-          return null;
-        })()}
-      </div>
-      <div className="g_row df aic pt12 pb12 bc:fff">
-        <InputJSX isJSX={isJSX}/>
-        <Button
-          className="f1"
-          disabled={noSelection || copyText !== DEFAULT_COPY}
-          onClick={onCopy}
-          block>{copyText}</Button>
-      </div>
-    </>
-  );
+  if (tabIndex === 0) {
+    return (
+      <>
+        <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
+          <Highlight language="html">
+            {html}
+          </Highlight>
+        </div>
+        <div className="g_row df aic pt12 pb12 bc:fff">
+          <InputJSX isJSX={isJSX}/>
+          <Button
+            className="f1"
+            disabled={noSelection || copyText !== DEFAULT_COPY}
+            onClick={onCopy}
+            block>{copyText}</Button>
+        </div>
+      </>
+    )
+  }
+
+  if (tabIndex === 1) {
+    return (
+      <>
+        <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
+          <Highlight language="css">
+            {`/* @import '~@_nu/css-acss'; */\n\n${CSS}`}
+          </Highlight>
+        </div>
+        <div className="g_row df aic pt12 pb12 bc:fff">
+          <a className="btn mr8" href="https://www.npmjs.com/package/@_nu/css-acss" target="_blank">NPM ACSS</a>
+          <Button
+            className="f1"
+            disabled={noSelection || copyText !== DEFAULT_COPY}
+            onClick={onCopy}
+            block>{copyText}</Button>
+        </div>
+      </>
+    )
+  }
+  return null;
 };
 
 export default Home;

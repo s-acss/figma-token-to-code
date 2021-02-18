@@ -1,3 +1,6 @@
+
+## ACSS / Figma plugin
+
 Generate the text element to Html with css.
 
 The plugin reads the text styles and color styles on text element and let you export them into Html with css.
@@ -16,3 +19,11 @@ The text styles blow you don't define will transform to the ACSS.
 If the text you selecte with mutiple lines the `paragraphSpacing` will transform to the `margin-bottom`: `.mb16{ margin-bottom: 16px; }`...;
 
 * ACSS「 Atomic css 」: Each css selector with only one css rules.
+
+## Start
+
+```
+$ npm install @_nu/css-acss
+```
+
+you need install this npm first
