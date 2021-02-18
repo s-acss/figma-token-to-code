@@ -1,6 +1,6 @@
+![thumb](./thumb.jpg)
 
 ## ACSS / Figma plugin
-
 
 - Figma plugin [Home page](https://www.figma.com/community/plugin/759651077059504375).
 - ACSS: [NPM](https://www.npmjs.com/package/@_nu/css-acss)
