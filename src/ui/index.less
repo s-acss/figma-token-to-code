@@ -1,0 +1,76 @@
+@import '~@_nu/css-acss';
+@import '~@_nu/css-acss/lib/_mixin.less';
+
+#Margins(4, 8, 12, 16; 1/16rem);
+#Paddings(4, 8, 12, 16; 1/16rem);
+#ACSS(font-weight; fw; 600);
+#ACSS(font-size; fs; 12, 14, 16; 1/16rem);
+#ACSS(line-height; lh; 16; 1/16rem);
+#ACSS(border-radius; br; 2, 4; 1px);
+
+.c_l, .c_l\:h:hover {
+  color: #111;
+}
+
+.c_m, .c_m\:h:hover {
+  color: #333;
+}
+
+.c_s, .c_s\:h:hover {
+  color: #666;
+}
+
+.c_xs, .c_xs\:h:hover {
+  color: #999;
+}
+
+.td200 {
+  transition-duration: 200ms;
+}
+
+/* others */
+* {
+  font: inherit;
+  color: inherit;
+  text-decoration: inherit;
+}
+
+root {
+  font-size: 16px;
+}
+
+body, pre, form {
+  margin: 0;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+body,html{
+  height: 100%;
+  overflow: hidden;
+  background-color: #f5f5f5;
+}
+
+.g_wrap {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.g_row {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.react-page {
+  background-color: red;
+}
+
+.g_hr {
+  border-bottom: 1px solid #ddd;
+}
+
+.g_ell {
+  #Ellipsis();
+}
