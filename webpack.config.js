@@ -1,6 +1,7 @@
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const path = require('path')
+const path = require('path');
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env, argv) => ({
   mode: argv.mode === 'production' ? 'production' : 'development',
@@ -42,6 +43,7 @@ module.exports = (env, argv) => ({
 
   // Tells Webpack to generate "ui.html" and to inline "ui.ts" into it
   plugins: [
+    // new BundleAnalyzerPlugin(),
     new HtmlWebpackPlugin({
       template: './src/ui/index.html',
       filename: 'ui.html',

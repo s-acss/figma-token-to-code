@@ -1,4 +1,4 @@
-import Highlight from "react-highlight";
+import Highlight from "./Highlight";
 import 'highlight.js/styles/atom-one-dark.css';
 import format from "xml-formatter";
 import Button from "../../component/Button";
@@ -41,7 +41,7 @@ const RenderHtml = ({code, isJSX}) => {
   return (
     <>
       <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
-        <Highlight language="html">
+        <Highlight languages={["xml"]} className="xml">
           {format(code)}
         </Highlight>
       </div>

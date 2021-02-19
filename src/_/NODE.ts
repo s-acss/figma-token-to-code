@@ -1,13 +1,13 @@
 import COMPONENT from "./COMPONENT";
-import FILL from "./style/FILL";
-import TEXT from "./style/TEXT";
-import STROKE from "./style/STROKE";
-import GRID from "./struct/GRID";
-import FLEX from "./struct/FLEX";
-import PADDING from "./struct/PADDING";
+import FILL from "./token/FILL";
+import TEXT from "./token/TEXT";
+import STROKE from "./token/STROKE";
+import GRID from "./token/GRID";
+import FLEX from "./token/FLEX";
 import ACSS from "./ACSS";
 import UTILS from "./UTILS";
-import EFFECT from "./style/EFFECT";
+import EFFECT from "./token/EFFECT";
+import OTHERS from "./token/OTHERS";
 
 const NODE = {
   /**
@@ -90,7 +90,7 @@ const NODE = {
     const stroke = STROKE.getInfo(node);
     const grid = GRID.getInfo(node);
     const effect = EFFECT.getInfo(node);
-    const padding = PADDING.getInfo(node);
+    const others = OTHERS.getInfo(node);
     const flex = FLEX.getInfo(node);
     // console.log({component, fill, text, stroke, grid, effect});
     nodeInfo = NODE.extendInfo(nodeInfo, fill);
@@ -99,8 +99,8 @@ const NODE = {
     nodeInfo = NODE.extendInfo(nodeInfo, grid);
     nodeInfo = NODE.extendInfo(nodeInfo, effect);
     nodeInfo = NODE.extendInfo(nodeInfo, component);
-    nodeInfo = NODE.extendInfo(nodeInfo, padding);
     nodeInfo = NODE.extendInfo(nodeInfo, flex);
+    nodeInfo = NODE.extendInfo(nodeInfo, others);
     if (isStructNode) {
       nodeInfo.classNames.push(ACSS.add('h', parseInt(String(node.height))));
       nodeInfo.classNames.push(ACSS.add('w', parseInt(String(node.width))));

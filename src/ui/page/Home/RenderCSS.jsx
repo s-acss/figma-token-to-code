@@ -1,4 +1,4 @@
-import Highlight from "react-highlight";
+import Highlight from "./Highlight";
 import 'highlight.js/styles/atom-one-dark.css';
 import Button from "../../component/Button";
 import * as React from "react";
@@ -22,7 +22,7 @@ const RenderCSS = ({code}) => {
   return (
     <>
       <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
-        <Highlight language="css">
+        <Highlight languages={["css"]} className="css">
           {`/* @import '~@_nu/css-acss'; */\n\n${code}`}
         </Highlight>
       </div>

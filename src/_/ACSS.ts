@@ -17,7 +17,12 @@ const ACSS = {
     'mb': 'margin-bottom',
     'ml': 'margin-left',
     'h': 'height',
-    'w': 'width'
+    'w': 'width',
+    'btlr':'border-top-left-radius',
+    'btrr':'border-top-right-radius',
+    'bbrr':'border-bottom-right-radius',
+    'bblr':'border-bottom-left-radius',
+    'br':'border-radius'
   },
   getClassSelectorByName: (className = '') => {
     if (className.indexOf('.') > -1) {
