@@ -89,7 +89,7 @@ const API = {
       return '';
     }
     const matchToken = {};
-    console.log(selection);
+    // console.log(selection);
     //@ts-ignore
     [selection.fillStyleId, selection.textStyleId, selection.strokeStyleId, selection.effectStyleId, selection.gridStyleId].forEach((item, key) => {
       if (!item) {
@@ -144,7 +144,7 @@ const API = {
 // full browser environment (see documentation).
 CONFIG.init().then(() => {
   // This shows the HTML page in "ui.html".
-  figma.showUI(__html__, {width: 360, height: 600});
+  figma.showUI(__html__, {width: 400, height: 600});
   API.runHome();
   figma.on("selectionchange", () => {
     API.onSelectionChange();

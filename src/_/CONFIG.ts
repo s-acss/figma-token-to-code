@@ -59,11 +59,12 @@ const CONFIG = {
   init: () => {
     return new Promise(((resolve, reject) => {
       figma.clientStorage.getAsync(CONFIG.key).then((ret) => {
+
+        // console.log('config init', ret);
         CONFIG.store = ret?.projects?.length ? ret : CONFIG_DEFAULT;
         if (!ret) {
           figma.clientStorage.setAsync(CONFIG.key, CONFIG_DEFAULT);
         }
-        // console.log('config init', CONFIG.store);
         resolve(CONFIG.getToken());
       }).catch(reject);
     }))

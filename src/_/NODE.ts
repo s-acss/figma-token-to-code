@@ -62,10 +62,10 @@ const NODE = {
     if (node.children.length !== 1) {
       return false;
     }
-    const onlyChildren = node.children[0];
-    if (onlyChildren.type === 'INSTANCE') {
-      return true;
-    }
+    // const onlyChildren = node.children[0];
+    // if (onlyChildren.type === 'INSTANCE') {
+    //   return true;
+    // }
     return false;
   },
   getNodeInfo: (node: SceneNode) => {
@@ -101,7 +101,7 @@ const NODE = {
     nodeInfo = NODE.extendInfo(nodeInfo, component);
     nodeInfo = NODE.extendInfo(nodeInfo, flex);
     nodeInfo = NODE.extendInfo(nodeInfo, others);
-    if (isStructNode) {
+    if (isStructNode || component?.componentName) {
       nodeInfo.classNames.push(ACSS.add('h', parseInt(String(node.height))));
       nodeInfo.classNames.push(ACSS.add('w', parseInt(String(node.width))));
     }

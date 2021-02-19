@@ -14,14 +14,12 @@ const COMPONENT = {
     }
     // @ts-ignore
     const isVariant = COMPONENT.isVariant(node);
+    // console.log(node, {isVariant});
     return isVariant ? node.mainComponent.parent : node.mainComponent;
   },
   getComponentId: (node) => {
-    if (COMPONENT.isComponent(node)) {
-      const {id = ''} = COMPONENT.getMainComponent(node);
-      return id;
-    }
-    return '';
+    const {id = ''} = COMPONENT.getMainComponent(node) || {};
+    return id;
   },
   getComponentName: (node: InstanceNode | ComponentNode) => {
     const {name = ''} = COMPONENT.getMainComponent(node);
@@ -38,7 +36,7 @@ const COMPONENT = {
     if (!isVariant) {
       return {};
     }
-    const { name } = node.mainComponent;
+    const {name} = node.mainComponent;
     const props = {};
     if (typeof name === 'string' && name.indexOf('=') > -1) {
       name.split(",").forEach((item) => {
@@ -57,7 +55,9 @@ const COMPONENT = {
       return null;
     }
     // @ts-ignore
-    const matchToken = CONFIG.getInfoById(COMPONENT.getComponentId(node));
+    const id = COMPONENT.getComponentId(node);
+    const matchToken = CONFIG.getInfoById(id);
+    // console.log(id, matchToken, node);
     if (!matchToken) {
       return null;
     }
