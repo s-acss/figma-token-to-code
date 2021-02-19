@@ -21,10 +21,10 @@ const HTML = {
     if (!children.length) {
       return `<${tagStart}></${tagName}>`;
     }
-    return `<${tagStart}>\n${HTML.getDomByArray(children)}\n</${tagName}>`;
+    return `<${tagStart}>${HTML.getDomByArray(children)}</${tagName}>`;
   },
   getDomByArray: (obj = []) => {
-    return obj.map((item) => HTML.getItemDom(item)).join('\n');
+    return obj.map((item) => HTML.getItemDom(item)).join('');
   }
 };
 

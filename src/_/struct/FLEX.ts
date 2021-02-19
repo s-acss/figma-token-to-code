@@ -1,4 +1,3 @@
-import UTILS from "../UTILS";
 import ACSS from "../ACSS";
 // import CONFIG from "./CONFIG";
 
@@ -22,7 +21,7 @@ const FLEX = {
         "VERTICAL": "mb",
         "HORIZONTAL": "mr"
       };
-      gutterClass.push(ACSS.add(gutterMap[layoutMode],itemSpacing));
+      gutterClass.push(ACSS.add(gutterMap[layoutMode], itemSpacing));
     }
     // 如果是纵向的 这里可以不使用 flex 布局
     if (layoutMode === 'VERTICAL') {
@@ -53,13 +52,11 @@ const FLEX = {
     };
   },
   addClassNodes: (arrNode = [], gutterClass = []) => {
-    if (!gutterClass.length) {
+    if (!gutterClass?.length) {
       return arrNode;
     }
     return arrNode.map((item, key) => {
       const {classNames = []} = item;
-      const isBlock = UTILS.isBlock(item.tagName);
-      !isBlock && classNames.push('db');
       // 最后一个元素不做任何处理
       if (key !== arrNode.length - 1) {
         item.classNames = [...classNames, ...gutterClass];

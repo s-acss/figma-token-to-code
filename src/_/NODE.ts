@@ -80,7 +80,7 @@ const NODE = {
     const isStructNode = NODE.isStructNode(node);
     let nodeInfo = {
       // node,
-      tagName: NODE.isBlockElement(node) ? 'div' : 'i',
+      tagName: NODE.isBlockElement(node) ? 'div' : 'span',
       classNames: [],
       children: []
     };
@@ -112,6 +112,8 @@ const NODE = {
       // @ts-ignore
       nodeInfo.children = node.type === 'TEXT' ? [node.characters] : NODE.getNodesInfo(node.children);
     }
+    // 把 flex 间距添加到子元素
+    nodeInfo.children = FLEX.addClassNodes(nodeInfo.children, flex?.gutterClass);
     nodeInfo.classNames = UTILS.clearStingArray(nodeInfo.classNames);
     return nodeInfo;
   },

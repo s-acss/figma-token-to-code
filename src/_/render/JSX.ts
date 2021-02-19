@@ -26,10 +26,10 @@ const JSX = {
       }
       return `<${tagStart}></${tagName}>`;
     }
-    return `<${tagStart}>\n${JSX.getDomByArray(children)}\n</${tagName}>`;
+    return `<${tagStart}>${JSX.getDomByArray(children)}</${tagName}>`;
   },
   getDomByArray: (obj = []) => {
-    return obj.map((item) => JSX.getItemDom(item)).join('\n');
+    return obj.map((item) => JSX.getItemDom(item)).join('');
   }
 };
 
