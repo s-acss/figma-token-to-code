@@ -7,9 +7,8 @@ import Config from "./page/Config/index";
 import Token from "./page/Token/index";
 import Home from "./page/Home/index";
 import './index.less';
-import Svg from "./component/Svg";
 
-const DATA_TAB = ['HTML', 'ACSS', 'Token', 'Project'];
+const DATA_TAB = ['HTML', 'CSS', 'Token', 'Project'];
 
 
 const APP = () => {
@@ -29,10 +28,7 @@ const APP = () => {
         <>
             <Header
                 extra={
-                    <a className="df aic jcc fs20" href="https://github.com/ziven27/Figma-ACSS" target="_blank"
-                       title="Help">
-                        <Svg name="github"/>
-                    </a>
+                    <a className="c:s c:primary:h fs14 fw500 pl8 pr8 pt8 pb8 fw700" href="https://github.com/ziven27/Figma-ACSS" target="_blank" title="Help">?</a>
                 }>
                 <Tabs className="fs14" data={DATA_TAB} tabIndex={tabIndex} onChange={onTabChange}></Tabs>
             </Header>

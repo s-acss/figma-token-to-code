@@ -19,17 +19,11 @@ const Home = ({tabIndex}) => {
         });
     }, []);
 
-    if (noSelection) {
-        return (
-            <div style={{color: 'rgba(255,255,255,0.8)', backgroundColor: '#282c34'}} className="f1 df aic jcc fs14">
-                Please Select Something!
-            </div>);
-    }
     if (tabIndex === 0) {
-        return (<RenderHtml code={html} isJSX={isJSX}/>)
+        return (<RenderHtml noSelection={noSelection} code={html} isJSX={isJSX}/>)
     }
     if (tabIndex === 1) {
-        return <RenderCSS code={CSS}/>
+        return <RenderCSS noSelection={noSelection} code={CSS}/>
     }
     return null;
 };
