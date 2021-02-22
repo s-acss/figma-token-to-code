@@ -2,11 +2,6 @@
 # yarn lockfile v1
 
 
-"@_nu/css-acss@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.npm.taobao.org/@_nu/css-acss/download/@_nu/css-acss-0.5.0.tgz#af8cc09219cda8fdafbed47d0c47202ea6e03309"
-  integrity sha1-r4zAkhnNqP2vvtR9DEcgLqbgMwk=
-
 "@babel/cli@^7.12.16":
   version "7.12.16"
   resolved "https://registry.npm.taobao.org/@babel/cli/download/@babel/cli-7.12.16.tgz?cache=0&sync_timestamp=1613102618066&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40babel%2Fcli%2Fdownload%2F%40babel%2Fcli-7.12.16.tgz#bde5bc5118d90e539603abcd37938c5f0fd6c87a"
@@ -2531,11 +2526,6 @@ homedir-polyfill@^1.0.1:
   dependencies:
     parse-passwd "^1.0.0"
 
-html-format@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/html-format/-/html-format-1.0.1.tgz#3f518be1a1123e2d378716aef662c07ed2a0e008"
-  integrity sha512-ePp+h+akaQiLeCGPefWQ4QJXVXhWx4sU4ZxJVFlaY0AeVgh/tnHGTL27ao09JrdEEelXYMAWi4ynKKheck4tdw==
-
 html-minifier@^3.2.3:
   version "3.5.21"
   resolved "https://registry.npm.taobao.org/html-minifier/download/html-minifier-3.5.21.tgz#d0040e054730e354db008463593194015212d20c"
@@ -3906,6 +3896,11 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   integrity sha1-6Eg5bwV9Ij8kOGkkYY4laUFh7Ec=
   dependencies:
     aproba "^1.1.1"
+
+sacss@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/sacss/-/sacss-0.0.6.tgz#18d3251f6169edd6bdc24b23100880283af555f1"
+  integrity sha512-qeHCisBRNQjYl2ORqcgqtCYtT+dCCb3wTmySrrC3JdywT2/IJ3bIYv2dt01lVmfhPUGip82Z6QMVy8PNs0HE+g==
 
 safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@^5.2.0, safe-buffer@~5.2.0:
   version "5.2.1"

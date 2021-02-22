@@ -1,26 +1,26 @@
-@import '~@_nu/css-acss';
-@import '~@_nu/css-acss/lib/_mixin.less';
+@import '~sacss';
+@import '~sacss/mixin.less';
 
 #Margins(4, 8, 12, 16; 1/16rem);
 #Paddings(4, 8, 12, 16; 1/16rem);
-#ACSS(font-weight; fw; 600);
-#ACSS(font-size; fs; 12, 14, 16; 1/16rem);
-#ACSS(line-height; lh; 16; 1/16rem);
-#ACSS(border-radius; br; 2, 4; 1px);
+#SACSS(font-weight; fw; 600);
+#SACSS(font-size; fs; 12, 14, 16, 20; 1/16rem);
+#SACSS(line-height; lh; 16; 1/16rem);
+#SACSS(border-radius; br; 2, 4; 1px);
 
-.c_l, .c_l\:h:hover {
+.c\:l, .c\:l\:h:hover {
   color: #111;
 }
 
-.c_m, .c_m\:h:hover {
+.c\:m, .c\:m\:h:hover {
   color: #333;
 }
 
-.c_s, .c_s\:h:hover {
+.c\:s, .c\:s\:h:hover {
   color: #666;
 }
 
-.c_xs, .c_xs\:h:hover {
+.c\:xs, .c\:xs\:h:hover {
   color: #999;
 }
 
@@ -39,6 +39,12 @@ root {
   font-size: 16px;
 }
 
+svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
+
 body, pre, form {
   margin: 0;
 }
@@ -47,10 +53,10 @@ body {
   font-family: sans-serif;
 }
 
-body,html{
+body, html {
   height: 100%;
   overflow: hidden;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
 }
 
 .g_wrap {
@@ -69,6 +75,10 @@ body,html{
 
 .g_hr {
   border-bottom: 1px solid #ddd;
+}
+
+.g_hr_t {
+  border-top: 1px solid #ddd;
 }
 
 .g_ell {

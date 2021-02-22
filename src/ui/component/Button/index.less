@@ -1,5 +1,5 @@
 
-.btn{
+.btn {
   font-size: 14/16*1rem;
   padding: 6/16*1rem 1rem;
   border: 1px solid;
@@ -9,11 +9,24 @@
   display: inline-block;
   text-align: center;
   white-space: nowrap;
+  box-sizing: border-box;
+  cursor: pointer;
 }
-.btn:disabled{
+
+.btn:hover {
+  color: #4c5fe2;
+}
+
+.btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.btn._block{
+
+.btn._block {
   display: block;
+  width: 100%;
+}
+
+.btn._square {
+  padding: 6/16*1rem;
 }
