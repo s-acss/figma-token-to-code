@@ -21,15 +21,17 @@ const API = {
     if ((beforeIndex === 0 || beforeIndex === 1) && (index === 0 || index === 1)) {
       return;
     }
-    const actionMap = ['runHome', 'runHome', 'runConfig', 'runToken'];
+    const actionMap = ['runHome', 'runHome', 'runToken', 'runConfig'];
     const action = actionMap[index];
     action && API[action]();
   },
   onSelectionChange: () => {
-    // 更新样式
-    if (API.tabIndex === 0 || API.tabIndex === 2) {
-      API.runHome();
+    const actionMap = ['runHome', 'runHome', 'runToken', ''];
+    const action = actionMap[API.tabIndex];
+    if (!action) {
+      return;
     }
+    API[action]();
   },
   runHome: () => {
     const selection = API.getSelection();
@@ -54,7 +56,8 @@ const API = {
     });
   },
   runToken: () => {
-    CONFIG.getAllTokens();
+    const [selection] = API.getSelection() || [];
+    CONFIG.getSelectionTokens(selection);
   },
   onmessage: (msg = {}) => {
     // @ts-ignore

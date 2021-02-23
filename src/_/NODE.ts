@@ -118,6 +118,7 @@ const NODE = {
     nodeInfo.children = FLEX.addClassNodes(nodeInfo.children, flex?.gutterClass);
 
     // 整个项目都忽略的 classNames
+    // @ts-ignore
     const {ignoreClassNames = []} = CONFIG.getCurrent() || {};
     nodeInfo.classNames = UTILS.clearStingArray(nodeInfo.classNames, [...nodeInfo.ignoreClassNames, ...ignoreClassNames]);
     delete nodeInfo.ignoreClassNames;

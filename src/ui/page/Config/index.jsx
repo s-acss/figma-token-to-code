@@ -26,7 +26,8 @@ const saveJSON = (data, fileName = 'SACSS-project') => {
 };
 
 const ProjectItem = ({data = {}, index, checked, projects = [], className = ''}) => {
-  const {name} = data;
+  const {name, token} = data;
+  const tokenLen = Object.keys(token).length;
   const [currentName, setCurrentName] = useState(name);
   const onNameChange = (e) => {
     setCurrentName(e.target.value.trim());
@@ -106,24 +107,23 @@ const ProjectItem = ({data = {}, index, checked, projects = [], className = ''})
   };
 
   return (
-    <form onSubmit={onSubmit} className={`g_row df aic pr pt12 pb12 ${className}`}>
-      <div className="mr8">
-        <input type="radio" checked={checked} onChange={onChangeCurrent}/>
-      </div>
-      <div className="f1 df aic">
-        <Input title="project name" placeholder="Project Name" className="f1 mr8" name="name"
-               value={currentName} onChange={onNameChange}/>
-        <label className="btn _square pr oh mr8" title="Replace">
-          <Svg name="replace" className="fs20"/>
-          <input className="o0 pa" type="file" onChange={onReplace}/>
-        </label>
-        <Button title="Download" square className="mr8" onClick={onDownLoad}>
-          <Svg name="download" className="fs20"/>
-        </Button>
-        <Button title="Delete" square onClick={onDel}>
-          <Svg name="close" className="fs20"/>
-        </Button>
-      </div>
+    <form onSubmit={onSubmit} title={`${tokenLen} token in this project`}
+          className={`g_row df aic pr pt12 pb12 ${className}`}>
+      <label className="df aic pt8 pb8 cp">
+        <input className="mr8" type="radio" checked={checked} onChange={onChangeCurrent}/>
+        <strong className="mr8">{tokenLen}</strong>
+      </label>
+      <Input placeholder="Project Name" className="f1 mr8" name="name" value={currentName} onChange={onNameChange}/>
+      <label className="btn _square pr oh mr8" title="Replace">
+        <Svg name="replace" className="fs20"/>
+        <input className="o0 pa" type="file" onChange={onReplace}/>
+      </label>
+      <Button title="Download" square className="mr8" onClick={onDownLoad}>
+        <Svg name="download" className="fs20"/>
+      </Button>
+      <Button title="Delete" square onClick={onDel}>
+        <Svg name="close" className="fs20"/>
+      </Button>
     </form>
   );
 };
@@ -140,17 +140,16 @@ const Config = () => {
     });
   }, []);
 
-
   const addNew = (value = {}) => {
     // 没有名字
     if (!value.name) {
       alert(`Project Name is required!`);
-      return;
+      return false;
     }
     // 已经存在
     if (projects.find((item) => item.name === value.name)) {
       alert(`${value.name} is exist!`);
-      return;
+      return false;
     }
     _postConfig({
       action: 'addNewProject',
@@ -172,8 +171,21 @@ const Config = () => {
     fr.readAsText(files.item(0));
   };
 
+  // 添加
+  const onAdd = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const newName = form.name.value.trim();
+    const result = addNew({name: newName});
+    (result !== false) && form.reset();
+  };
+
   return (
     <>
+      <div className="g_row g_hr df jcsb aic fs14 pt12 pb12">
+        <strong className="c:s">Current Project: </strong>
+        <em className="f1 tar ell">{projects[currentIndex]?.name || '--'}</em>
+      </div>
       {projects.length ? (
         <div className="f1 oa">
           {projects.map((project, key) => {
@@ -194,15 +206,15 @@ const Config = () => {
           <p className="c:s fs14">Custom and Upload</p>
         </div>
       )}
-      <div className="g_row pt12 pb12 bc:fff g_hr_t">
-        <div className="df jcsb aic fs14 mb8">
-          <strong className="c:s">Current Project: </strong>
-          <em className="f1 tar ell">{projects[currentIndex]?.name || '--'}</em>
+      <form onSubmit={onAdd} action="" className="g_row pt12 pb12 bc:fff g_hr_t">
+        <div className="df aic mb8">
+          <Input placeholder="Enter new project name" className="f1 mr8" required type="text" name="name"/>
+          <Button type="submit">Add</Button>
         </div>
-        <label htmlFor="inputFile" className="btn pr _block oh"> Upload New
-          <input id="inputFile" className="o0 pa" type="file" onChange={onUpFile}/>
+        <label htmlFor="inputFile" className="btn pr _block oh"> Add New By Upload JSON
+          <input className="o0 pa" id="inputFile" type="file" onChange={onUpFile}/>
         </label>
-      </div>
+      </form>
     </>
   )
 };

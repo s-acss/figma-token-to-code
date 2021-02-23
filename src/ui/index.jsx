@@ -8,7 +8,7 @@ import Token from "./page/Token/index";
 import Home from "./page/Home/index";
 import './index.less';
 
-const DATA_TAB = ['HTML', 'CSS', 'Project', 'Token'];
+const DATA_TAB = ['HTML', 'CSS', 'Token', 'Project'];
 
 
 const APP = () => {
@@ -37,10 +37,10 @@ const APP = () => {
         if (tabIndex === 0 || tabIndex === 1) {
           return <Home tabIndex={tabIndex}/>;
         }
-        if (tabIndex === 2) {
+        if (tabIndex === 3) {
           return <Config/>;
         }
-        if (tabIndex === 3) {
+        if (tabIndex === 2) {
           return <Token/>;
         }
         return null;

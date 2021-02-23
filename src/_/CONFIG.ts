@@ -1,7 +1,34 @@
+import COMPONENT from "./COMPONENT";
+
+
+const PRO_DEFAULT = {
+  name: 'default',
+  ignoreClassNames: [],
+  token: {}
+};
+
 const CONFIG_DEFAULT = {
   currentIndex: 0,
   isJSX: false,
-  projects: []
+  projects: [PRO_DEFAULT]
+};
+
+/**
+ * 组件的默认属性
+ */
+const COMPONENT_DEFAULT = {
+  classNames: [],
+  componentName: '',
+  stopRenderChildren: false,
+  ignoreClassNames: []
+};
+
+/**
+ * Token 默认属性
+ */
+const TOKEN_DEFAULT = {
+  classNames: [],
+  ignoreClassNames: []
 };
 
 const CONFIG = {
@@ -24,12 +51,16 @@ const CONFIG = {
     // 重置回第一个
     store.currentIndex = 0;
     store.projects.splice(index, 1);
+    if (!store.projects.length) {
+      store.projects.push(PRO_DEFAULT);
+    }
     figma.clientStorage.setAsync(CONFIG.key, store);
   },
   addNewProject: ({name = '', token = {}} = {}) => {
     const store = CONFIG.getAll();
     store.projects.push({
       name,
+      ignoreClassNames: [],
       token
     });
     store.currentIndex = store.projects.length - 1;
@@ -54,6 +85,9 @@ const CONFIG = {
     current.token = {...token, ...appendToken};
     // console.log(appendToken, CONFIG.store);
     figma.clientStorage.setAsync(CONFIG.key, CONFIG.store);
+    figma.ui.postMessage({
+      alertMsg: `${current.name} save success`
+    });
   },
   isJSX: () => {
     return !!CONFIG.store.isJSX;
@@ -64,10 +98,14 @@ const CONFIG = {
   init: () => {
     return new Promise(((resolve, reject) => {
       figma.clientStorage.getAsync(CONFIG.key).then((ret) => {
-        CONFIG.store = ret || CONFIG_DEFAULT;
+        if (ret && ret.projects && ret.projects.length) {
+          CONFIG.store = ret;
+        } else {
+          // 没有缓存创建一个新的
+          figma.clientStorage.setAsync(CONFIG.key, CONFIG_DEFAULT);
+          CONFIG.store = CONFIG_DEFAULT;
+        }
         resolve(CONFIG.getToken());
-        // 没有缓存创建一个新的
-        (!ret) && figma.clientStorage.setAsync(CONFIG.key, CONFIG_DEFAULT);
       }).catch(reject);
     }))
   },
@@ -88,27 +126,56 @@ const CONFIG = {
     // 如果有自定义用自定义的
     return tokenConfig[id];
   },
+  getSelectionTokens: (selection) => {
+    const {name = '', token = {}} = CONFIG.getCurrent() || {};
+    if (!selection) {
+      figma.ui.postMessage({
+        getSelectionInfo: {
+          name
+        }
+      });
+      return;
+    }
+    const matchToken = {};
+    // 如果是组件则不需要显示任何其它的属性
+    if (COMPONENT.isComponent(selection)) {
+      //@ts-ignore
+      const {id, name, type} = COMPONENT.getMainComponent(selection);
+      const findToken = token[id] || {};
+      matchToken[id] = {
+        ...COMPONENT_DEFAULT,
+        ...findToken,
+        name,
+        type
+      };
+    }
+    //@ts-ignore
+    [selection.fillStyleId, selection.textStyleId, selection.strokeStyleId, selection.effectStyleId, selection.gridStyleId].forEach((item, key) => {
+      if (!item) {
+        return '';
+      }
+      const {id, name, type} = figma.getStyleById(item) || {};
+      if (!id) {
+        return '';
+      }
+      matchToken[id] = {
+        ...TOKEN_DEFAULT,
+        ...token[id],
+        name,
+        type
+      }
+    });
+    figma.ui.postMessage({
+      getSelectionInfo: {
+        name,
+        token: matchToken
+      }
+    });
+  },
   /**
    * 获取所有的 Token 包括 Component
    */
   getAllTokens: () => {
-    /**
-     * 组件的默认属性
-     */
-    const COMPONENT_DEFAULT = {
-      classNames: [],
-      componentName: '',
-      stopRenderChildren: false,
-      ignoreClassNames: []
-    };
-
-    /**
-     * Token 默认属性
-     */
-    const TOKEN_DEFAULT = {
-      classNames: [],
-      ignoreClassNames: []
-    };
     const name = figma.root.name;
     const components = figma.root.findAll(c => {
       if (c.type === 'COMPONENT_SET') {
@@ -147,3 +214,5 @@ const CONFIG = {
   }
 };
 export default CONFIG;
+
+export {COMPONENT_DEFAULT, TOKEN_DEFAULT};
