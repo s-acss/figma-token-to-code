@@ -80,4 +80,4 @@ exp: `_Header`
 
 4. I wanna knonw more about SACSS in code
 
-[ziven27.github.io/sacss](ziven27.github.io/sacss)
+[https://ziven27.github.io/sacss](ziven27.github.io/sacss)
