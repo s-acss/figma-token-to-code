@@ -1,33 +1,83 @@
 ![thumb](./thumb.jpg)
 
-## ACSS / Figma plugin
 
-- Figma plugin [Home page](https://www.figma.com/community/plugin/759651077059504375).
-- ACSS: [NPM](https://www.npmjs.com/package/@_nu/css-acss)
+Generate the node to Html with CSS. 
 
-Generate the text element to Html with css.
+The plugin read element you select and let you export them into Html with CSS.
 
-The plugin reads the text styles and color styles on text element and let you export them into Html with css.
+If the element with Auto layout it will go to flex.
 
-You can custome css selector rely on the defined Figma style's name.
 
-The text styles blow you don't define will transform to the ACSS.
+## Feature
 
-- `font-size`： `.fs12{ font-size: 12px; }` ...;
-- `font-weight`：`.fw700{ font-weight: 700; }`...;
-- `font-style`：`.fsi{ font-style: italic; }` ...;
-- `line-height`：`.lh16{ line-height: 16px; }`...;
-- `text-align`：`.tac{ text-align: center; }; }`...;
-- `text-transform`：`.ttc{ text-transform: capitalize; }`...;
+- HTML: Elements => HTML;
+- CSS: Element Style => CSS;
+- Project: Manage the token you custom and upload;
+- Token: All component and styles in current figma file, you can download as JSON and custom them and upload at 「 Project 」;
 
-If the text you selecte with mutiple lines the `paragraphSpacing` will transform to the `margin-bottom`: `.mb16{ margin-bottom: 16px; }`...;
 
-* ACSS「 Atomic css 」: Each css selector with only one css rules.
+There are 2 way to use SACSS.
 
-## Start
+## Pure way:
 
-```
-$ npm install @_nu/css-acss
-```
+This way you do not need setting, just open and generator.
 
-you need install this npm first
+The element will transform to the Atomic CSS.
+
+- font-size： .fs12{ font-size: 12px; };
+- font-weight：.fw700{ font-weight: 700; };
+- font-style：fsi{ font-style: italic; };
+- line-height：.lh16{ line-height: 16px; };
+- text-align：tac{ text-align: center; };
+- text-transform：.ttc{ text-transform: capitalize; };
+- padding: .pb16{ padding-bottom:16px; }
+- flex: .df{ display:flex; }
+
+* SACSS「 Static Atomic css 」: Each css selector with only one css rules.
+
+you need `$ npm install sacss` first.
+
+[https://www.npmjs.com/package/sacss](https://www.npmjs.com/package/sacss)
+
+
+## Custom way:
+
+
+- You can give each local style name a alias as the css selector in Token.
+- When the generator match the rules, it will turn out to be the html and the CSS.
+- Even you can custom a Component.
+
+The other stuff you don't give alias will use SACSS instead
+
+
+## Token
+
+
+- fill
+- text
+- effect
+- stroke
+- grid
+- effect
+- component
+- padding
+- flex
+
+All of them are token.
+
+
+## FAG
+
+1. I can't open the plugin of SACSS in the first time?
+
+Try 3 times and wait.
+
+2. How to ignore some local styles name?
+
+Just set those style name with `_` start.
+
+exp: `_Header`
+
+4. I wanna knonw more about SACSS in code
+
+[ziven27.github.io/sacss](ziven27.github.io/sacss)
