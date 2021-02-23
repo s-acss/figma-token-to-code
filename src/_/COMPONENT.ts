@@ -51,9 +51,6 @@ const COMPONENT = {
         return props;
     },
     getInfo: (node: SceneNode) => {
-        if (!COMPONENT.isComponent(node)) {
-            return null;
-        }
         // @ts-ignore
         const id = COMPONENT.getComponentId(node);
         const matchToken = CONFIG.getInfoById(id);

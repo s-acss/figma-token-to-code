@@ -8,44 +8,45 @@ import Token from "./page/Token/index";
 import Home from "./page/Home/index";
 import './index.less';
 
-const DATA_TAB = ['HTML', 'CSS', 'Token', 'Project'];
+const DATA_TAB = ['HTML', 'CSS', 'Project', 'Token'];
 
 
 const APP = () => {
-    const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(0);
 
-    const onTabChange = (index) => {
-        setTabIndex(index);
-        parent.postMessage({
-            pluginMessage: {
-                type: `API.onTabChange`,
-                value: index
-            }
-        }, '*');
-    };
+  const onTabChange = (index) => {
+    setTabIndex(index);
+    parent.postMessage({
+      pluginMessage: {
+        type: `API.onTabChange`,
+        value: index
+      }
+    }, '*');
+  };
 
-    return (
-        <>
-            <Header
-                extra={
-                    <a className="c:s c:primary:h fs14 fw500 pl8 pr8 pt8 pb8 fw700" href="https://github.com/ziven27/Figma-ACSS" target="_blank" title="Help">?</a>
-                }>
-                <Tabs className="fs14" data={DATA_TAB} tabIndex={tabIndex} onChange={onTabChange}></Tabs>
-            </Header>
-            {(() => {
-                if (tabIndex === 0 || tabIndex === 1) {
-                    return <Home tabIndex={tabIndex}/>;
-                }
-                if (tabIndex === 2) {
-                    return <Token/>;
-                }
-                if (tabIndex === 3) {
-                    return <Config/>;
-                }
-                return null;
-            })()}
-        </>
-    )
+  return (
+    <>
+      <Header
+        extra={
+          <a className="c:s c:primary:h fs14 fw500 pl8 pr8 pt8 pb8 fw700" href="https://github.com/ziven27/Figma-ACSS"
+             target="_blank" title="Help">?</a>
+        }>
+        <Tabs className="fs14" data={DATA_TAB} tabIndex={tabIndex} onChange={onTabChange}></Tabs>
+      </Header>
+      {(() => {
+        if (tabIndex === 0 || tabIndex === 1) {
+          return <Home tabIndex={tabIndex}/>;
+        }
+        if (tabIndex === 2) {
+          return <Config/>;
+        }
+        if (tabIndex === 3) {
+          return <Token/>;
+        }
+        return null;
+      })()}
+    </>
+  )
 };
 
 ReactDOM.render(<APP/>, document.getElementById('react-page'));
