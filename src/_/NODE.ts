@@ -114,8 +114,6 @@ const NODE = {
       // @ts-ignore
       nodeInfo.children = node.type === 'TEXT' ? [node.characters] : NODE.getNodesInfo(node.children);
     }
-    // 把 flex 间距添加到子元素
-    nodeInfo.children = FLEX.addClassNodes(nodeInfo.children, flex?.gutterClass);
 
     // 整个项目都忽略的 classNames
     // @ts-ignore
