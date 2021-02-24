@@ -1,5 +1,5 @@
 import CONFIG from "../CONFIG";
-import ACSS from "../ACSS";
+import SACSS from "../SACSS";
 
 const TEXT = {
   unitMap: {
@@ -32,7 +32,7 @@ const TEXT = {
     const classNames = [];
     if (["string", "number"].indexOf(typeof node.fontSize) > -1) {
       // @ts-ignore
-      classNames.push(ACSS.add('fs', node.fontSize));
+      classNames.push(SACSS.add('fs', node.fontSize));
     }
     // 杭高
     // @ts-ignore
@@ -40,7 +40,7 @@ const TEXT = {
       // @ts-ignore
       const {value, unit} = node.lineHeight;
       // @ts-ignore
-      classNames.push(ACSS.add('lh', value, TEXT.unitMap[unit]));
+      classNames.push(SACSS.add('lh', value, TEXT.unitMap[unit]));
     }
 
     // 字间距
@@ -48,7 +48,7 @@ const TEXT = {
     if (node.letterSpacing?.value) {
       // @ts-ignore
       const {value, unit} = node.letterSpacing;
-      classNames.push(ACSS.add('ls', value, TEXT.unitMap[unit]));
+      classNames.push(SACSS.add('ls', value, TEXT.unitMap[unit]));
     }
     // font-weight font-style
     const fnClass = TEXT.getFontNameClass(node);
@@ -57,7 +57,7 @@ const TEXT = {
     // @ts-ignore
     if (node.fontName?.family) {
       // @ts-ignore
-      classNames.push(ACSS.addFontFamily(node.fontName.family));
+      classNames.push(SACSS.addFontFamily(node.fontName.family));
     }
 
     // text-align

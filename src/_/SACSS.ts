@@ -1,7 +1,7 @@
-const ACSS = {
+const SACSS = {
     data: {},
     init: () => {
-        ACSS.data = {};
+        SACSS.data = {};
     },
     nameMap: {
         'fs': 'font-size',
@@ -37,16 +37,16 @@ const ACSS = {
         return className;
     },
     getString: () => {
-        const data = ACSS.data;
+        const data = SACSS.data;
         const keys = Object.keys(data).sort();
-        const result = keys.map((name) => `.${ACSS.getClassSelectorByName(name)}{${data[name]};}`).join('\n');
+        const result = keys.map((name) => `.${SACSS.getClassSelectorByName(name)}{${data[name]};}`).join('\n');
         return result;
     },
     add: (name = '', value, unit = 'px') => {
         if (!name || !value) {
             return '';
         }
-        const propName = ACSS.nameMap[name];
+        const propName = SACSS.nameMap[name];
         if (!propName) {
             return '';
         }
@@ -55,7 +55,7 @@ const ACSS = {
         // 如果是 px 不需要渲染
         const classUnit = unit === 'px' ? '' : unit;
         const className = `${name}${useValue}${classUnit}`;
-        ACSS.data[className] = `${propName}:${useValue}${unit}`;
+        SACSS.data[className] = `${propName}:${useValue}${unit}`;
         return className;
     },
     addFontFamily: (value) => {
@@ -63,7 +63,7 @@ const ACSS = {
             return '';
         }
         const className = `ff:${value.toLowerCase()}`;
-        ACSS.data[className] = `font-family:"${value}"`;
+        SACSS.data[className] = `font-family:"${value}"`;
         return className;
     },
     addColor: (rgba = []) => {
@@ -71,7 +71,7 @@ const ACSS = {
             return '';
         }
         const className = `c:${rgba.join('')}`;
-        ACSS.data[className] = `color:rgba(${rgba.join(',')})`;
+        SACSS.data[className] = `color:rgba(${rgba.join(',')})`;
         return className;
     },
     addBgColor: (rgba = []) => {
@@ -79,8 +79,8 @@ const ACSS = {
             return '';
         }
         const className = `bc:${rgba.join('')}`;
-        ACSS.data[className] = `background-color:rgba(${rgba.join(',')})`;
+        SACSS.data[className] = `background-color:rgba(${rgba.join(',')})`;
         return className;
     }
 };
-export default ACSS;
+export default SACSS;

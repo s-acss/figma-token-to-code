@@ -4,7 +4,7 @@ import TEXT from "./token/TEXT";
 import STROKE from "./token/STROKE";
 import GRID from "./token/GRID";
 import FLEX from "./token/FLEX";
-import ACSS from "./ACSS";
+import SACSS from "./SACSS";
 import UTILS from "./UTILS";
 import EFFECT from "./token/EFFECT";
 import OTHERS from "./token/OTHERS";
@@ -104,8 +104,8 @@ const NODE = {
     nodeInfo = NODE.extendInfo(nodeInfo, flex);
     nodeInfo = NODE.extendInfo(nodeInfo, others);
     if (isStructNode || component?.componentName) {
-      nodeInfo.classNames.push(ACSS.add('h', parseInt(String(node.height))));
-      nodeInfo.classNames.push(ACSS.add('w', parseInt(String(node.width))));
+      nodeInfo.classNames.push(SACSS.add('h', parseInt(String(node.height))));
+      nodeInfo.classNames.push(SACSS.add('w', parseInt(String(node.width))));
     }
     const {stopRenderChildren = false} = component || {};
 

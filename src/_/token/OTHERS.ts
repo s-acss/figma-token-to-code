@@ -1,4 +1,4 @@
-import ACSS from "../ACSS";
+import SACSS from "../SACSS";
 
 const OTHERS = {
     gerBorderRadiusClassNames: (node) => {
@@ -12,21 +12,21 @@ const OTHERS = {
         }
         // 如果四个值都相等
         if ((tl === tr) && (tl === br) && (tl === bl)) {
-            return [ACSS.add('br', tl)];
+            return [SACSS.add('br', tl)];
         }
         const classNames = [];
-        tl && classNames.push(ACSS.add('btlr', tl));
-        tr && classNames.push(ACSS.add('btrr', tr));
-        br && classNames.push(ACSS.add('bbrr', br));
-        bl && classNames.push(ACSS.add('bblr', bl));
+        tl && classNames.push(SACSS.add('btlr', tl));
+        tr && classNames.push(SACSS.add('btrr', tr));
+        br && classNames.push(SACSS.add('bbrr', br));
+        bl && classNames.push(SACSS.add('bblr', bl));
         return classNames;
     },
     getPaddingClassNames: (node) => {
         return [
-            ACSS.add('pt', node.paddingTop),
-            ACSS.add('pr', node.paddingRight),
-            ACSS.add('pb', node.paddingBottom),
-            ACSS.add('pl', node.paddingLeft),
+            SACSS.add('pt', node.paddingTop),
+            SACSS.add('pr', node.paddingRight),
+            SACSS.add('pb', node.paddingBottom),
+            SACSS.add('pl', node.paddingLeft),
         ];
     },
     getInfo: (node) => {

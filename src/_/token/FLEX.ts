@@ -1,4 +1,4 @@
-import ACSS from "../ACSS";
+import SACSS from "../SACSS";
 // import CONFIG from "./CONFIG";
 
 const FLEX = {
@@ -21,7 +21,7 @@ const FLEX = {
                 "VERTICAL": "mb",
                 "HORIZONTAL": "mr"
             };
-            gutterClass.push(ACSS.add(gutterMap[layoutMode], itemSpacing));
+            gutterClass.push(SACSS.add(gutterMap[layoutMode], itemSpacing));
         }
         // 如果是纵向的 这里可以不使用 flex 布局
         if (layoutMode === 'VERTICAL') {

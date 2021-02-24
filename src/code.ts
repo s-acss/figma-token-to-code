@@ -1,12 +1,13 @@
 import NODE from "./_/NODE";
 import CONFIG from "./_/CONFIG";
-import ACSS from "./_/ACSS";
+import SACSS from "./_/SACSS";
 import DOM from "./_/render/DOM";
 
 const API = {
   tabIndex: 0,
   getSelection: () => {
     const selection = figma.currentPage.selection;
+    // console.log(selection);
     if (!selection.length) {
       // 没有选择任何元素
       figma.ui.postMessage({noSelection: true});
@@ -38,14 +39,14 @@ const API = {
     if (!selection) {
       return;
     }
-    ACSS.init();
+    SACSS.init();
     // @ts-ignore
     const Info = NODE.getNodesInfo(selection);
     // console.log(Info);
     const isJSX = CONFIG.isJSX();
     figma.ui.postMessage({
       getHTML: DOM.render(Info, isJSX),
-      getCSS: ACSS.getString(),
+      getCSS: SACSS.getString(),
       isJSX,
       noSelection: false
     });

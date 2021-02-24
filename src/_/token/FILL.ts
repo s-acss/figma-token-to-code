@@ -1,6 +1,6 @@
 import COLOR from "./COLOR";
 import CONFIG from "../CONFIG";
-import ACSS from "../ACSS";
+import SACSS from "../SACSS";
 
 const FILL = {
     getFill: (node: SceneNode) => {
@@ -15,7 +15,7 @@ const FILL = {
         if (!color) {
             return null;
         }
-        const className = node.type === 'TEXT' ? ACSS.addColor(color) : ACSS.addBgColor(color);
+        const className = node.type === 'TEXT' ? SACSS.addColor(color) : SACSS.addBgColor(color);
         // 文本是用颜色，其它理解为背景色
         return {
             classNames: [className]
