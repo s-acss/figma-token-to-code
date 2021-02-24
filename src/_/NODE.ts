@@ -103,16 +103,28 @@ const NODE = {
     nodeInfo = NODE.extendInfo(nodeInfo, component);
     nodeInfo = NODE.extendInfo(nodeInfo, flex);
     nodeInfo = NODE.extendInfo(nodeInfo, others);
-    if (isStructNode || component?.componentName) {
-      nodeInfo.classNames.push(SACSS.add('h', parseInt(String(node.height))));
+
+    // @ts-ignore
+    if (isStructNode || nodeInfo?.renderWidth === true) {
       nodeInfo.classNames.push(SACSS.add('w', parseInt(String(node.width))));
     }
-    const {stopRenderChildren = false} = component || {};
+    // @ts-ignore
+    if (isStructNode || nodeInfo?.renderHeight === true) {
+      nodeInfo.classNames.push(SACSS.add('h', parseInt(String(node.height))));
+    }
 
-    // 渲染子节点
-    if (!stopRenderChildren && !isStructNode) {
-      // @ts-ignore
-      nodeInfo.children = node.type === 'TEXT' ? [node.characters] : NODE.getNodesInfo(node.children);
+    const {renderChildren = 1} = component || {};
+
+    if (!isStructNode || String(renderChildren) === '0') {
+      if (String(renderChildren) === '2') {
+        // @ts-ignore
+        nodeInfo.children = node.findAll(c => c.type === 'TEXT').map((c) => c.characters);
+      }
+      // 渲染子节点
+      if (String(renderChildren) === '1') {
+        // @ts-ignore
+        nodeInfo.children = node.type === 'TEXT' ? [node.characters] : NODE.getNodesInfo(node.children);
+      }
     }
 
     // 整个项目都忽略的 classNames

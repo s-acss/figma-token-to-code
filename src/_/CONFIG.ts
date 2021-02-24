@@ -17,10 +17,13 @@ const CONFIG_DEFAULT = {
  * 组件的默认属性
  */
 const COMPONENT_DEFAULT = {
-  classNames: [],
   componentName: '',
-  stopRenderChildren: false,
-  ignoreClassNames: []
+  classNames: [],
+  ignoreClassNames: [],
+  // 1 渲染, 0 不渲染, 2 只渲染文字节点
+  renderChildren: 1,
+  renderWidth: false,
+  renderHeight: false
 };
 
 /**

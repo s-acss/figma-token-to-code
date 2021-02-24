@@ -103,11 +103,12 @@ const TEXT = {
     }
     // @ts-ignore
     const {classNames = [], ignoreClassNames = []} = CONFIG.getInfoById(node.textStyleId) || {};
-    // @ts-ignore
-    return {
+    const result = {
       classNames: classNames.length ? classNames : TEXT.getACSSSInfo(node),
       ignoreClassNames: ignoreClassNames
     };
+    // console.log(node, result);
+    return result;
   },
 };
 

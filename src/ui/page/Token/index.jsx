@@ -1,13 +1,15 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
+import COMPONENT from "../../../_/COMPONENT";
+import {COMPONENT_DEFAULT} from "../../../_/CONFIG";
 import Button from "../../component/Button";
 import Input from "../../component/Input";
 import InputRow from "../../component/InputRow";
 import "./index.less";
-import COMPONENT from "../../../_/COMPONENT";
 
 const TokenItem = ({data = {}, id}) => {
   const {name, type, ...rest} = data;
+  const propNames = Object.keys(rest);
   return (
     <div className="pt12 pb12 g_row g_hr">
       <input type="hidden" name={`${id}|name`} value={name}/>
@@ -16,19 +18,33 @@ const TokenItem = ({data = {}, id}) => {
         <div className="c:s ttc mr8">{type}:</div>
         <div className="f1 g_ell tar">{name}</div>
       </div>
-      {Object.keys(rest).map((propName) => {
+      {propNames.map((propName) => {
+        // 属性不合法
+        if (!(propName in COMPONENT_DEFAULT)) {
+          return null;
+        }
         const defaultValue = rest[propName];
         const isArray = defaultValue instanceof Array;
         const isSelect = String(defaultValue) === 'false' || String(defaultValue) === 'true';
         const name = `${id}|${propName}`;
-        if (isSelect) {
+        if (propName === 'renderChildren') {
           return (
             <div key={propName} label={propName} className="df aic jcsb mt8">
               <strong className="fs14 f1 ell mr8 ttc">{propName}</strong>
               <select name={name} defaultValue={String(defaultValue)}>
-                <option value="false">false</option>
-                <option value="true">true</option>
+                <option value="0">false</option>
+                <option value="1">true</option>
+                <option value="2">only Text</option>
               </select>
+            </div>
+          );
+        }
+        if (isSelect) {
+          return (
+            <div key={propName} label={propName} className="df aic jcsb mt8">
+              <strong className="fs14 f1 ell mr8 ttc">{propName}</strong>
+              <input name={name} type="hidden" value="false"/>
+              <input name={name} type="checkbox" value="true" defaultChecked={String(defaultValue) === 'true'}/>
             </div>
           );
         }
@@ -48,29 +64,40 @@ const TokenItem = ({data = {}, id}) => {
   );
 };
 
-
-const getFormData = ({name, value}) => {
+const getValueParser = (name, value) => {
   const actions = {
-    stopRenderChildren: (value = '') => {
+    boolean: (value = '') => {
       if (value === 'true') {
         return true;
       }
       return false;
     },
-    classNames: (value) => {
-      return value.trim().split(' ');
+    array: (value) => {
+      const strValue = value.trim();
+      if (!strValue) {
+        return [];
+      }
+      return strValue.split(' ');
     },
-    ignoreClassNames: (value) => {
-      return value.trim().split(' ');
-    },
-    componentName: (value) => {
+    capitalize: (value) => {
       return COMPONENT.stringToComponentName(value);
+    },
+    default: (value) => {
+      return value.trim();
     }
   };
-  if (actions[name]) {
-    return actions[name](value.trim());
+
+  if (['componentName'].indexOf(name) > -1) {
+    // 首字母大写
+    return actions.capitalize;
   }
-  return value.trim();
+  if (value instanceof Array) {
+    return actions.array;
+  }
+  if (typeof value === 'boolean' || value === 'true' || value === 'false') {
+    return actions.boolean;
+  }
+  return actions.default;
 };
 
 
@@ -91,12 +118,16 @@ const Token = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const postData = {...selectionTokens};
+
     formData.forEach(function (value, item) {
       const [id, name] = item.split('|');
       if (postData[id]) {
-        postData[id][name] = getFormData({name, value});
+        postData[id][name] = getValueParser(name, postData[id][name])(value);
       }
     });
+
+    // console.log(postData);
+
     parent.postMessage({
       pluginMessage: {
         type: 'CONFIG.appendToken',
