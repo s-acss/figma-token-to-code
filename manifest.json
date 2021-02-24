@@ -1,5 +1,5 @@
 {
-  "name": "SACSS",
+  "name": "Token -> Code",
   "id": "759651077059504375",
   "api": "1.0.0",
   "main": "./dist/code.js",
