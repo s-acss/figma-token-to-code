@@ -24,14 +24,13 @@ const FILL = {
   // 获取填充信息
   getInfo: (node: SceneNode) => {
     //@ts-ignore
-    const getInfo = CONFIG.getInfoById(node.fillStyleId);
-
-    if (!getInfo) {
+    const {textClassName = '', className = '', ...rest} = CONFIG.getInfoById(node.fillStyleId) || {};
+    const renderClassName = node.type === 'TEXT' ? textClassName : className;
+    if (!renderClassName) {
       return FILL.getFill(node);
     }
-    const {textClassName = '', className = '', ...rest} = getInfo;
     return {
-      className: node.type === 'TEXT' ? textClassName : className,
+      className: renderClassName,
       ...rest
     };
   },

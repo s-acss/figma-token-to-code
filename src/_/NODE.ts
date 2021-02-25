@@ -52,7 +52,7 @@ const NODE = {
       return true;
     }
     // 找到了不合法元素（不在上面的几何列表里面）
-    const gotNo = children.find((item) => yesTypes.indexOf(item.type) === -1);
+    const gotNo = children.find((item) => item.visible && yesTypes.indexOf(item.type) === -1);
     return !gotNo;
   },
   isRenderChildren: (node: SceneNode) => {
@@ -112,18 +112,24 @@ const NODE = {
     if (isStructNode || String(nodeInfo?.renderHeight) === '1') {
       nodeInfo.className += ' ' + SACSS.add('h', parseInt(String(node.height)));
     }
-    const {renderChildren} = component || {};
-    if (!isStructNode || String(renderChildren) === '0') {
-      if (String(renderChildren) === '2') {
-        // @ts-ignore
-        nodeInfo.children = node.findAll(c => c.type === 'TEXT').map((c) => c.characters);
+
+    nodeInfo.children = (() => {
+      if (node.type === 'TEXT') {
+        return [node.characters];
+      }
+      const {renderChildren = 1} = component || {};
+      if (isStructNode || String(renderChildren) === '0') {
+        return [];
       }
       // 渲染子节点
-      if (String(renderChildren) === '1') {
+      if (String(renderChildren) === '2') {
         // @ts-ignore
-        nodeInfo.children = node.type === 'TEXT' ? [node.characters] : NODE.getNodesInfo(node.children);
+        return node.findAll(c => c.type === 'TEXT').map((c) => c.characters);
       }
-    }
+
+      // @ts-ignore
+      return NODE.getNodesInfo(node.children);
+    })();
     // 整个项目都忽略的 className
     // @ts-ignore
     const {ignoreClassName = ''} = CONFIG.getCurrent() || {};

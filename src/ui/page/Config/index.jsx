@@ -97,7 +97,7 @@ const ProjectItem = ({data = {}, index, checked, projects = [], className = ''})
     const form = e.target;
     const currentName = form.name.value;
 
-    if(checkName(currentName)){
+    if (checkName(currentName)) {
       _postConfig({
         action: 'editByIndex',
         value: {

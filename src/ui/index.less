@@ -23,6 +23,7 @@
 .c\:xs, .c\:xs\:h:hover {
   color: #999;
 }
+
 .c\:primary, .c\:primary\:h:hover {
   color: #4c5fe2;
 }
@@ -92,7 +93,8 @@ body, html {
 .g_tip[data-title] {
   text-indent: 0;
   position: relative;
-  overflow: visible; }
+  overflow: visible;
+}
 
 .g_tip[data-title]::before,
 .g_tip[data-title]::after {
@@ -103,7 +105,9 @@ body, html {
   -webkit-transform: translateX(-50%);
   -ms-transform: translateX(-50%);
   transform: translateX(-50%);
-  visibility: hidden; z-index: 100; }
+  visibility: hidden;
+  z-index: 100;
+}
 
 .g_tip[data-title]::before {
   content: attr(data-title);
@@ -117,7 +121,8 @@ body, html {
   color: #fff;
   font-size: 12px;
   font-style: normal;
-  white-space: nowrap; }
+  white-space: nowrap;
+}
 
 .g_tip[data-title]::after {
   content: '';
@@ -128,13 +133,16 @@ body, html {
   border-top-color: #373c42;
   top: -12px;
 }
+
 .g_tip[data-title]:hover::before,
 .g_tip[data-title]:hover::after,
 .g_tip[data-title]:focus::before,
 .g_tip[data-title]:focus::after {
   -webkit-transition: visibility .1s .1s;
   transition: visibility .1s .1s;
-  visibility: visible; }
+  visibility: visible;
+}
 
 .g_tip[data-title]:hover {
-  outline: none; }
+  outline: none;
+}

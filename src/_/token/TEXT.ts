@@ -104,7 +104,7 @@ const TEXT = {
     // @ts-ignore
     const {className = '', ignoreClassName = ''} = CONFIG.getInfoById(node.textStyleId) || {};
     const result = {
-      className: className.length ? className : TEXT.getACSSSInfo(node),
+      className: className ? className : TEXT.getACSSSInfo(node),
       ignoreClassName: ignoreClassName
     };
     // console.log(node, result);
