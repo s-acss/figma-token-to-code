@@ -29,7 +29,6 @@ const FLEX = {
         // "SPACE_BETWEEN": "jcsb",
       }[counterAxisAlignItems]);
     } else {
-      className.push('df');
       className.push({
         // "MIN": "",
         "CENTER": "jcc",
@@ -41,6 +40,8 @@ const FLEX = {
         "CENTER": "aic",
         "MAX": "aife",
       }[counterAxisAlignItems] || "");
+
+      className.push('df');
     }
     return {
       className: className.join(' ')

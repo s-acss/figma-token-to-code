@@ -94,7 +94,30 @@ const TEXT = {
     }[node.textDecoration];
     tdClass && className.push(tdClass);
 
-    return className.join(' ');
+    const strClassName = className.join(' ');
+    const isStrong = ['fw500', 'fw600', 'fw700', 'fw800', 'fw900'].findIndex((item) => strClassName.indexOf(item) > -1) > -1;
+    return {
+      className: strClassName,
+      tagName: isStrong ? 'strong' : 'span'
+    };
+  },
+  getTextChildren: (node: TextNode) => {
+    const {characters = ''} = node;
+    const legalP = characters.split('\n').filter(item => item.trim());
+    // 有回车表示多段落
+    if (legalP.length > 1) {
+      const mbClass = node.paragraphSpacing > 0 ? SACSS.add('mb', node.paragraphSpacing) : '';
+      const ps = legalP.map((item, key) => {
+        const isLast = key === legalP.length - 1;
+        return {
+          tagName: 'p',
+          className: isLast ? '' : mbClass,
+          children: [item]
+        };
+      });
+      return ps;
+    }
+    return [characters];
   },
   // 文本组件
   getInfo: (node: SceneNode) => {
@@ -102,12 +125,13 @@ const TEXT = {
       return null;
     }
     // @ts-ignore
-    const {className = '', ignoreClassName = ''} = CONFIG.getInfoById(node.textStyleId) || {};
+    const getInfo = CONFIG.getInfoById(node.textStyleId) || {};
+    const acssInfo = TEXT.getACSSSInfo(node);
     const result = {
-      className: className ? className : TEXT.getACSSSInfo(node),
-      ignoreClassName: ignoreClassName
+      className: getInfo.className || acssInfo.className || '',
+      tagName: getInfo.tagName || acssInfo.tagName || '',
+      ignoreClassName: getInfo.ignoreClassName || ''
     };
-    // console.log(node, result);
     return result;
   },
 };

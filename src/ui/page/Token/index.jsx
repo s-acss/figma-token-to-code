@@ -56,8 +56,26 @@ const TokenItem = ({data = {}, id}) => {
         <InputRow label="className" className="mt8 g_tip" data-title="Text node will ignore this">
           <Input name={`${id}|className`} defaultValue={data.className || ''}/>
         </InputRow>
-        <InputRow label="ignoreClassName" className="mt8" data-title="Split with Blank">
+        <InputRow label="ignoreClassName" className="mt8 g_tip" data-title="Split with Blank">
           <Input name={`${id}|ignoreClassName`} defaultValue={data.ignoreClassName || ''}/>
+        </InputRow>
+      </>
+    )
+  }
+  if (data.type === 'TEXT') {
+    return (
+      <>
+        <InputRow key="textClassName" label="textClassName" className="mt8 g_tip" data-title="Only work on text node">
+          <Input name={`${id}|textClassName`} defaultValue={data.textClassName || ''}/>
+        </InputRow>
+        <InputRow label="className" className="mt8 g_tip" data-title="Text node will ignore this">
+          <Input name={`${id}|className`} defaultValue={data.className || ''}/>
+        </InputRow>
+        <InputRow label="ignoreClassName" className="mt8 g_tip" data-title="Split with Blank">
+          <Input name={`${id}|ignoreClassName`} defaultValue={data.ignoreClassName || ''}/>
+        </InputRow>
+        <InputRow label="tagName" className="mt8">
+          <Input name={`${id}|tagName`} defaultValue={data.tagName || ''}/>
         </InputRow>
       </>
     )
@@ -67,7 +85,7 @@ const TokenItem = ({data = {}, id}) => {
       <InputRow label="className" className="mt8 g_tip" data-title="Split with Blank">
         <Input name={`${id}|className`} defaultValue={data.className || ''}/>
       </InputRow>
-      <InputRow label="ignoreClassName" className="mt8" data-title="Split with Blank">
+      <InputRow label="ignoreClassName" className="mt8 g_tip" data-title="Split with Blank">
         <Input name={`${id}|ignoreClassName`} defaultValue={data.ignoreClassName || ''}/>
       </InputRow>
     </>
@@ -156,6 +174,7 @@ const Token = () => {
                   <div className="f1 g_ell tar">{name}</div>
                 </div>
                 <TokenItem data={selectionTokens[id]} id={id}/>
+                <div className="fs12 mt4 c:s tar g_tip" data-title="token id">{id}</div>
               </div>
             )
           })}

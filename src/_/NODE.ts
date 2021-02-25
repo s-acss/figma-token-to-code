@@ -80,12 +80,14 @@ const NODE = {
     }
     const isStructNode = NODE.isStructNode(node);
     let nodeInfo = {
-      // node,
-      tagName: NODE.isBlockElement(node) ? 'div' : 'span',
       ignoreClassName: '',
       className: '',
       children: []
     };
+    if(isStructNode){
+      // @ts-ignore
+      nodeInfo.tagName='i';
+    }
     const component = COMPONENT.getInfo(node);
     const fill = FILL.getInfo(node);
     const text = TEXT.getInfo(node);
@@ -115,7 +117,7 @@ const NODE = {
 
     nodeInfo.children = (() => {
       if (node.type === 'TEXT') {
-        return [node.characters];
+        return TEXT.getTextChildren(node);
       }
       const {renderChildren = 1} = component || {};
       if (isStructNode || String(renderChildren) === '0') {
@@ -126,7 +128,6 @@ const NODE = {
         // @ts-ignore
         return node.findAll(c => c.type === 'TEXT').map((c) => c.characters);
       }
-
       // @ts-ignore
       return NODE.getNodesInfo(node.children);
     })();
@@ -135,29 +136,18 @@ const NODE = {
     const {ignoreClassName = ''} = CONFIG.getCurrent() || {};
     nodeInfo.className = UTILS.clearClassName(nodeInfo.className, `${nodeInfo.ignoreClassName} ${ignoreClassName}`);
     delete nodeInfo.ignoreClassName;
+
+    // 减少嵌套
+    if (nodeInfo.children.length === 1) {
+      const childrenInfo = nodeInfo.children[0];
+      // 如果父元素和子元素 tagName 相同合并 className
+      // @ts-ignore
+      if (childrenInfo.tagName === nodeInfo.tagName && !nodeInfo.componentName && !childrenInfo.componentName) {
+        childrenInfo.className = UTILS.clearClassName(`${childrenInfo.className} ${nodeInfo.className}`);
+        return childrenInfo;
+      }
+    }
     return nodeInfo;
-  },
-  /**
-   * 获取 Tag Name
-   * @param node
-   */
-  isBlockElement: (node: SceneNode) => {
-    const parent = node.parent;
-    // 没有父元素
-    if (!parent) {
-      return true;
-    }
-    // @ts-ignore
-    // 和父元素宽度一样
-    if (node.width === parent.width) {
-      return true;
-    }
-    // 如果父元素是纵向 的 flex 布局
-    // @ts-ignore
-    if (parent.layoutMode !== "NONE") {
-      return true;
-    }
-    return false;
   },
   sort: (nodes = []) => {
     return [...nodes].sort((a, b) => {
@@ -173,7 +163,14 @@ const NODE = {
     const sortNodes = NODE.sort(nodes);
     for (let i = 0, len = sortNodes.length; i < len; i++) {
       const nodeInfo = NODE.getNodeInfo(sortNodes[i]);
-      nodeInfo && info.push(nodeInfo);
+      if (!nodeInfo) {
+        continue;
+      }
+      if (nodeInfo instanceof Array) {
+        info = [...info, ...nodeInfo];
+      } else {
+        info.push(nodeInfo);
+      }
     }
     return info;
   }

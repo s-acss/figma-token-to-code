@@ -10,7 +10,8 @@ const HTML = {
     if (typeof item === 'string') {
       return item;
     }
-    const {tagName = 'i', children = [], className = ''} = item;
+    const {children = [], className = ''} = item;
+    const tagName = item.tagName || 'div';
     const arrProps = getPropsArray({
       class: className
     });

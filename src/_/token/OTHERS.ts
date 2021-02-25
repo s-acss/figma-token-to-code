@@ -22,11 +22,12 @@ const OTHERS = {
     return className;
   },
   getPaddingClassName: (node) => {
+    // 会忽略掉 1像素的 padding
     return [
-      SACSS.add('pt', node.paddingTop),
-      SACSS.add('pr', node.paddingRight),
-      SACSS.add('pb', node.paddingBottom),
-      SACSS.add('pl', node.paddingLeft),
+      node.paddingTop > 1 ? SACSS.add('pt', node.paddingTop) : '',
+      node.paddingRight > 1 ? SACSS.add('pr', node.paddingRight) : '',
+      node.paddingBottom > 1 ? SACSS.add('pb', node.paddingBottom) : '',
+      node.paddingLeft > 1 ? SACSS.add('pl', node.paddingLeft) : '',
     ];
   },
   getInfo: (node) => {

@@ -11,7 +11,7 @@ const JSX = {
       return item;
     }
     const {children = [], props = {}, className = ''} = item;
-    const tagName = item.componentName || item.tagName;
+    const tagName = item.componentName || item.tagName || 'div';
     const arrProps = getPropsArray({
       ...props,
       className
