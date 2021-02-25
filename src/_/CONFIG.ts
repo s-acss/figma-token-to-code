@@ -3,7 +3,7 @@ import COMPONENT from "./COMPONENT";
 
 const PRO_DEFAULT = {
   name: 'default',
-  ignoreClassNames: [],
+  ignoreClassName: '',
   token: {}
 };
 
@@ -18,8 +18,8 @@ const CONFIG_DEFAULT = {
  */
 const COMPONENT_DEFAULT = {
   componentName: '',
-  classNames: [],
-  ignoreClassNames: [],
+  className: '',
+  ignoreClassName: '',
   // 1 渲染, 0 不渲染, 2 只渲染文字节点
   renderChildren: 1,
   renderWidth: false,
@@ -30,8 +30,8 @@ const COMPONENT_DEFAULT = {
  * Token 默认属性
  */
 const TOKEN_DEFAULT = {
-  classNames: [],
-  ignoreClassNames: []
+  className: '',
+  ignoreClassName: ''
 };
 
 const CONFIG = {
@@ -63,20 +63,30 @@ const CONFIG = {
     const store = CONFIG.getAll();
     store.projects.push({
       name,
-      ignoreClassNames: [],
+      ignoreClassName: '',
       token
     });
     store.currentIndex = store.projects.length - 1;
     figma.clientStorage.setAsync(CONFIG.key, store);
   },
-  changeProjectName: ({name, index}) => {
+  editByIndex: ({data, index}) => {
     const store = CONFIG.getAll();
-    store.projects[index].name = name;
+    const current = store.projects[index];
+    store.projects[index] = {
+      name: data.name,
+      ignoreClassName: data.ignoreClassName,
+      token: data.token ? data.token : current.token
+    };
     figma.clientStorage.setAsync(CONFIG.key, store);
+    // console.log(store);
+    figma.ui.postMessage({
+      // @ts-ignore
+      alertMsg: `${data.name} save success`
+    });
   },
-  replaceProject: ({data, index}) => {
+  replaceByIndex: ({data, index}) => {
     const store = CONFIG.getAll();
-    store.projects[index] = data;
+    store.projects[index] = data || {};
     figma.clientStorage.setAsync(CONFIG.key, store);
     figma.ui.postMessage({
       alertMsg: `${data.name} replace success`
@@ -210,7 +220,7 @@ const CONFIG = {
     figma.ui.postMessage({
       gotAllTokens: {
         name,
-        ignoreClassNames: [],
+        ignoreClassName: '',
         token
       }
     });

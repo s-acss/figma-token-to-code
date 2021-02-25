@@ -18,32 +18,32 @@ const FLEX = {
     if (!children.length) {
       return null;
     }
-    const classNames = [];
+    const className = [];
     // 如果是纵向的 这里可以不使用 flex 布局
     if (layoutMode === 'VERTICAL') {
       // 当是纵向布局当时候
-      classNames.push({
+      className.push({
         // "MIN": "",
         "CENTER": "tac",
         "MAX": "tar",
         // "SPACE_BETWEEN": "jcsb",
       }[counterAxisAlignItems]);
     } else {
-      classNames.push('df');
-      classNames.push({
+      className.push('df');
+      className.push({
         // "MIN": "",
         "CENTER": "jcc",
         "MAX": "jcfe",
         "SPACE_BETWEEN": "jcsb",
       }[primaryAxisAlignItems] || "");
-      classNames.push({
+      className.push({
         //"MIN": "",
         "CENTER": "aic",
         "MAX": "aife",
       }[counterAxisAlignItems] || "");
     }
     return {
-      classNames
+      className: className.join(' ')
     };
   },
   getInfoFromParent: (node: FrameNode) => {
@@ -57,36 +57,35 @@ const FLEX = {
     if (primaryAxisAlignItems === "SPACE_BETWEEN") {
       return null;
     }
-    const classNames = [];
-    const ignoreClassNames = [];
-
-    const isLastChildren = parent.children.indexOf(node) === (parent.children.length - 1);
+    const className = [];
+    const ignoreClassName = [];
+    const {id = ''} = parent.children.filter(c => c.visible).pop() || {};
+    const isLastChildren = id === node.id;
     // 为子元素添加间距
     if (itemSpacing > 0 && !isLastChildren) {
       const gutterMap = {
         "VERTICAL": "mb",
         "HORIZONTAL": "mr"
       };
-      classNames.push(SACSS.add(gutterMap[layoutMode], itemSpacing));
+      className.push(SACSS.add(gutterMap[layoutMode], itemSpacing));
     }
-
     if (node.layoutGrow === 1) {
-      classNames.push('f1');
-      ignoreClassNames.push(`w${node.width}`);
+      className.push('f1');
+      ignoreClassName.push(`w${node.width}`);
     }
     return {
-      classNames,
-      ignoreClassNames
+      className: className.join(' '),
+      ignoreClassName: ignoreClassName.join(' ')
     };
   },
   getInfo: (node: SceneNode) => {
     // @ts-ignore
-    const {classNames: c1 = [], ignoreClassNames: ic1 = []} = FLEX.getThisInfo(node) || {};
+    const {className: c1 = '', ignoreClassName: ic1 = ''} = FLEX.getThisInfo(node) || {};
     // @ts-ignore
-    const {classNames: c2 = [], ignoreClassNames: ic2 = []} = FLEX.getInfoFromParent(node) || {};
+    const {className: c2 = '', ignoreClassName: ic2 = ''} = FLEX.getInfoFromParent(node) || {};
     return {
-      classNames: [...c1, ...c2],
-      ignoreClassNames: [...ic1, ...ic2]
+      className: `${c1} ${c2}`,
+      ignoreClassName: `${ic1} ${ic2}`
     };
   }
 };

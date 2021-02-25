@@ -25,14 +25,14 @@ const TEXT = {
       "ITALIC": "fsi",
       "OBLIQUE": "fsi"
     };
-    const classNames = style.split(' ').map((item: string) => fontMap[item.toUpperCase()] || '');
-    return classNames.filter(item => item).join(' ');
+    const className = style.split(' ').map((item: string) => fontMap[item.toUpperCase()] || '');
+    return className.filter(item => item).join(' ');
   },
   getACSSSInfo: (node: TextNode) => {
-    const classNames = [];
+    const className = [];
     if (["string", "number"].indexOf(typeof node.fontSize) > -1) {
       // @ts-ignore
-      classNames.push(SACSS.add('fs', node.fontSize));
+      className.push(SACSS.add('fs', node.fontSize));
     }
     // 杭高
     // @ts-ignore
@@ -40,7 +40,7 @@ const TEXT = {
       // @ts-ignore
       const {value, unit} = node.lineHeight;
       // @ts-ignore
-      classNames.push(SACSS.add('lh', value, TEXT.unitMap[unit]));
+      className.push(SACSS.add('lh', value, TEXT.unitMap[unit]));
     }
 
     // 字间距
@@ -48,16 +48,16 @@ const TEXT = {
     if (node.letterSpacing?.value) {
       // @ts-ignore
       const {value, unit} = node.letterSpacing;
-      classNames.push(SACSS.add('ls', value, TEXT.unitMap[unit]));
+      className.push(SACSS.add('ls', value, TEXT.unitMap[unit]));
     }
     // font-weight font-style
     const fnClass = TEXT.getFontNameClass(node);
-    fnClass && classNames.push(fnClass);
+    fnClass && className.push(fnClass);
 
     // @ts-ignore
     if (node.fontName?.family) {
       // @ts-ignore
-      classNames.push(SACSS.addFontFamily(node.fontName.family));
+      className.push(SACSS.addFontFamily(node.fontName.family));
     }
 
     // text-align
@@ -67,7 +67,7 @@ const TEXT = {
       "RIGHT": 'tar',
       "JUSTIFIED": 'taj',
     }[node.textAlignHorizontal];
-    taClass && classNames.push(taClass);
+    taClass && className.push(taClass);
 
     // vertical-align
     const vaClass = {
@@ -75,7 +75,7 @@ const TEXT = {
       "CENTER": 'vam',
       "BOTTOM": 'vab',
     }[node.textAlignVertical];
-    vaClass && classNames.push(vaClass);
+    vaClass && className.push(vaClass);
 
     // tt
     const ttClass = {
@@ -84,7 +84,7 @@ const TEXT = {
       "LOWER": 'ttl',
       "TITLE": 'ttc',
     }[node.textCase];
-    ttClass && classNames.push(ttClass);
+    ttClass && className.push(ttClass);
 
     // td
     const tdClass = {
@@ -92,9 +92,9 @@ const TEXT = {
       "UNDERLINE": 'tdu',
       "STRIKETHROUGH": 'tdl'
     }[node.textDecoration];
-    tdClass && classNames.push(tdClass);
+    tdClass && className.push(tdClass);
 
-    return classNames;
+    return className.join(' ');
   },
   // 文本组件
   getInfo: (node: SceneNode) => {
@@ -102,10 +102,10 @@ const TEXT = {
       return null;
     }
     // @ts-ignore
-    const {classNames = [], ignoreClassNames = []} = CONFIG.getInfoById(node.textStyleId) || {};
+    const {className = '', ignoreClassName = ''} = CONFIG.getInfoById(node.textStyleId) || {};
     const result = {
-      classNames: classNames.length ? classNames : TEXT.getACSSSInfo(node),
-      ignoreClassNames: ignoreClassNames
+      className: className.length ? className : TEXT.getACSSSInfo(node),
+      ignoreClassName: ignoreClassName
     };
     // console.log(node, result);
     return result;

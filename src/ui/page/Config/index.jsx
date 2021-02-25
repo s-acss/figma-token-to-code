@@ -5,6 +5,7 @@ import Button from "../../component/Button";
 import Input from "../../component/Input";
 import "./index.less";
 import Svg from "../../component/Svg";
+import InputRow from "../../component/InputRow";
 
 
 const _postConfig = ({action, value}) => {
@@ -26,12 +27,8 @@ const saveJSON = (data, fileName = 'SACSS-project') => {
 };
 
 const ProjectItem = ({data = {}, index, checked, projects = [], className = ''}) => {
-  const {name, token} = data;
+  const {name = '', ignoreClassName = '', token} = data;
   const tokenLen = Object.keys(token).length;
-  const [currentName, setCurrentName] = useState(name);
-  const onNameChange = (e) => {
-    setCurrentName(e.target.value.trim());
-  };
 
   // 下载 JSON
   const onDownLoad = (e) => {
@@ -61,6 +58,19 @@ const ProjectItem = ({data = {}, index, checked, projects = [], className = ''})
     });
   };
 
+  // 校验羡慕是否已经存在
+  const checkName = (value) => {
+    if (!value) {
+      alert('project name is required!');
+      return false;
+    }
+    if ((name !== value) && projects.find((item) => item.name === value)) {
+      alert(`${value} is exist!`);
+      return false;
+    }
+    return true;
+  };
+
   // 上传文件
   const onReplace = (e) => {
     const files = e.target.files || [];
@@ -70,16 +80,8 @@ const ProjectItem = ({data = {}, index, checked, projects = [], className = ''})
     var fr = new FileReader();
     fr.onload = function (e) {
       var result = JSON.parse(e.target.result);
-      if (!result.name) {
-        alert('project name is required!');
-        return;
-      }
-      if ((name !== result.name) && projects.find((item) => item.name === result.name)) {
-        alert(`${result.name} is exist!`);
-        return;
-      }
-      _postConfig({
-        action: 'replaceProject',
+      checkName(result.name) && _postConfig({
+        action: 'replaceByIndex',
         value: {
           data: result,
           index
@@ -89,41 +91,59 @@ const ProjectItem = ({data = {}, index, checked, projects = [], className = ''})
     fr.readAsText(files.item(0));
   };
 
-  // 修改名字
+  // 修改
   const onSubmit = (e) => {
     e.preventDefault();
-    if (!currentName) {
-      alert('project name is required!');
-      return;
+    const form = e.target;
+    const currentName = form.name.value;
+
+    if(checkName(currentName)){
+      _postConfig({
+        action: 'editByIndex',
+        value: {
+          data: {
+            name: currentName,
+            ignoreClassName: form.ignoreClassName.value
+          },
+          index
+        }
+      });
     }
-    if (projects.find((item) => item.name === currentName)) {
-      alert(`${currentName} is exist!`);
-      return;
-    }
-    _postConfig({
-      action: 'changeProjectName',
-      value: {name: currentName, index}
-    });
   };
 
   return (
-    <form onSubmit={onSubmit} title={`${tokenLen} token in this project`}
-          className={`g_row df aic pr pt12 pb12 ${className}`}>
-      <label className="df aic pt8 pb8 cp">
+    <form onSubmit={onSubmit} className={`g_row df pr pt12 pb12 ${className}`}>
+      <label className="df pt8 pb8 cp">
         <input className="mr8" type="radio" checked={checked} onChange={onChangeCurrent}/>
-        <strong className="mr8">{tokenLen}</strong>
       </label>
-      <Input placeholder="Project Name" className="f1 mr8" name="name" value={currentName} onChange={onNameChange}/>
-      <label className="btn _square pr oh mr8" title="Replace">
-        <Svg name="replace" className="fs20"/>
-        <input className="o0 pa" type="file" onChange={onReplace}/>
-      </label>
-      <Button title="Download" square className="mr8" onClick={onDownLoad}>
-        <Svg name="download" className="fs20"/>
-      </Button>
-      <Button title="Delete" square onClick={onDel}>
-        <Svg name="close" className="fs20"/>
-      </Button>
+      <div className="f1">
+        <InputRow className="mb8" label="Project Name">
+          <Input placeholder="Project Name" className="f1 mr8" name="name" defaultValue={name}/>
+        </InputRow>
+        <InputRow className="mb8 g_tip" data-title="it's for each token" label="ignoreClassName">
+          <Input
+            name="ignoreClassName"
+            placeholder={`Enter`}
+            className="w100% tar"
+            type="text"
+            defaultValue={ignoreClassName}
+          />
+        </InputRow>
+        <div className="df aic">
+          <strong className="mra fs14 c:m">{tokenLen ? `${tokenLen} tokens` : 'No Token'}</strong>
+          <label className="btn _square pr oh mr8 g_tip" data-title="Replace By Upload JSON">
+            <Svg name="replace" className="fs20"/>
+            <input className="o0 pa w100% h100%" type="file" onChange={onReplace}/>
+          </label>
+          <Button title="Download" square className="mr8 g_tip" data-title="Download" onClick={onDownLoad}>
+            <Svg name="download" className="fs20"/>
+          </Button>
+          <Button title="Delete" square className="mr8 g_tip" data-title="Delete" onClick={onDel}>
+            <Svg name="close" className="fs20"/>
+          </Button>
+          <Button type="submit">Save</Button>
+        </div>
+      </div>
     </form>
   );
 };

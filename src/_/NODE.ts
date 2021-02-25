@@ -20,12 +20,12 @@ const NODE = {
     if (!b) {
       return a;
     }
-    const {classNames: classNamesA = [], ignoreClassNames: ignoreClassNamesA = [], props: propsA = {}, ...restA} = a;
-    const {classNames: classNamesB = [], ignoreClassNames: ignoreClassNamesB = [], props: propsB = {}, children, ...restB} = b;
+    const {className: classNameA = '', ignoreClassName: ignoreClassNameA = '', props: propsA = {}, ...restA} = a;
+    const {className: classNameB = '', ignoreClassName: ignoreClassNameB = '', props: propsB = {}, children, ...restB} = b;
     return {
       props: {...propsA, ...propsB},
-      classNames: [...classNamesA, ...classNamesB],
-      ignoreClassNames: [...ignoreClassNamesA, ...ignoreClassNamesB],
+      className: `${classNameA} ${classNameB}`,
+      ignoreClassName: `${ignoreClassNameA} ${ignoreClassNameB}`,
       ...restA,
       ...restB
     };
@@ -82,8 +82,8 @@ const NODE = {
     let nodeInfo = {
       // node,
       tagName: NODE.isBlockElement(node) ? 'div' : 'span',
-      ignoreClassNames: [],
-      classNames: [],
+      ignoreClassName: '',
+      className: '',
       children: []
     };
     const component = COMPONENT.getInfo(node);
@@ -106,15 +106,13 @@ const NODE = {
 
     // @ts-ignore
     if (isStructNode || nodeInfo?.renderWidth === true) {
-      nodeInfo.classNames.push(SACSS.add('w', parseInt(String(node.width))));
+      nodeInfo.className += ' ' + SACSS.add('w', parseInt(String(node.width)));
     }
     // @ts-ignore
     if (isStructNode || nodeInfo?.renderHeight === true) {
-      nodeInfo.classNames.push(SACSS.add('h', parseInt(String(node.height))));
+      nodeInfo.className += ' ' + SACSS.add('h', parseInt(String(node.height)));
     }
-
     const {renderChildren = 1} = component || {};
-
     if (!isStructNode || String(renderChildren) === '0') {
       if (String(renderChildren) === '2') {
         // @ts-ignore
@@ -126,12 +124,11 @@ const NODE = {
         nodeInfo.children = node.type === 'TEXT' ? [node.characters] : NODE.getNodesInfo(node.children);
       }
     }
-
-    // 整个项目都忽略的 classNames
+    // 整个项目都忽略的 className
     // @ts-ignore
-    const {ignoreClassNames = []} = CONFIG.getCurrent() || {};
-    nodeInfo.classNames = UTILS.clearStingArray(nodeInfo.classNames, [...nodeInfo.ignoreClassNames, ...ignoreClassNames]);
-    delete nodeInfo.ignoreClassNames;
+    const {ignoreClassName = ''} = CONFIG.getCurrent() || {};
+    nodeInfo.className = UTILS.clearClassName(nodeInfo.className, `${nodeInfo.ignoreClassName} ${ignoreClassName}`);
+    delete nodeInfo.ignoreClassName;
     return nodeInfo;
   },
   /**

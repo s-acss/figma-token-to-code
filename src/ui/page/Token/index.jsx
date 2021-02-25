@@ -7,6 +7,23 @@ import Input from "../../component/Input";
 import InputRow from "../../component/InputRow";
 import "./index.less";
 
+
+const getTipTitle = (propName, nodeType) => {
+  if (nodeType === 'PAINT' && propName === 'textClassName') {
+    return "Only work on text node";
+  }
+
+  if (nodeType === 'PAINT' && propName === 'className') {
+    return "Text node will ignore this";
+  }
+
+  if (['ignoreClassName', 'className'].indexOf(propName) > -1) {
+    return 'Split With Blank';
+  }
+
+  return undefined;
+};
+
 const TokenItem = ({data = {}, id}) => {
   const {name, type, ...rest} = data;
   const propNames = Object.keys(rest);
@@ -18,14 +35,25 @@ const TokenItem = ({data = {}, id}) => {
         <div className="c:s ttc mr8">{type}:</div>
         <div className="f1 g_ell tar">{name}</div>
       </div>
+      {type === 'PAINT' ? (
+        <InputRow key="textClassName" label="textClassName" className="mt8 g_tip"
+                  data-title={getTipTitle('textClassName', type)}>
+          <Input
+            name={`${id}|textClassName`}
+            placeholder={`Enter`}
+            className="w100% tar"
+            type="text"
+            defaultValue={rest.textClassName}
+          />
+        </InputRow>
+      ) : null}
       {propNames.map((propName) => {
         // 属性不合法
         if (!(propName in COMPONENT_DEFAULT)) {
           return null;
         }
-        const defaultValue = rest[propName];
-        const isArray = defaultValue instanceof Array;
-        const isSelect = String(defaultValue) === 'false' || String(defaultValue) === 'true';
+        const defaultValue = String(rest[propName]);
+        const isSelect = defaultValue === 'false' || defaultValue === 'true';
         const name = `${id}|${propName}`;
         if (propName === 'renderChildren') {
           return (
@@ -48,14 +76,15 @@ const TokenItem = ({data = {}, id}) => {
             </div>
           );
         }
+
         return (
-          <InputRow key={propName} label={propName} className="mt8">
+          <InputRow key={propName} label={propName} className={`mt8 g_tip`} data-title={getTipTitle(propName, type)}>
             <Input
               name={name}
               placeholder={`Enter`}
               className="w100% tar"
               type="text"
-              defaultValue={isArray ? defaultValue.join(' ') : defaultValue}
+              defaultValue={defaultValue}
             />
           </InputRow>
         );
@@ -72,13 +101,6 @@ const getValueParser = (name, value) => {
       }
       return false;
     },
-    array: (value) => {
-      const strValue = value.trim();
-      if (!strValue) {
-        return [];
-      }
-      return strValue.split(' ');
-    },
     capitalize: (value) => {
       return COMPONENT.stringToComponentName(value);
     },
@@ -86,15 +108,11 @@ const getValueParser = (name, value) => {
       return value.trim();
     }
   };
-
   if (['componentName'].indexOf(name) > -1) {
     // 首字母大写
     return actions.capitalize;
   }
-  if (value instanceof Array) {
-    return actions.array;
-  }
-  if (typeof value === 'boolean' || value === 'true' || value === 'false') {
+  if (value === 'true' || value === 'false') {
     return actions.boolean;
   }
   return actions.default;
@@ -117,17 +135,19 @@ const Token = () => {
   const onSave = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const postData = {...selectionTokens};
+    const postData = {};
 
     formData.forEach(function (value, item) {
       const [id, name] = item.split('|');
-      if (postData[id]) {
-        postData[id][name] = getValueParser(name, postData[id][name])(value);
+      if (!value) {
+        return;
       }
+      if (!postData[id]) {
+        postData[id] = {};
+      }
+      postData[id][name] = getValueParser(name, postData[id][name])(value);
     });
-
     // console.log(postData);
-
     parent.postMessage({
       pluginMessage: {
         type: 'CONFIG.appendToken',

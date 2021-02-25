@@ -87,3 +87,54 @@ body, html {
 .g_ell {
   #Ellipsis();
 }
+
+/* tips */
+.g_tip[data-title] {
+  text-indent: 0;
+  position: relative;
+  overflow: visible; }
+
+.g_tip[data-title]::before,
+.g_tip[data-title]::after {
+  position: absolute;
+  left: 50%;
+  -ms-pointer-events: none;
+  pointer-events: none;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+  visibility: hidden; z-index: 100; }
+
+.g_tip[data-title]::before {
+  content: attr(data-title);
+  top: -41px;
+  max-width: 50vw;
+  padding: 6px 10px;
+  line-height: 18px;
+  border-radius: 3px;
+  background-color: #373c42;
+  text-align: left;
+  color: #fff;
+  font-size: 12px;
+  font-style: normal;
+  white-space: nowrap; }
+
+.g_tip[data-title]::after {
+  content: '';
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  border: 6px solid transparent;
+  border-top-color: #373c42;
+  top: -12px;
+}
+.g_tip[data-title]:hover::before,
+.g_tip[data-title]:hover::after,
+.g_tip[data-title]:focus::before,
+.g_tip[data-title]:focus::after {
+  -webkit-transition: visibility .1s .1s;
+  transition: visibility .1s .1s;
+  visibility: visible; }
+
+.g_tip[data-title]:hover {
+  outline: none; }

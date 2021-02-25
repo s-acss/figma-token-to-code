@@ -11,18 +11,18 @@ const UTILS = {
    * 去重和去空
    * @param arrStr
    */
-  clearStingArray: (arrStr = [], arrIgnore = []) => {
-    if (!arrStr || !arrStr.length) {
-      return [];
+  clearClassName: (className = '', ignoreClassName = '') => {
+    if (!className) {
+      return '';
     }
+    const classNames = className.split(' ');
     const result = [];
-    arrStr.forEach((item) => {
-      if (item && result.indexOf(item) === -1 && arrIgnore.indexOf(item) === -1) {
+    classNames.forEach((item = '') => {
+      if (item && item !== 'null' && result.indexOf(item) === -1 && ignoreClassName.indexOf(item) === -1) {
         result.push(item);
       }
     });
-    return result;
+    return result.join(' ');
   }
 };
-
 export default UTILS;

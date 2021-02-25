@@ -9,7 +9,7 @@ import NoSelection from "./NoSelection";
 
 const DEFAULT_COPY = 'Copy';
 
-const CODE_PRE=`/*
+const CODE_PRE = `/*
  * All rules in 「 sacss 」 will filter out.
  * Make sure you got 「 scass 」 in your project
  * $ npm install sacss
@@ -34,7 +34,7 @@ const RenderCSS = ({noSelection = true, code}) => {
       {noSelection ? <NoSelection/> : (
         <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
           <Highlight languages={["css"]} className="css">
-            {`${CODE_PRE}${code||''}`}
+            {`${CODE_PRE}${code || ''}`}
           </Highlight>
         </div>
       )}
