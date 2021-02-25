@@ -105,14 +105,14 @@ const NODE = {
     nodeInfo = NODE.extendInfo(nodeInfo, others);
 
     // @ts-ignore
-    if (isStructNode || nodeInfo?.renderWidth === true) {
+    if (isStructNode || String(nodeInfo?.renderWidth) === '1') {
       nodeInfo.className += ' ' + SACSS.add('w', parseInt(String(node.width)));
     }
     // @ts-ignore
-    if (isStructNode || nodeInfo?.renderHeight === true) {
+    if (isStructNode || String(nodeInfo?.renderHeight) === '1') {
       nodeInfo.className += ' ' + SACSS.add('h', parseInt(String(node.height)));
     }
-    const {renderChildren = 1} = component || {};
+    const {renderChildren} = component || {};
     if (!isStructNode || String(renderChildren) === '0') {
       if (String(renderChildren) === '2') {
         // @ts-ignore

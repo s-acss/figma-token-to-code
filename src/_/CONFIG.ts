@@ -1,6 +1,5 @@
 import COMPONENT from "./COMPONENT";
 
-
 const PRO_DEFAULT = {
   name: 'default',
   ignoreClassName: '',
@@ -11,27 +10,6 @@ const CONFIG_DEFAULT = {
   currentIndex: 0,
   isJSX: false,
   projects: [PRO_DEFAULT]
-};
-
-/**
- * 组件的默认属性
- */
-const COMPONENT_DEFAULT = {
-  componentName: '',
-  className: '',
-  ignoreClassName: '',
-  // 1 渲染, 0 不渲染, 2 只渲染文字节点
-  renderChildren: 1,
-  renderWidth: false,
-  renderHeight: false
-};
-
-/**
- * Token 默认属性
- */
-const TOKEN_DEFAULT = {
-  className: '',
-  ignoreClassName: ''
 };
 
 const CONFIG = {
@@ -156,7 +134,6 @@ const CONFIG = {
       const {id, name, type} = COMPONENT.getMainComponent(selection);
       const findToken = token[id] || {};
       matchToken[id] = {
-        ...COMPONENT_DEFAULT,
         ...findToken,
         name,
         type
@@ -172,7 +149,6 @@ const CONFIG = {
         return '';
       }
       matchToken[id] = {
-        ...TOKEN_DEFAULT,
         ...token[id],
         name,
         type
@@ -203,20 +179,19 @@ const CONFIG = {
       return true;
     });
     const token = {};
-    const addConfig = (data = [], template = {}) => {
+    const addConfig = (data = []) => {
       data.forEach((item) => {
         token[item.id] = {
-          ...template,
           name: item.name,
           type: item.type
         };
       });
     };
-    addConfig(components, COMPONENT_DEFAULT);
-    addConfig(figma.getLocalPaintStyles(), TOKEN_DEFAULT);
-    addConfig(figma.getLocalTextStyles(), TOKEN_DEFAULT);
-    addConfig(figma.getLocalEffectStyles(), TOKEN_DEFAULT);
-    addConfig(figma.getLocalGridStyles(), TOKEN_DEFAULT);
+    addConfig(components);
+    addConfig(figma.getLocalPaintStyles());
+    addConfig(figma.getLocalTextStyles());
+    addConfig(figma.getLocalEffectStyles());
+    addConfig(figma.getLocalGridStyles());
     figma.ui.postMessage({
       gotAllTokens: {
         name,
@@ -227,5 +202,3 @@ const CONFIG = {
   }
 };
 export default CONFIG;
-
-export {COMPONENT_DEFAULT, TOKEN_DEFAULT};

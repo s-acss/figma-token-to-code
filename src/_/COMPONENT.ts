@@ -71,6 +71,19 @@ const COMPONENT = {
     }
     // @ts-ignore
     matchToken.props = COMPONENT.getComponentProps(node);
+
+    // 用户没有指定表示要渲染
+    if (!('renderChildren' in matchToken)) {
+      matchToken.renderChildren = '1';
+    }
+    // 用户没有指定表示要渲染
+    if (!('renderWidth' in matchToken)) {
+      matchToken.renderWidth = '0';
+    }
+    // 用户没有指定表示要渲染
+    if (!('renderHeight' in matchToken)) {
+      matchToken.renderHeight = '0';
+    }
     return matchToken;
   }
 };

@@ -1,95 +1,76 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import COMPONENT from "../../../_/COMPONENT";
-import {COMPONENT_DEFAULT} from "../../../_/CONFIG";
 import Button from "../../component/Button";
 import Input from "../../component/Input";
 import InputRow from "../../component/InputRow";
 import "./index.less";
 
-
-const getTipTitle = (propName, nodeType) => {
-  if (nodeType === 'PAINT' && propName === 'textClassName') {
-    return "Only work on text node";
-  }
-
-  if (nodeType === 'PAINT' && propName === 'className') {
-    return "Text node will ignore this";
-  }
-
-  if (['ignoreClassName', 'className'].indexOf(propName) > -1) {
-    return 'Split With Blank';
-  }
-
-  return undefined;
-};
-
 const TokenItem = ({data = {}, id}) => {
-  const {name, type, ...rest} = data;
-  const propNames = Object.keys(rest);
-  return (
-    <div className="pt12 pb12 g_row g_hr">
-      <input type="hidden" name={`${id}|name`} value={name}/>
-      <input type="hidden" name={`${id}|type`} value={type}/>
-      <div className="df aic jcsb mb8 fs14">
-        <div className="c:s ttc mr8">{type}:</div>
-        <div className="f1 g_ell tar">{name}</div>
-      </div>
-      {type === 'PAINT' ? (
-        <InputRow key="textClassName" label="textClassName" className="mt8 g_tip"
-                  data-title={getTipTitle('textClassName', type)}>
-          <Input
-            name={`${id}|textClassName`}
-            placeholder={`Enter`}
-            className="w100% tar"
-            type="text"
-            defaultValue={rest.textClassName}
-          />
-        </InputRow>
-      ) : null}
-      {propNames.map((propName) => {
-        // 属性不合法
-        if (!(propName in COMPONENT_DEFAULT)) {
-          return null;
-        }
-        const defaultValue = String(rest[propName]);
-        const isSelect = defaultValue === 'false' || defaultValue === 'true';
-        const name = `${id}|${propName}`;
-        if (propName === 'renderChildren') {
-          return (
-            <div key={propName} label={propName} className="df aic jcsb mt8">
-              <strong className="fs14 f1 ell mr8 ttc">{propName}</strong>
-              <select name={name} defaultValue={String(defaultValue)}>
-                <option value="0">false</option>
-                <option value="1">true</option>
-                <option value="2">only Text</option>
-              </select>
-            </div>
-          );
-        }
-        if (isSelect) {
-          return (
-            <div key={propName} label={propName} className="df aic jcsb mt8">
-              <strong className="fs14 f1 ell mr8 ttc">{propName}</strong>
-              <input name={name} type="hidden" value="false"/>
-              <input name={name} type="checkbox" value="true" defaultChecked={String(defaultValue) === 'true'}/>
-            </div>
-          );
-        }
 
-        return (
-          <InputRow key={propName} label={propName} className={`mt8 g_tip`} data-title={getTipTitle(propName, type)}>
-            <Input
-              name={name}
-              placeholder={`Enter`}
-              className="w100% tar"
-              type="text"
-              defaultValue={defaultValue}
-            />
-          </InputRow>
-        );
-      })}
-    </div>
+  // 渲染组件
+  if (['COMPONENT'].indexOf(data.type) > -1) {
+    return (
+      <>
+        <InputRow label="componentName" className="mt8">
+          <Input name={`${id}|componentName`} defaultValue={data.componentName || ''}/>
+        </InputRow>
+        <InputRow label="className" className="mt8 g_tip" data-title="Split with Blank">
+          <Input name={`${id}|className`} defaultValue={data.className || ''}/>
+        </InputRow>
+        <InputRow label="ignoreClassName" className="mt8 g_tip" data-title="Split with Blank">
+          <Input name={`${id}|ignoreClassName`} defaultValue={data.ignoreClassName || ''}/>
+        </InputRow>
+        <label label="renderChildren" className="df aic jcsb mt8">
+          <strong className="fs14 f1 ell mr8 ttc">renderChildren</strong>
+          <select name={`${id}|renderChildren`} defaultValue={String(data.renderChildren || 0)}>
+            <option value="0">false</option>
+            <option value="1">true</option>
+            <option value="2">only Text</option>
+          </select>
+        </label>
+        <label label="renderWidth" className="df aic jcsb mt8">
+          <strong className="fs14 f1 ell mr8 ttc">renderWidth</strong>
+          <select name={`${id}|renderWidth`} defaultValue={String(data.renderWidth) || 0}>
+            <option value="0">false</option>
+            <option value="1">true</option>
+          </select>
+        </label>
+        <label label="renderHeight" className="df aic jcsb mt8">
+          <strong className="fs14 f1 ell mr8 ttc">renderHeight</strong>
+          <select name={`${id}|renderHeight`} defaultValue={String(data.renderHeight) || 0}>
+            <option value="0">false</option>
+            <option value="1">true</option>
+          </select>
+        </label>
+      </>
+    );
+  }
+
+  if (data.type === 'PAINT') {
+    return (
+      <>
+        <InputRow key="textClassName" label="textClassName" className="mt8 g_tip" data-title="Only work on text node">
+          <Input name={`${id}|textClassName`} defaultValue={data.textClassName || ''}/>
+        </InputRow>
+        <InputRow label="className" className="mt8 g_tip" data-title="Text node will ignore this">
+          <Input name={`${id}|className`} defaultValue={data.className || ''}/>
+        </InputRow>
+        <InputRow label="ignoreClassName" className="mt8" data-title="Split with Blank">
+          <Input name={`${id}|ignoreClassName`} defaultValue={data.ignoreClassName || ''}/>
+        </InputRow>
+      </>
+    )
+  }
+  return (
+    <>
+      <InputRow label="className" className="mt8 g_tip" data-title="Split with Blank">
+        <Input name={`${id}|className`} defaultValue={data.className || ''}/>
+      </InputRow>
+      <InputRow label="ignoreClassName" className="mt8" data-title="Split with Blank">
+        <Input name={`${id}|ignoreClassName`} defaultValue={data.ignoreClassName || ''}/>
+      </InputRow>
+    </>
   );
 };
 
@@ -164,7 +145,19 @@ const Token = () => {
       {selectionIds.length ? (
         <div className="f1 oa">
           {selectionIds.map(id => {
-            return <TokenItem key={id} data={selectionTokens[id]} id={id}/>
+            const data = selectionTokens[id];
+            const {name, type} = data;
+            return (
+              <div key={id} className="pt12 pb12 g_row g_hr">
+                <input type="hidden" name={`${id}|name`} value={name}/>
+                <input type="hidden" name={`${id}|type`} value={type}/>
+                <div className="df aic jcsb mb8 fs14">
+                  <div className="c:s ttc mr8">{type}:</div>
+                  <div className="f1 g_ell tar">{name}</div>
+                </div>
+                <TokenItem data={selectionTokens[id]} id={id}/>
+              </div>
+            )
           })}
         </div>
       ) : (
