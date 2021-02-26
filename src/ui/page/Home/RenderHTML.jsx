@@ -43,7 +43,7 @@ const RenderHtml = ({code = '', noSelection = true, isJSX}) => {
       {noSelection ? <NoSelection/> : (
         <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
           <Highlight languages={["xml"]} className="xml">
-            {code ? `${format(`<body>${code}</body>`)}` : ''}
+            {code ? `${format(`<root>${code}</root>`)}` : ''}
           </Highlight>
         </div>
       )}

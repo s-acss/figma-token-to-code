@@ -147,6 +147,7 @@ const NODE = {
         return childrenInfo;
       }
     }
+    console.log(nodeInfo);
     return nodeInfo;
   },
   sort: (nodes = []) => {

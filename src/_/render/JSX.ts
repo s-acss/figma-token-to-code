@@ -1,5 +1,5 @@
 import UTILS from "../UTILS";
-import getPropsArray from "./getPropsArray";
+import getPropsString from "./getPropsString";
 
 const JSX = {
   // @ts-ignore
@@ -12,11 +12,11 @@ const JSX = {
     }
     const {children = [], props = {}, className = ''} = item;
     const tagName = item.componentName || item.tagName || 'div';
-    const arrProps = getPropsArray({
+    const strProps = getPropsString({
       ...props,
       className
     });
-    const tagStart = `${tagName}${arrProps.length ? ` ${arrProps.join(' ')}` : ''}`;
+    const tagStart = `${tagName}${strProps ? ` ${strProps}` : ''}`;
     if (UTILS.isSelfTag(tagName)) {
       return `<${tagStart}/>`;
     }

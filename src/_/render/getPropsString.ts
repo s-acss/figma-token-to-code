@@ -1,21 +1,22 @@
-const getPropsArray = (props = {}) => {
+const getPropsString = (props = {}) => {
   const arrProps = [];
   for (const [key, value] of Object.entries(props)) {
     const item = ((key, value) => {
-      if (value === '' || value === false || value === 'false') {
+      const strValue = String(value);
+      if (strValue === '' || value === 'false') {
         return '';
       }
-      if (value === true || value === 'true') {
-        return key;
+      if (value === 'true') {
+        return `${key}="true"`;
       }
       if (typeof value === 'string' || typeof value === 'number') {
         return `${key}="${value}"`;
       }
-      return `${key}={${JSON.stringify(value)}}`;
+      return "";
     })(key, value);
     item && arrProps.push(item);
   }
-  return arrProps;
+  return arrProps.join(' ');
 };
 
-export default getPropsArray;
+export default getPropsString;

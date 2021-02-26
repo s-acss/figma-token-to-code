@@ -9,7 +9,7 @@ import "./index.less";
 const TokenItem = ({data = {}, id}) => {
 
   // 渲染组件
-  if (['COMPONENT'].indexOf(data.type) > -1) {
+  if (['COMPONENT','COMPONENT_SET'].indexOf(data.type) > -1) {
     return (
       <>
         <InputRow label="componentName" className="mt8">
