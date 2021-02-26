@@ -1,7 +1,20 @@
 import UTILS from "../UTILS";
-import getPropsString from "./getPropsString";
 
 const JSX = {
+  getPropsString: (props = {}) => {
+    const arrProps = [];
+    for (const [key, value] of Object.entries(props)) {
+      const item = ((key, value) => {
+        const strValue = String(value);
+        if (strValue === '' || value === 'false') {
+          return '';
+        }
+        return `${key}="${strValue}"`;
+      })(key, value);
+      item && arrProps.push(item);
+    }
+    return arrProps.join(' ');
+  },
   // @ts-ignore
   getItemDom: (item) => {
     if (!item) {
@@ -12,7 +25,7 @@ const JSX = {
     }
     const {children = [], props = {}, className = ''} = item;
     const tagName = item.componentName || item.tagName || 'div';
-    const strProps = getPropsString({
+    const strProps = JSX.getPropsString({
       ...props,
       className
     });
