@@ -40,6 +40,23 @@ const COMPONENT = {
     }
     return COMPONENT.stringToComponentName(name);
   },
+  getComponentPropsByString: (strProp) => {
+    const props = {};
+    if (typeof strProp === 'string') {
+      // 去掉单双引号
+      const legalProps = strProp.replace(/\"/g, '').replace(/\'/g, '');
+      legalProps.split(",").forEach((item) => {
+        const [key, value] = item.split("=");
+        const trimValue = String(value).trim();
+        // false 表示没有这个值 不做处理
+        if (trimValue === "false") {
+          return;
+        }
+        props[String(key).trim()] = value ? trimValue : 'true';
+      });
+    }
+    return props;
+  },
   getComponentProps: (node: InstanceNode) => {
     // console.log('getComponentProps', node);
     const isVariant = COMPONENT.isVariant(node);
@@ -48,18 +65,7 @@ const COMPONENT = {
       return {};
     }
     const {name} = node.mainComponent;
-    const props = {};
-    if (typeof name === 'string' && name.indexOf('=') > -1) {
-      name.split(",").forEach((item) => {
-        const [key, value] = item.split("=");
-        // false 表示没有这个值 不做处理
-        if (value === "false") {
-          return;
-        }
-        props[key.trim()] = value.trim();
-      });
-    }
-    return props;
+    return COMPONENT.getComponentPropsByString(name);
   },
   getInfo: (node: SceneNode) => {
     // @ts-ignore
@@ -69,8 +75,12 @@ const COMPONENT = {
     if (!matchToken) {
       return null;
     }
-    // @ts-ignore
-    matchToken.props = COMPONENT.getComponentProps(node);
+
+    matchToken.props = {
+      // @ts-ignore
+      ...COMPONENT.getComponentProps(node),
+      ...COMPONENT.getComponentPropsByString(matchToken.props || '')
+    };
 
     // 用户没有指定表示要渲染
     if (!('renderChildren' in matchToken)) {

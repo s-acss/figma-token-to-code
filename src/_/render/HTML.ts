@@ -1,7 +1,7 @@
 import UTILS from "../UTILS";
 
-// legle 合法属性
-const legalProp = ['class', 'role', 'disabled', 'id', 'title', 'lang', 'dir', 'tabindex', 'accesskey', 'src', 'href','style','aria-hidden','target','rel'];
+// legal 合法属性
+const legalProp = ['class','type','name', 'role', 'disabled', 'id', 'title', 'lang', 'dir', 'tabindex', 'accesskey', 'src', 'href','style','aria-hidden','target','rel'];
 const HTML = {
   getPropsString: ({className = '', ...props} = {}) => {
     const arrProps = [];

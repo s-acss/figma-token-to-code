@@ -15,6 +15,9 @@ const TokenItem = ({data = {}, id}) => {
         <InputRow label="componentName" className="mt8">
           <Input name={`${id}|componentName`} defaultValue={data.componentName || ''}/>
         </InputRow>
+        <InputRow label="props" className="mt8 g_tip" data-title="exp: type=button,name=hello,key=1">
+          <Input name={`${id}|props`} defaultValue={data.props || ''}/>
+        </InputRow>
         <InputRow label="tagName" className="mt8">
           <Input name={`${id}|tagName`} defaultValue={data.tagName || ''}/>
         </InputRow>
