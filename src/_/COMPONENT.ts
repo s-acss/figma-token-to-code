@@ -42,7 +42,7 @@ const COMPONENT = {
   },
   getComponentPropsByString: (strProp) => {
     const props = {};
-    if (typeof strProp === 'string') {
+    if (strProp && typeof strProp === 'string') {
       // 去掉单双引号
       const legalProps = strProp.replace(/\"/g, '').replace(/\'/g, '');
       legalProps.split(",").forEach((item) => {
@@ -94,6 +94,7 @@ const COMPONENT = {
     if (!('renderHeight' in matchToken)) {
       matchToken.renderHeight = '0';
     }
+    // console.log(matchToken);
     return matchToken;
   }
 };

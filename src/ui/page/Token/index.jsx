@@ -71,9 +71,6 @@ const TokenItem = ({data = {}, id}) => {
   if (data.type === 'TEXT') {
     return (
       <>
-        <InputRow key="textClassName" label="textClassName" className="mt8 g_tip" data-title="Only work on text node">
-          <Input name={`${id}|textClassName`} defaultValue={data.textClassName || ''}/>
-        </InputRow>
         <InputRow label="className" className="mt8 g_tip" data-title="Text node will ignore this">
           <Input name={`${id}|className`} defaultValue={data.className || ''}/>
         </InputRow>
@@ -161,13 +158,13 @@ const Token = () => {
     }, '*');
   };
   return (
-    <form onSubmit={onSave} className="f1 df fdc">
+    <form onSubmit={onSave} className="f1 df fdc oh">
       <div className="g_row g_hr df jcsb aic fs14 pt12 pb12">
         <strong className="c:s">Current Project: </strong>
         <em className="f1 tar ell">{name}</em>
       </div>
       {selectionIds.length ? (
-        <div className="f1 oa">
+        <div className="f1 oa mb-1">
           {selectionIds.map(id => {
             const data = selectionTokens[id];
             const {name, type} = data;
