@@ -28,8 +28,9 @@ const APP = () => {
     <>
       <Header
         extra={
-          <a className="c:s c:primary:h fs14 fw500 pl8 pr8 pt8 pb8 fw700" href="https://github.com/ziven27/Figma-ACSS"
-             target="_blank" title="Help">?</a>
+          <a className="c:s c:primary:h fs14 fw500 pl8 pr8 pt8 pb8 fw700" href="https://github.com/ziven27/figma-token-to-code" target="_blank" title="Help">
+            <img src="https://img.shields.io/github/stars/ziven27/figma-token-to-code.svg?style=social" alt="figma-token-to-code"/>
+          </a>
         }>
         <Tabs className="fs14" data={DATA_TAB} tabIndex={tabIndex} onChange={onTabChange}></Tabs>
       </Header>

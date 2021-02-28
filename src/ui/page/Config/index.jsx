@@ -210,7 +210,7 @@ const Config = () => {
     const form = e.target;
     const newName = form.name.value.trim();
     const result = addNew({name: newName});
-    (result !== false) && form.reset();
+    (result !== false) && form.current.reset();
   };
 
   const onChangeCurrent = (e) => {
