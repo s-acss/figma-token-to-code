@@ -135,9 +135,11 @@ const ProjectItem = React.forwardRef(({data = {}, index, checked, projects = [],
             </Button>
           </div>
         ) : (
-          <Button className="f1" block title="Delete" onClick={onDel}>
-            Delete
-          </Button>
+          <div className="f1">
+            <Button block title="Delete" onClick={onDel}>
+              Delete
+            </Button>
+          </div>
         )}
         <div className="f1 ml8">
           <Button type="submit" block>Save</Button>
