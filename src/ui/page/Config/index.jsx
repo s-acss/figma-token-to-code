@@ -1,10 +1,9 @@
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import saveFile from 'save-as-file';
 import Button from "../../component/Button";
 import Input from "../../component/Input";
 import "./index.less";
-import Svg from "../../component/Svg";
 import InputRow from "../../component/InputRow";
 
 
@@ -26,23 +25,14 @@ const saveJSON = (data, fileName = 'SACSS-project') => {
   saveFile(file, `${fileName}.json`);
 };
 
-const ProjectItem = ({data = {}, index, checked, projects = [], className = ''}) => {
-  const {name = '', ignoreClassName = '', token} = data;
+const ProjectItem = React.forwardRef(({data = {}, index, checked, projects = [], className = ''}, ref) => {
+  const {name = '', ignoreClassName = '', replaceClassName = '', token} = data;
   const tokenLen = Object.keys(token).length;
 
   // 下载 JSON
   const onDownLoad = (e) => {
     e.preventDefault();
     saveJSON(data, data.name);
-  };
-
-  const onChangeCurrent = (e) => {
-    if (e.target.checked) {
-      _postConfig({
-        action: 'changeCurrent',
-        value: index
-      });
-    }
   };
 
   // 删除
@@ -58,7 +48,7 @@ const ProjectItem = ({data = {}, index, checked, projects = [], className = ''})
     });
   };
 
-  // 校验羡慕是否已经存在
+  // 校验项目是否已经存在
   const checkName = (value) => {
     if (!value) {
       alert('project name is required!');
@@ -112,45 +102,66 @@ const ProjectItem = ({data = {}, index, checked, projects = [], className = ''})
   };
 
   return (
-    <form onSubmit={onSubmit} className={`g_row df pr pt12 pb12 ${className}`}>
-      <label className="df pt8 pb8 cp">
-        <input className="mr8" type="radio" checked={checked} onChange={onChangeCurrent}/>
-      </label>
-      <div className="f1">
-        <InputRow className="mb8" label="Project Name">
-          <Input placeholder="Project Name" className="f1 mr8" name="name" defaultValue={name}/>
-        </InputRow>
-        <InputRow className="mb8 g_tip" data-title="it's for each token" label="ignoreClassName">
-          <Input
-            name="ignoreClassName"
-            placeholder={`Enter`}
-            className="w100% tar"
-            type="text"
-            defaultValue={ignoreClassName}
-          />
-        </InputRow>
-        <div className="df aic">
-          <strong className="mra fs14 c:m">{tokenLen ? `${tokenLen} tokens` : 'No Token'}</strong>
-          <label className="btn _square pr oh mr8 g_tip" data-title="Replace By Upload JSON">
-            <Svg name="replace" className="fs20"/>
-            <input className="o0 pa w100% h100%" type="file" onChange={onReplace}/>
-          </label>
-          <Button title="Download" square className="mr8 g_tip" data-title="Download" onClick={onDownLoad}>
-            <Svg name="download" className="fs20"/>
+    <form ref={ref} onSubmit={onSubmit} className={`g_row pr pt12 pb12 ${className}`}>
+      <div className="mb8">
+        <strong className="mra fs14 c:m">{tokenLen ? `${tokenLen} tokens in this project` : 'No Token'}</strong>
+      </div>
+      <InputRow className="mb8" label="Project Name">
+        <Input placeholder="Project Name" className="f1 mr8" name="name" defaultValue={name}/>
+      </InputRow>
+      <InputRow className="mb8 g_tip" data-title="it's for each token" label="ignoreClassName">
+        <Input
+          name="ignoreClassName"
+          placeholder={`Enter`}
+          className="w100% tar"
+          type="text"
+          defaultValue={ignoreClassName}
+        />
+      </InputRow>
+      {/*<InputRow className="mb8 g_tip" data-title="Exp: w980=g_wrap, w1008=g_row" label="replaceClassName">*/}
+      {/*  <Input*/}
+      {/*    name="replaceClassName"*/}
+      {/*    placeholder={`Enter`}*/}
+      {/*    className="w100% tar"*/}
+      {/*    type="text"*/}
+      {/*    defaultValue={replaceClassName}*/}
+      {/*  />*/}
+      {/*</InputRow>*/}
+      <div className="df mb16">
+        {(name === 'default') ? (
+          <div className="g_tip f1" data-title="Default Can't Delete">
+            <Button disabled block title="Delete">
+              Delete
+            </Button>
+          </div>
+        ) : (
+          <Button className="f1" block title="Delete" onClick={onDel}>
+            Delete
           </Button>
-          <Button title="Delete" square className="mr8 g_tip" data-title="Delete" onClick={onDel}>
-            <Svg name="close" className="fs20"/>
-          </Button>
-          <Button type="submit">Save</Button>
+        )}
+        <div className="f1 ml8">
+          <Button type="submit" block>Save</Button>
         </div>
+      </div>
+      <div className="g_hr mb16"></div>
+      <div className="df">
+        <label className="btn  _block pr oh g_tip mr8 f1" data-title="Replace By Upload JSON">
+          Replace
+          <input className="o0 pa w100% h100%" type="file" onChange={onReplace}/>
+        </label>
+        <Button block title="Download" className="g_tip f1" data-title="Download JSON" onClick={onDownLoad}>
+          DownLoad
+        </Button>
       </div>
     </form>
   );
-};
+});
 
 const Config = () => {
   const [config, setConfig] = useState({});
   const {projects = [], currentIndex} = config;
+  const currentProject = projects[currentIndex];
+  const form = useRef(null);
 
   useEffect(() => {
     onmessage = (({data: {pluginMessage} = {}}) => {
@@ -200,32 +211,25 @@ const Config = () => {
     (result !== false) && form.reset();
   };
 
+  const onChangeCurrent = (e) => {
+    _postConfig({
+      action: 'changeCurrent',
+      value: e.target.value
+    });
+    form.current.reset();
+  };
   return (
     <>
       <div className="g_row g_hr df jcsb aic fs14 pt12 pb12">
         <strong className="c:s">Current Project: </strong>
-        <em className="f1 tar ell">{projects[currentIndex]?.name || '--'}</em>
+        <select onChange={onChangeCurrent} value={currentIndex}>
+          {projects.map((project, key) => (<option key={project.name} value={key}>{project.name}</option>))}
+        </select>
       </div>
-      {projects.length ? (
-        <div className="f1 oa">
-          {projects.map((project, key) => {
-            const isLast = key === projects.length - 1;
-            return (<ProjectItem
-              checked={currentIndex === key}
-              index={key}
-              key={project.name}
-              data={project}
-              projects={projects}
-              className={isLast ? '' : 'g_hr'}
-            />);
-          })}
-        </div>) : (
-        <div className="f1 df aic fdc jcc g_row">
-          <p className="c:m mb8 fw700">No Project</p>
-          <p className="c:s fs14">Download pure token at「 Token 」</p>
-          <p className="c:s fs14">Custom and Upload</p>
-        </div>
-      )}
+      <div className="f1 oa">
+        {currentProject ?
+          <ProjectItem ref={form} index={currentIndex} checked data={currentProject} projects={currentProject}/> : null}
+      </div>
       <form onSubmit={onAdd} action="" className="g_row pt12 pb12 bc:fff g_hr_t">
         <div className="df aic mb8">
           <Input placeholder="Enter new project name" className="f1 mr8" required type="text" name="name"/>

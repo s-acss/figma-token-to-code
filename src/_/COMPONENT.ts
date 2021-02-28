@@ -18,8 +18,9 @@ const COMPONENT = {
     return isVariant ? node.mainComponent.parent : node.mainComponent;
   },
   getComponentId: (node) => {
-    const {id = ''} = COMPONENT.getMainComponent(node) || {};
-    return id;
+    // @ts-ignore
+    const {key = ''} = COMPONENT.getMainComponent(node) || {};
+    return key;
   },
   stringToComponentName: (name = '') => {
     const trimName = name.trim();

@@ -13,6 +13,7 @@ const API = {
       figma.ui.postMessage({noSelection: true});
       return null;
     }
+    console.log(selection[0]);
     return selection;
   },
   onTabChange: (index) => {

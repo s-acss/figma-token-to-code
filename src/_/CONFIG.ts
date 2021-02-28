@@ -131,9 +131,9 @@ const CONFIG = {
     // 如果是组件则不需要显示任何其它的属性
     if (COMPONENT.isComponent(selection)) {
       //@ts-ignore
-      const {id, name, type} = COMPONENT.getMainComponent(selection);
-      const findToken = token[id] || {};
-      matchToken[id] = {
+      const {key, name, type} = COMPONENT.getMainComponent(selection);
+      const findToken = token[key] || {};
+      matchToken[key] = {
         ...findToken,
         name,
         type
@@ -144,12 +144,12 @@ const CONFIG = {
       if (!item) {
         return '';
       }
-      const {id, name, type} = figma.getStyleById(item) || {};
-      if (!id) {
+      const {key: styleKey, name, type} = figma.getStyleById(item) || {};
+      if (!styleKey) {
         return '';
       }
-      matchToken[id] = {
-        ...token[id],
+      matchToken[styleKey] = {
+        ...token[styleKey],
         name,
         type
       }

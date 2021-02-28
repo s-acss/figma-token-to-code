@@ -147,7 +147,7 @@ const NODE = {
         return childrenInfo;
       }
     }
-    console.log(node);
+    // console.log(node);
     // console.log(nodeInfo);
     return nodeInfo;
   },
