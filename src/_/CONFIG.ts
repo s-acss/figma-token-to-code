@@ -109,8 +109,8 @@ const CONFIG = {
     const {token = null} = CONFIG.getCurrent() || {};
     return token ? JSON.parse(JSON.stringify(token)) : null;
   },
-  getInfoById: (id = '') => {
-    if (!id) {
+  getInfoById: (id) => {
+    if (!(id && (typeof id === 'string'))) {
       return null;
     }
     const {key = ''} = figma.getStyleById(id) || {};

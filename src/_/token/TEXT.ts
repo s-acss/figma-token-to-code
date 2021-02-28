@@ -1,16 +1,15 @@
 import CONFIG from "../CONFIG";
 import SACSS from "../SACSS";
 
+// @ts-ignore
 const TEXT = {
   unitMap: {
     'PERCENT': '%'
     // "PIXELS":""
   },
-  getFontNameClass: (node: TextNode) => {
-    const {fontName} = node;
-    // @ts-ignore
-    const {style} = fontName;
-    if (typeof style !== 'string') {
+  // @ts-ignore
+  getFontNameClassByStyle: (style) => {
+    if (typeof style !== 'string' || !style) {
       return '';
     }
     const fontMap = {
@@ -28,36 +27,60 @@ const TEXT = {
     const className = style.split(' ').map((item: string) => fontMap[item.toUpperCase()] || '');
     return className.filter(item => item).join(' ');
   },
+  getPropByNode: (node: any, name: string) => {
+    const nameMap = {
+      'textCase': 'getRangeTextCase',
+      'lineHeight': 'getRangeLineHeight',
+      'letterSpacing': 'getRangeLetterSpacing',
+      'fontSize': 'getRangeFontSize',
+      'textDecoration': 'getRangeTextDecoration',
+      'fontName': 'getRangeFontName',
+      'fills': 'getRangeFills',
+      'textStyleId': 'getRangeTextStyleId'
+    }
+    if (typeof node[name] === 'symbol' && nameMap[name] && typeof node[nameMap[name]] === 'function') {
+      return node[nameMap[name]](0, 1);
+    }
+    return node[name];
+  },
   getACSSSInfo: (node: TextNode) => {
     const className = [];
-    if (["string", "number"].indexOf(typeof node.fontSize) > -1) {
-      // @ts-ignore
-      className.push(SACSS.add('fs', node.fontSize));
+
+    // 文字大小
+    const fontSize = TEXT.getPropByNode(node, 'fontSize');
+    if (fontSize > 1) {
+      className.push(SACSS.add('fs', fontSize));
     }
-    // 杭高
+
+    // 行高
+    const lineHeight = TEXT.getPropByNode(node, 'lineHeight');
     // @ts-ignore
-    if (node.lineHeight?.value) {
+    if (lineHeight?.value) {
       // @ts-ignore
-      const {value, unit} = node.lineHeight;
+      const {value, unit} = lineHeight;
       // @ts-ignore
       className.push(SACSS.add('lh', value, TEXT.unitMap[unit]));
     }
 
     // 字间距
+    const letterSpacing = TEXT.getPropByNode(node, 'letterSpacing');
     // @ts-ignore
-    if (node.letterSpacing?.value) {
+    if (letterSpacing?.value) {
       // @ts-ignore
-      const {value, unit} = node.letterSpacing;
+      const {value, unit} = letterSpacing;
       className.push(SACSS.add('ls', value, TEXT.unitMap[unit]));
     }
+
+    const fontName = TEXT.getPropByNode(node, 'fontName');
+
     // font-weight font-style
-    const fnClass = TEXT.getFontNameClass(node);
+    const fnClass = TEXT.getFontNameClassByStyle(fontName.style);
     fnClass && className.push(fnClass);
 
     // @ts-ignore
-    if (node.fontName?.family) {
+    if (fontName?.family) {
       // @ts-ignore
-      className.push(SACSS.addFontFamily(node.fontName.family));
+      className.push(SACSS.addFontFamily(fontName.family));
     }
 
     // text-align
@@ -77,21 +100,24 @@ const TEXT = {
     }[node.textAlignVertical];
     vaClass && className.push(vaClass);
 
+
+    const textCase = TEXT.getPropByNode(node, 'textCase');
     // tt
     const ttClass = {
       "ORIGINAL": '',
       "UPPER": 'ttu',
       "LOWER": 'ttl',
       "TITLE": 'ttc',
-    }[node.textCase];
+    }[textCase];
     ttClass && className.push(ttClass);
 
+    const textDecoration = TEXT.getPropByNode(node, 'textDecoration');
     // td
     const tdClass = {
       "NONE": "",
       "UNDERLINE": 'tdu',
       "STRIKETHROUGH": 'tdl'
-    }[node.textDecoration];
+    }[textDecoration];
     tdClass && className.push(tdClass);
 
     const strClassName = className.join(' ');
@@ -124,8 +150,9 @@ const TEXT = {
     if (node.type !== 'TEXT') {
       return null;
     }
+    const id = TEXT.getPropByNode(node, 'textStyleId');
     // @ts-ignore
-    const getInfo = CONFIG.getInfoById(node.textStyleId) || {};
+    const getInfo = CONFIG.getInfoById(id) || {};
     const acssInfo = TEXT.getACSSSInfo(node);
     const result = {
       className: getInfo.className || acssInfo.className || '',
