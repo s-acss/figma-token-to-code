@@ -113,9 +113,13 @@ const CONFIG = {
     if (!id) {
       return null;
     }
+    const {key = ''} = figma.getStyleById(id) || {};
+    if (!key) {
+      return null;
+    }
     const tokenConfig = CONFIG.getToken() || {};
     // 如果有自定义用自定义的
-    return tokenConfig[id];
+    return tokenConfig[key];
   },
   getSelectionTokens: (selection) => {
     const {name = '', token = {}} = CONFIG.getCurrent() || {};
