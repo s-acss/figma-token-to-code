@@ -20,12 +20,13 @@ const NODE = {
     if (!b) {
       return a;
     }
-    const {className: classNameA = '', ignoreClassName: ignoreClassNameA = '', props: propsA = {}, ...restA} = a;
-    const {className: classNameB = '', ignoreClassName: ignoreClassNameB = '', props: propsB = {}, children, ...restB} = b;
+    const {className: classNameA = '', ignoreClassName: ignoreClassNameA = '', componentProps: componentPropsA = '', props: propsA = {}, htmlProps: htmlPropsA = "", ...restA} = a;
+    const {className: classNameB = '', ignoreClassName: ignoreClassNameB = '', componentProps: componentPropsB = '', props: propsB = {}, htmlProps: htmlPropsB = "", children, ...restB} = b;
     return {
-      props: {...propsA, ...propsB},
-      className: `${classNameA} ${classNameB}`,
-      ignoreClassName: `${ignoreClassNameA} ${ignoreClassNameB}`,
+      className: `${classNameA} ${classNameB}`.trim(),
+      ignoreClassName: `${ignoreClassNameA} ${ignoreClassNameB}`.trim(),
+      htmlProps: `${htmlPropsA} ${htmlPropsB}`.trim(),
+      componentProps: `${componentPropsA} ${componentPropsB}`.trim(),
       ...restA,
       ...restB
     };
@@ -84,9 +85,9 @@ const NODE = {
       className: '',
       children: []
     };
-    if(isStructNode){
+    if (isStructNode) {
       // @ts-ignore
-      nodeInfo.tagName='i';
+      nodeInfo.tagName = 'i';
     }
     const component = COMPONENT.getInfo(node);
     const fill = FILL.getInfo(node);
@@ -107,14 +108,13 @@ const NODE = {
     nodeInfo = NODE.extendInfo(nodeInfo, others);
 
     // @ts-ignore
-    if (isStructNode || String(nodeInfo?.renderWidth) === '1') {
+    if ((isStructNode && String(nodeInfo?.renderHeight) !== '0') || String(nodeInfo?.renderWidth) === '1') {
       nodeInfo.className += ' ' + SACSS.add('w', parseInt(String(node.width)));
     }
     // @ts-ignore
-    if (isStructNode || String(nodeInfo?.renderHeight) === '1') {
+    if ((isStructNode && String(nodeInfo?.renderHeight) !== '0') || String(nodeInfo?.renderHeight) === '1') {
       nodeInfo.className += ' ' + SACSS.add('h', parseInt(String(node.height)));
     }
-
     nodeInfo.children = (() => {
       if (node.type === 'TEXT') {
         return TEXT.getTextChildren(node);
@@ -126,7 +126,7 @@ const NODE = {
       // 渲染子节点
       if (String(renderChildren) === '2') {
         // @ts-ignore
-        return node.findAll(c => c.type === 'TEXT').map((c) => c.characters);
+        return node.findAll(c => c.type === 'TEXT' && c.visible).map((c) => c.characters);
       }
       // @ts-ignore
       return NODE.getNodesInfo(node.children);
@@ -148,7 +148,7 @@ const NODE = {
       }
     }
     // console.log(node);
-    // console.log(nodeInfo);
+    console.log(nodeInfo);
     return nodeInfo;
   },
   sort: (nodes = []) => {

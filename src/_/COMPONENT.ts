@@ -1,23 +1,19 @@
 import CONFIG from "./CONFIG";
 
 const COMPONENT = {
-  isVariant: (node: InstanceNode | ComponentNode) => {
-    // @ts-ignore
-    return node.mainComponent?.parent?.type === 'COMPONENT_SET';
-  },
   isComponent: (node: SceneNode) => {
+    // 'COMPONENT_SET' 目前不能作为组件的判断标准
     return node.type === 'INSTANCE' || node.type === 'COMPONENT';
   },
-  getMainComponent: (node: InstanceNode | ComponentNode) => {
-    if (node.type === 'COMPONENT') {
+  getMainComponent: (node: InstanceNode | ComponentNode | ComponentSetNode) => {
+    if (node.type === 'COMPONENT_SET' || node.type === 'COMPONENT') {
       return node;
     }
-    // @ts-ignore
-    const isVariant = COMPONENT.isVariant(node);
     // console.log(node, {isVariant});
-    return isVariant ? node.mainComponent.parent : node.mainComponent;
+    return node.mainComponent;
   },
   getComponentId: (node) => {
+    // console.log(node);
     // @ts-ignore
     const {key = ''} = COMPONENT.getMainComponent(node) || {};
     return key;
@@ -33,13 +29,6 @@ const COMPONENT = {
       return firstChar;
     }
     return firstChar + strName.slice(1);
-  },
-  getComponentName: (node: InstanceNode | ComponentNode) => {
-    const {name = ''} = COMPONENT.getMainComponent(node);
-    if (!name) {
-      return '';
-    }
-    return COMPONENT.stringToComponentName(name);
   },
   getComponentPropsByString: (strProp) => {
     const props = {};
@@ -58,28 +47,15 @@ const COMPONENT = {
     }
     return props;
   },
-  getComponentProps: (node: InstanceNode) => {
-    // console.log('getComponentProps', node);
-    const isVariant = COMPONENT.isVariant(node);
-    // 没有变体表示没有 props
-    if (!isVariant) {
-      return {};
-    }
-    const {name} = node.mainComponent;
-    return COMPONENT.getComponentPropsByString(name);
-  },
   getInfo: (node: SceneNode) => {
     // @ts-ignore
     const id = COMPONENT.getComponentId(node);
-    const matchToken = CONFIG.getInfoById(id);
-    // console.log(id, matchToken, node);
+    const matchToken = id ? CONFIG.getToken()[id] : '';
+    // console.log({matchToken});
     if (!matchToken) {
       return null;
     }
-
     matchToken.props = {
-      // @ts-ignore
-      ...COMPONENT.getComponentProps(node),
       ...COMPONENT.getComponentPropsByString(matchToken.props || '')
     };
 
@@ -89,13 +65,13 @@ const COMPONENT = {
     }
     // 用户没有指定表示要渲染
     if (!('renderWidth' in matchToken)) {
-      matchToken.renderWidth = '0';
+      matchToken.renderWidth = '1';
     }
     // 用户没有指定表示要渲染
     if (!('renderHeight' in matchToken)) {
-      matchToken.renderHeight = '0';
+      matchToken.renderHeight = '1';
     }
-    // console.log(matchToken);
+    // console.log({matchToken});
     return matchToken;
   }
 };

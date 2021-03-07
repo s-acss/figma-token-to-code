@@ -5,18 +5,16 @@ import Button from "../../component/Button";
 import Input from "../../component/Input";
 import InputRow from "../../component/InputRow";
 import "./index.less";
+import Textarea from "../../component/Textarea";
 
 const TokenItem = ({data = {}, id}) => {
 
   // 渲染组件
-  if (['COMPONENT','COMPONENT_SET'].indexOf(data.type) > -1) {
+  if (['COMPONENT', 'COMPONENT_SET'].indexOf(data.type) > -1) {
     return (
       <>
         <InputRow label="componentName" className="mt8">
           <Input name={`${id}|componentName`} defaultValue={data.componentName || ''}/>
-        </InputRow>
-        <InputRow label="props" className="mt8 g_tip" data-title="exp: type=button,name=hello,key=1">
-          <Input name={`${id}|props`} defaultValue={data.props || ''}/>
         </InputRow>
         <InputRow label="tagName" className="mt8">
           <Input name={`${id}|tagName`} defaultValue={data.tagName || ''}/>
@@ -27,6 +25,16 @@ const TokenItem = ({data = {}, id}) => {
         <InputRow label="ignoreClassName" className="mt8 g_tip" data-title="Split with Blank">
           <Input name={`${id}|ignoreClassName`} defaultValue={data.ignoreClassName || ''}/>
         </InputRow>
+        <label className="db mt8 g_tip"
+               data-title="Only render on JSX, Exp: type=&#x22;button&#x22; size=&#x22;large&#x22;">
+          <strong className="fs14 fw400 c:s db mb4">componentProps:</strong>
+          <Textarea name={`${id}|componentProps`} defaultValue={data.componentProps || ''}/>
+        </label>
+        <label className="db mt8 g_tip"
+               data-title="Only render on Html, Exp: type=&#x22;button&#x22; size=&#x22;large&#x22;">
+          <strong className="fs14 fw400 c:s db mb4">htmlProps:</strong>
+          <Textarea name={`${id}|htmlProps`} defaultValue={data.htmlProps || ''}/>
+        </label>
         <label label="renderChildren" className="df aic jcsb mt8">
           <strong className="fs14 f1 ell mr8 ttc">renderChildren</strong>
           <select name={`${id}|renderChildren`} defaultValue={String(data.renderChildren || 0)}>
@@ -59,10 +67,10 @@ const TokenItem = ({data = {}, id}) => {
         <InputRow key="textClassName" label="textClassName" className="mt8 g_tip" data-title="Only work on text node">
           <Input name={`${id}|textClassName`} defaultValue={data.textClassName || ''}/>
         </InputRow>
-        <InputRow label="className" className="mt8 g_tip" data-title="Text node will ignore this">
+        <InputRow label="className" className="mt8 g_tip" data-title="Text node will ignore this, split with blank">
           <Input name={`${id}|className`} defaultValue={data.className || ''}/>
         </InputRow>
-        <InputRow label="ignoreClassName" className="mt8 g_tip" data-title="Split with Blank">
+        <InputRow label="ignoreClassName" className="mt8 g_tip" data-title="Split with blank">
           <Input name={`${id}|ignoreClassName`} defaultValue={data.ignoreClassName || ''}/>
         </InputRow>
       </>
@@ -71,10 +79,10 @@ const TokenItem = ({data = {}, id}) => {
   if (data.type === 'TEXT') {
     return (
       <>
-        <InputRow label="className" className="mt8 g_tip" data-title="Text node will ignore this">
+        <InputRow label="className" className="mt8 g_tip" data-title="Text node will ignore this, split with blank">
           <Input name={`${id}|className`} defaultValue={data.className || ''}/>
         </InputRow>
-        <InputRow label="ignoreClassName" className="mt8 g_tip" data-title="Split with Blank">
+        <InputRow label="ignoreClassName" className="mt8 g_tip" data-title="Split with blank">
           <Input name={`${id}|ignoreClassName`} defaultValue={data.ignoreClassName || ''}/>
         </InputRow>
         <InputRow label="tagName" className="mt8">
@@ -95,6 +103,12 @@ const TokenItem = ({data = {}, id}) => {
   );
 };
 
+/**
+ * 获取 value 值处理器
+ * @param name
+ * @param value
+ * @returns {(function(*): *)|(function(*): (string|*))|(function(*=): boolean)|(function(*=): string | string)}
+ */
 const getValueParser = (name, value) => {
   const actions = {
     boolean: (value = '') => {
@@ -103,6 +117,40 @@ const getValueParser = (name, value) => {
       }
       return false;
     },
+    attr: (value) => {
+      const trimValue = value.trim();
+      // if (!trimValue) {
+      //   return '';
+      // }
+      // const attrs = [];
+      // // 遍历 key 值
+      // let isKey = true;
+      // let isValue = false;
+      // let keyTemp = '';
+      // let valueTemp = '';
+      // for (let i = 0, len = value.length; i < len; i++) {
+      //   const chartI = value.chartAt(i);
+      //   if (chartI === '=') {
+      //     isKey=false;
+      //     continue;
+      //   }
+      //   if (chartI === '"') {
+      //
+      //     continue;
+      //   }
+      //
+      //   if (chartI === ' ') {
+      //     continue;
+      //   }
+      //
+      //   if (isKey) {
+      //     keyTemp += chartI;
+      //   } else if (isValue) {
+      //     valueTemp += chartI;
+      //   }
+      // }
+      return trimValue;
+    },
     capitalize: (value) => {
       return COMPONENT.stringToComponentName(value);
     },
@@ -110,6 +158,9 @@ const getValueParser = (name, value) => {
       return value.trim();
     }
   };
+  if (['componentProps', 'htmlProps'].indexOf(name) > -1) {
+    return actions.attr;
+  }
   if (['componentName'].indexOf(name) > -1) {
     // 首字母大写
     return actions.capitalize;

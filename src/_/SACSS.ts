@@ -63,7 +63,7 @@ const SACSS = {
       return '';
     }
     const valueOk = value.replace(/[\W]/g, '').toLowerCase();
-    const className = `ff:${valueOk}`;
+    const className = `ff_${valueOk}`;
     SACSS.data[className] = `font-family:"${value}"`;
     return className;
   },
@@ -71,7 +71,7 @@ const SACSS = {
     if (!rgba && rgba.length) {
       return '';
     }
-    const className = `c:${rgba.join('')}`;
+    const className = `c_${rgba.join('')}`;
     SACSS.data[className] = `color:rgba(${rgba.join(',')})`;
     return className;
   },
@@ -79,7 +79,7 @@ const SACSS = {
     if (!rgba && rgba.length) {
       return '';
     }
-    const className = `bc:${rgba.join('')}`;
+    const className = `bc_${rgba.join('')}`;
     SACSS.data[className] = `background-color:rgba(${rgba.join(',')})`;
     return className;
   }

@@ -5,7 +5,7 @@ import SACSS from "../SACSS";
 const FILL = {
   getFill: (node: SceneNode) => {
     // @ts-ignore
-    const [firstFill = null] = node.getRangeFills(0, 1) || [];
+    const [firstFill] = (typeof node.getRangeFills === 'function' ? node.getRangeFills(0, 1) : node.fills) || [];
     // 没有设置任何颜色, 目前不支持渐变
     // @ts-ignore
     if (!firstFill || firstFill.type !== 'SOLID') {
@@ -25,7 +25,7 @@ const FILL = {
   getInfo: (node: SceneNode) => {
     // console.log(node);
     // @ts-ignore
-    const id = typeof node.fillStyleId === 'string' ? node.fillStyleId : node.getRangeFillStyleId(0, 1);
+    const id = typeof node.getRangeFillStyleId === 'function' ? node.getRangeFillStyleId(0, 1) : node.fillStyleId;
     //@ts-ignore
     const {textClassName = '', className = '', ...rest} = CONFIG.getInfoById(id) || {};
     const renderClassName = node.type === 'TEXT' ? textClassName : className;

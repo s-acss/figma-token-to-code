@@ -132,7 +132,7 @@ const CONFIG = {
       return;
     }
     const matchToken = {};
-    // 如果是组件则不需要显示任何其它的属性
+    // 如果是组件
     if (COMPONENT.isComponent(selection)) {
       //@ts-ignore
       const {key, name, type} = COMPONENT.getMainComponent(selection);

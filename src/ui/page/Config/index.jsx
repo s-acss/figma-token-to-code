@@ -26,7 +26,7 @@ const saveJSON = (data, fileName = 'SACSS-project') => {
 };
 
 const ProjectItem = React.forwardRef(({data = {}, index, checked, projects = [], className = ''}, ref) => {
-  const {name = '', ignoreClassName = '', replaceClassName = '', token} = data;
+  const {name = '', ignoreClassName = '', token} = data;
   const tokenLen = Object.keys(token).length;
 
   // 下载 JSON
@@ -109,7 +109,7 @@ const ProjectItem = React.forwardRef(({data = {}, index, checked, projects = [],
       <InputRow className="mb8" label="Project Name">
         <Input placeholder="Project Name" className="f1 mr8" name="name" defaultValue={name}/>
       </InputRow>
-      <InputRow className="mb8 g_tip" data-title="it's for each token" label="ignoreClassName">
+      <InputRow className="mb8 g_tip" data-title="it's for each token, split with blank" label="ignoreClassName">
         <Input
           name="ignoreClassName"
           placeholder={`Enter`}
@@ -127,26 +127,20 @@ const ProjectItem = React.forwardRef(({data = {}, index, checked, projects = [],
       {/*    defaultValue={replaceClassName}*/}
       {/*  />*/}
       {/*</InputRow>*/}
-      <div className="df mb16">
+      <Button type="submit" className="mb16" block>Save</Button>
+      <div className="g_hr mb16"></div>
+      <div className="df">
         {(name === 'default') ? (
-          <div className="g_tip f1" data-title="Default Can't Delete">
+          <div className="g_tip f1 mr8" data-title="Default Can't Delete">
             <Button disabled block title="Delete">
               Delete
             </Button>
           </div>
         ) : (
-          <div className="f1">
-            <Button block title="Delete" onClick={onDel}>
-              Delete
-            </Button>
-          </div>
+          <Button className="f1 mr8 g_tip" block title="Delete" data-title="Confirm it" onClick={onDel}>
+            Delete
+          </Button>
         )}
-        <div className="f1 ml8">
-          <Button type="submit" block>Save</Button>
-        </div>
-      </div>
-      <div className="g_hr mb16"></div>
-      <div className="df">
         <label className="btn  _block pr oh g_tip mr8 f1" data-title="Replace By Upload JSON">
           Replace
           <input className="o0 pa w100% h100%" type="file" onChange={onReplace}/>
@@ -230,7 +224,7 @@ const Config = () => {
       </div>
       <div className="f1 oa">
         {currentProject ?
-          <ProjectItem ref={form} index={currentIndex} checked data={currentProject} projects={currentProject}/> : null}
+          <ProjectItem ref={form} index={currentIndex} checked data={currentProject} projects={projects}/> : null}
       </div>
       <form onSubmit={onAdd} action="" className="g_row pt12 pb12 bc:fff g_hr_t">
         <div className="df aic mb8">
