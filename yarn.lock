@@ -3897,10 +3897,10 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
-sacss@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/sacss/-/sacss-0.0.6.tgz#18d3251f6169edd6bdc24b23100880283af555f1"
-  integrity sha512-qeHCisBRNQjYl2ORqcgqtCYtT+dCCb3wTmySrrC3JdywT2/IJ3bIYv2dt01lVmfhPUGip82Z6QMVy8PNs0HE+g==
+sacss@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.npmjs.org/sacss/-/sacss-1.0.4.tgz#467511ee5098d817592d50cca4121405d40f412f"
+  integrity sha512-r5QGT42D6wlhj5N6hoef/MNbLdud15PuAYvneH8pMHz/Gvi+xrD6hzCrH8jipcKoD9kH/vzJFXIhOo8tOZdtRw==
 
 safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@^5.2.0, safe-buffer@~5.2.0:
   version "5.2.1"

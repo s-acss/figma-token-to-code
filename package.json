@@ -1,9 +1,9 @@
 {
-  "name": "ACSS",
-  "version": "1.0.0",
+  "name": "figma-token-to-code",
+  "version": "1.2.7",
   "description": "Generate the text element to Html with css.",
   "main": "code.js",
-  "repository": "https://github.com/ziven27/Figma-ACSS.git",
+  "repository": "https://github.com/s-acss/figma-token-to-code.git",
   "author": "ziven27",
   "license": "MIT",
   "scripts": {
@@ -30,7 +30,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-highlight": "^0.13.0",
-    "sacss": "^0.0.6",
+    "sacss": "^1.0.4",
     "save-as-file": "^0.3.0",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.0.17",

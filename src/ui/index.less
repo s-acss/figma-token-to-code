@@ -1,8 +1,19 @@
 @import '~sacss';
-@import '~sacss/mixin.less';
+@import '~sacss/less/SACSS.less';
+@import '~sacss/less/Helpers.less';
 
-#Margins(-1, 4, 8, 12, 16; 1/16rem);
-#Paddings(4, 8, 12, 16; 1/16rem);
+
+#SACSS(margin-top; mt; -1, 4, 8, 12, 16; 1/16rem);
+#SACSS(margin-bottom; mb; -1, 4, 8, 12, 16; 1/16rem);
+#SACSS(margin-right; mr; -1, 4, 8, 12, 16; 1/16rem);
+#SACSS(margin-left; ml; -1, 4, 8, 12, 16; 1/16rem);
+
+#SACSS(padding-top; pt; 4, 8, 12, 16; 1/16rem);
+#SACSS(padding-right; pt; 4, 8, 12, 16; 1/16rem);
+#SACSS(padding-bottom; pb; 4, 8, 12, 16; 1/16rem);
+#SACSS(padding-left; pl; 4, 8, 12, 16; 1/16rem);
+
+#SACSS(font-weight; fw; 600);
 #SACSS(font-weight; fw; 600);
 #SACSS(font-size; fs; 12, 14, 16, 20; 1/16rem);
 #SACSS(line-height; lh; 16, 20; 1/16rem);

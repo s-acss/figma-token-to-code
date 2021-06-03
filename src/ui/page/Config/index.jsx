@@ -26,7 +26,7 @@ const saveJSON = (data, fileName = 'SACSS-project') => {
 };
 
 const ProjectItem = React.forwardRef(({data = {}, index, checked, projects = [], className = ''}, ref) => {
-  const {name = '', ignoreClassName = '', token} = data;
+  const {name = '', ignoreClassName = '', token={}} = data;
   const tokenLen = Object.keys(token).length;
 
   // 下载 JSON
@@ -204,7 +204,7 @@ const Config = () => {
     const form = e.target;
     const newName = form.name.value.trim();
     const result = addNew({name: newName});
-    (result !== false) && form.current.reset();
+    (result !== false) && form.reset();
   };
 
   const onChangeCurrent = (e) => {
