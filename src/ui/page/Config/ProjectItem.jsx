@@ -3,6 +3,7 @@ import saveJSON from "../../utils/saveJSON";
 import InputRow from "../../component/InputRow";
 import Input from "../../component/Input";
 import Button from "../../component/Button";
+import _postConfig from "./_postConfig.js";
 
 const ProjectItem = forwardRef(({data = {}, index, checked, projects = [], className = ''}, ref) => {
     const {name = '', ignoreClassName = '', token = {}} = data;

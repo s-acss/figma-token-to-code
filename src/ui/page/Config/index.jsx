@@ -3,15 +3,7 @@ import Button from "../../component/Button";
 import Input from "../../component/Input";
 import "./index.less";
 import ProjectItem from "./ProjectItem";
-
-const _postConfig = ({action, value}) => {
-    parent.postMessage({
-        pluginMessage: {
-            type: `CONFIG.${action}`,
-            value
-        }
-    }, '*');
-};
+import _postConfig from "./_postConfig.js";
 
 
 
