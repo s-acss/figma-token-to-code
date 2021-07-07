@@ -61,17 +61,17 @@ const API = {
         const Info = NODE.getNodesInfo(selection);
         // console.log(Info);
         const isJSX = CONFIG.isJSX();
-        setTimeout(()=>{
+        setTimeout(() => {
             figma.ui.postMessage({
                 getHTML: DOM.render(Info, isJSX),
                 getCSS: SACSS.getString(),
                 isJSX,
                 noSelection: false
             });
-        },16);
+        }, 16);
     },
     runConfig: () => {
-        setTimeout(()=>{
+        setTimeout(() => {
             figma.ui.postMessage({
                 getConfig: CONFIG.getAll()
             });
@@ -79,7 +79,7 @@ const API = {
     },
     runToken: () => {
         const [selection] = API.getSelection() || [];
-        setTimeout(()=>{
+        setTimeout(() => {
             figma.ui.postMessage(CONFIG.getSelectionTokens(selection));
         }, 16);
     },
@@ -93,15 +93,19 @@ const API = {
         // console.log('API onmessage', name, action, value);
         if (name === 'API' && (action in API)) {
             API[action](value);
-        } else if (name === 'CONFIG' && (action in CONFIG)) {
+            return;
+        }
+        if (name === 'CONFIG' && (action in CONFIG)) {
             CONFIG[action](value);
             if (action === 'changeJSX') {
                 API.runHome();
-            } else if (action === 'appendToken') {
-                API.runToken();
-            } else {
-                API.runConfig();
+                return;
             }
+            if (action === 'appendToken') {
+                API.runToken();
+                return;
+            }
+            API.runConfig();
         }
     }
 }

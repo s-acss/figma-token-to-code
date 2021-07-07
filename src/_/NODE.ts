@@ -132,7 +132,14 @@ const NODE = {
         }
         nodeInfo.children = (() => {
             if (node.type === 'TEXT') {
-                return TEXT.getTextChildren(node);
+                const texts=TEXT.getTextChildren(node);
+                // 多段文本这里要修复一下嵌套的标签，有可能变成 strong > p 这样的结构
+                // @ts-ignore
+                if(texts[0]?.tagName ==='p'){
+                    // @ts-ignore
+                    nodeInfo.tagName = "div";
+                }
+                return texts;
             }
             const {renderChildren = 1} = component || {};
             if (isStructNode || String(renderChildren) === '0') {
@@ -180,7 +187,7 @@ const NODE = {
         let info = [];
         // 需要排序一下
         const sortNodes = NODE.sort(nodes);
-        console.log(nodes, sortNodes);
+        // console.log(nodes, sortNodes);
         for (let i = 0, len = sortNodes.length; i < len; i++) {
             const nodeInfo = NODE.getNodeInfo(sortNodes[i]);
             if (!nodeInfo) {
