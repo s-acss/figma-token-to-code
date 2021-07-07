@@ -54,14 +54,21 @@ const FLEX = {
         }
         // @ts-ignore
         const {layoutMode, primaryAxisAlignItems, itemSpacing} = parent;
-        // 两端对其表示不需要这些
+        // 两端两端对齐表示不需要这些
         if (primaryAxisAlignItems === "SPACE_BETWEEN") {
             return null;
         }
+
         const className = [];
         const ignoreClassName = [];
         const {id = ''} = parent.children.filter(c => c.visible).pop() || {};
         const isLastChildren = id === node.id;
+
+        // 父元素是纵向的flex 布局，因为忽略掉了 df
+        // 这里让自己有 db 实现纵向布局
+        if(layoutMode=== 'VERTICAL'){
+            className.push('db');
+        }
         // 为子元素添加间距
         if (itemSpacing > 0 && !isLastChildren) {
             const gutterMap = {

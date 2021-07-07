@@ -168,16 +168,19 @@ const NODE = {
     },
     sort: (nodes = []) => {
         return [...nodes].sort((a, b) => {
+            const aY= a.y + a.height;
+            const bY= b.y + b.height;
             if (a.y === b.y) {
                 return a.x - b.x;
             }
-            return a.y - b.y;
+            return aY - bY;
         });
     },
     getNodesInfo: (nodes = []) => {
         let info = [];
         // 需要排序一下
         const sortNodes = NODE.sort(nodes);
+        console.log(nodes, sortNodes);
         for (let i = 0, len = sortNodes.length; i < len; i++) {
             const nodeInfo = NODE.getNodeInfo(sortNodes[i]);
             if (!nodeInfo) {

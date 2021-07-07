@@ -5,8 +5,6 @@ import "./index.less";
 import ProjectItem from "./ProjectItem";
 import _postConfig from "./_postConfig.js";
 
-
-
 const Config = () => {
     const [config, setConfig] = useState({});
     const {projects = [], currentIndex} = config;
