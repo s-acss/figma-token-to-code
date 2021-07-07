@@ -3718,10 +3718,10 @@ randomfill@^1.0.3:
     randombytes "^2.0.5"
     safe-buffer "^5.1.0"
 
-react-highlight@^0.13.0:
-  version "0.13.0"
-  resolved "http://npm.devops.xiaohongshu.com:7001/react-highlight/download/react-highlight-0.13.0.tgz#3331d47fe45a3db0cdcca2e5b479ed81b117ac20"
-  integrity sha1-MzHUf+RaPbDNzKLltHntgbEXrCA=
+react-highlight@^0.14.0:
+  version "0.14.0"
+  resolved "http://npm.devops.xiaohongshu.com:7001/react-highlight/download/react-highlight-0.14.0.tgz#5aefa5518baa580f96b68d48129d7a5d2dc0c9ef"
+  integrity sha1-Wu+lUYuqWA+Wto1IEp16XS3Aye8=
   dependencies:
     highlight.js "^10.5.0"
 

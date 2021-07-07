@@ -125,14 +125,11 @@ const CONFIG = {
         const {name = '', token = {}} = CONFIG.getCurrent() || {};
         // console.log('runToken getSelectionTokens');
         if (!selection) {
-            setTimeout(()=>{
-                figma.ui.postMessage({
-                    getSelectionInfo: {
-                        name
-                    }
-                });
-            }, 16)
-            return;
+            return {
+                getSelectionInfo: {
+                    name
+                }
+            };
         }
         const matchToken = {};
         // 如果是组件
@@ -161,14 +158,12 @@ const CONFIG = {
                 type
             }
         });
-        setTimeout(()=> {
-            figma.ui.postMessage({
-                getSelectionInfo: {
-                    name,
-                    token: matchToken
-                }
-            });
-        },10);
+        return {
+            getSelectionInfo: {
+                name,
+                token: matchToken
+            }
+        };
     },
     /**
      * 获取所有的 Token 包括 Component

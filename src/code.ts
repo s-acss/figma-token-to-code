@@ -4,7 +4,13 @@ import SACSS from "./_/SACSS";
 import DOM from "./_/render/DOM";
 
 const API = {
+    /**
+     * 默认显示 home
+     */
     tabIndex: 0,
+    /**
+     * 获取用户选中的图层
+     */
     getSelection: () => {
         const selection = figma.currentPage.selection;
         // console.log(selection);
@@ -15,6 +21,10 @@ const API = {
         }
         return selection;
     },
+    /**
+     * 当 Tab 切换的时候会出发这个方法
+     * @param index
+     */
     onTabChange: (index) => {
         const beforeIndex = API.tabIndex;
         API.tabIndex = index;
@@ -24,11 +34,13 @@ const API = {
         }
         const actionMap = ['runHome', 'runHome', 'runToken', 'runConfig'];
         const action = actionMap[index];
-
-        // console.log('onTabChange');
+        // console.log('onTabChange', action);
         action && API[action]();
     },
-    onSelectionChange: () => {
+    /**
+     * 触发
+     */
+    run: () => {
         const actionMap = ['runHome', 'runHome', 'runToken', ''];
         const action = actionMap[API.tabIndex];
         if (!action) {
@@ -36,6 +48,9 @@ const API = {
         }
         API[action]();
     },
+    /**
+     * 显示第一屏
+     */
     runHome: () => {
         const selection = API.getSelection();
         if (!selection) {
@@ -46,12 +61,14 @@ const API = {
         const Info = NODE.getNodesInfo(selection);
         // console.log(Info);
         const isJSX = CONFIG.isJSX();
-        figma.ui.postMessage({
-            getHTML: DOM.render(Info, isJSX),
-            getCSS: SACSS.getString(),
-            isJSX,
-            noSelection: false
-        });
+        setTimeout(()=>{
+            figma.ui.postMessage({
+                getHTML: DOM.render(Info, isJSX),
+                getCSS: SACSS.getString(),
+                isJSX,
+                noSelection: false
+            });
+        },16);
     },
     runConfig: () => {
         setTimeout(()=>{
@@ -62,7 +79,9 @@ const API = {
     },
     runToken: () => {
         const [selection] = API.getSelection() || [];
-        CONFIG.getSelectionTokens(selection);
+        setTimeout(()=>{
+            figma.ui.postMessage(CONFIG.getSelectionTokens(selection));
+        }, 16);
     },
     onmessage: (msg = {}) => {
         // @ts-ignore
@@ -96,9 +115,9 @@ const API = {
 CONFIG.init().then(() => {
     // This shows the HTML page in "ui.html".
     figma.showUI(__html__, {width: 400, height: 600});
-    API.runHome();
+    API.run();
     figma.on("selectionchange", () => {
-        API.onSelectionChange();
+        API.run();
     });
     // @ts-ignore
     figma.ui.onmessage = API.onmessage;

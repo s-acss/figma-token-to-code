@@ -1,5 +1,5 @@
 import Highlight from "./Highlight";
-import 'highlight.js/styles/atom-one-dark.css';
+
 import Button from "../../component/Button";
 
 import {useState} from 'preact/hooks';
@@ -33,7 +33,7 @@ const RenderCSS = ({noSelection = true, code}) => {
         <>
             {noSelection ? <NoSelection/> : (
                 <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
-                    <Highlight languages={["css"]} className="css">
+                    <Highlight language="css" className="css">
                         {`${CODE_PRE}${code || ''}`}
                     </Highlight>
                 </div>

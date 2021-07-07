@@ -1,5 +1,4 @@
 import Highlight from "./Highlight";
-import 'highlight.js/styles/atom-one-dark.css';
 import format from "xml-formatter";
 import Button from "../../component/Button";
 import clipboardCopy from "clipboard-copy";
@@ -42,8 +41,8 @@ const RenderHtml = ({code = '', noSelection = true, isJSX}) => {
         <>
             {noSelection ? <NoSelection/> : (
                 <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
-                    <Highlight languages={["xml"]} className="xml">
-                        {code ? `${format(`<root>${code}</root>`)}` : ''}
+                    <Highlight language="xml">
+                        {code ? `${format(`<div>${code}</div>`)}` : ''}
                     </Highlight>
                 </div>
             )}
