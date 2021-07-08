@@ -13,7 +13,7 @@ const CONFIG_DEFAULT = {
 };
 
 const CONFIG = {
-    key: 'SACSS',
+    key: 'TokenToCode',
     store: CONFIG_DEFAULT,
     changeCurrent: (index) => {
         const store = CONFIG.getAll();

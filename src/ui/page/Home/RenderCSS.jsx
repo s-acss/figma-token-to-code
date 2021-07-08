@@ -38,15 +38,13 @@ const RenderCSS = ({noSelection = true, code}) => {
                     </Highlight>
                 </div>
             )}
-            <div className="g_row df aic pt12 pb12 bc:fff">
+            <div className="g_row df aic jcsb pt8 pb8 bc:fff">
                 <a className="mr8" href="https://www.npmjs.com/package/sacss" target="_blank">
                     <img src="https://img.shields.io/npm/v/sacss.svg" width="80" height="20" alt="sacss"/>
                 </a>
                 <Button
-                    className="f1"
                     disabled={noSelection || copyText !== DEFAULT_COPY}
-                    onClick={onCopy}
-                    block>{copyText}</Button>
+                    onClick={onCopy}>{copyText}</Button>
             </div>
         </>
     )

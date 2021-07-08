@@ -1,14 +1,14 @@
 import UTILS from "../UTILS";
 
 const JSX = {
-    getPropsString: ({className = '', props = ''} = {}) => {
+    getPropsString: ({className = '', props = {}} = {}) => {
         const arrProps = [];
         const classNames = className ? className.split(' ') : [];
         if (classNames.length) {
             arrProps.push(`className="${classNames.join(' ')}"`)
         }
-        if (props) {
-            arrProps.push(props.trim());
+        for (const [key, value] of Object.entries(props)) {
+            arrProps.push(`${key}="${value}"`);
         }
         return arrProps.join(' ');
     },
@@ -20,7 +20,8 @@ const JSX = {
         if (typeof item === 'string') {
             return item;
         }
-        const {children = [], componentProps = '', className = ''} = item;
+        // console.log({item});
+        const {children = [], componentProps = {}, className = ''} = item;
         const tagName = item.componentName || item.tagName || 'div';
         const strProps = JSX.getPropsString({
             props: componentProps,

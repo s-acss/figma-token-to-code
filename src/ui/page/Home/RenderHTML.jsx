@@ -46,13 +46,11 @@ const RenderHtml = ({code = '', noSelection = true, isJSX}) => {
                     </Highlight>
                 </div>
             )}
-            <div className="g_row df aic pt12 pb12 bc:fff">
+            <div className="g_row df aic jcsb pt8 pb8 bc:fff">
                 <InputJSX disabled={noSelection} isJSX={isJSX}/>
                 <Button
-                    className="f1"
                     disabled={noSelection || copyText !== DEFAULT_COPY}
-                    onClick={onCopy}
-                    block>{copyText}</Button>
+                    onClick={onCopy}>{copyText}</Button>
             </div>
         </>
     );

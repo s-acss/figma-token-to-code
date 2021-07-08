@@ -23,25 +23,25 @@ const NODE = {
         const {
             className: classNameA = '',
             ignoreClassName: ignoreClassNameA = '',
-            componentProps: componentPropsA = '',
+            componentProps: componentPropsA = {},
             props: propsA = {},
-            htmlProps: htmlPropsA = "",
+            htmlProps: htmlPropsA = {},
             ...restA
         } = a;
         const {
             className: classNameB = '',
             ignoreClassName: ignoreClassNameB = '',
-            componentProps: componentPropsB = '',
+            componentProps: componentPropsB = {},
             props: propsB = {},
-            htmlProps: htmlPropsB = "",
+            htmlProps: htmlPropsB = {},
             children,
             ...restB
         } = b;
         return {
             className: `${classNameA} ${classNameB}`.trim(),
             ignoreClassName: `${ignoreClassNameA} ${ignoreClassNameB}`.trim(),
-            htmlProps: `${htmlPropsA} ${htmlPropsB}`.trim(),
-            componentProps: `${componentPropsA} ${componentPropsB}`.trim(),
+            htmlProps: {...htmlPropsA, ...htmlPropsB},
+            componentProps: {...componentPropsA, ...componentPropsB},
             ...restA,
             ...restB
         };

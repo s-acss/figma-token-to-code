@@ -30,23 +30,6 @@ const COMPONENT = {
         }
         return firstChar + strName.slice(1);
     },
-    getComponentPropsByString: (strProp) => {
-        const props = {};
-        if (strProp && typeof strProp === 'string') {
-            // 去掉单双引号
-            const legalProps = strProp.replace(/\"/g, '').replace(/\'/g, '');
-            legalProps.split(",").forEach((item) => {
-                const [key, value] = item.split("=");
-                const trimValue = String(value).trim();
-                // false 表示没有这个值 不做处理
-                if (trimValue === "false") {
-                    return;
-                }
-                props[String(key).trim()] = value ? trimValue : 'true';
-            });
-        }
-        return props;
-    },
     getInfo: (node: SceneNode) => {
         // @ts-ignore
         const id = COMPONENT.getComponentId(node);
@@ -55,10 +38,6 @@ const COMPONENT = {
         if (!matchToken) {
             return null;
         }
-        matchToken.props = {
-            ...COMPONENT.getComponentPropsByString(matchToken.props || '')
-        };
-
         // 用户没有指定表示要渲染
         if (!('renderChildren' in matchToken)) {
             matchToken.renderChildren = '1';

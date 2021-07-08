@@ -3,14 +3,14 @@ import UTILS from "../UTILS";
 // legal 合法属性
 // const legalProp = ['class', 'type', 'name', 'role', 'disabled', 'id', 'title', 'lang', 'dir', 'tabindex', 'accesskey', 'src', 'href', 'style', 'aria-hidden', 'target', 'rel'];
 const HTML = {
-    getPropsString: ({className = '', props = ''} = {}) => {
+    getPropsString: ({className = '', props = {}} = {}) => {
         const arrProps = [];
         const classNames = className ? className.split(' ') : [];
         if (classNames.length) {
             arrProps.push(`class="${classNames.join(' ')}"`)
         }
-        if (props) {
-            arrProps.push(props.trim());
+        for (const [key, value] of Object.entries(props)) {
+            arrProps.push(`${key}="${value}"`);
         }
         return arrProps.join(' ');
     },
@@ -22,7 +22,7 @@ const HTML = {
         if (typeof item === 'string') {
             return item;
         }
-        const {children = [], htmlProps = '', className = ''} = item;
+        const {children = [], htmlProps = {}, className = ''} = item;
         const tagName = item.tagName || 'div';
         const propsString = HTML.getPropsString({
             props: htmlProps,
