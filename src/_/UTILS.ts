@@ -11,18 +11,17 @@ const UTILS = {
      * 去重和去空
      * @param arrStr
      */
-    clearClassName: (className = '', ignoreClassName = '') => {
-        if (!className) {
-            return '';
+    clearClassName: (className = [], ignoreClassName = []) => {
+        if (!className || className.length === 0) {
+            return [];
         }
-        const classNames = className.split(' ');
         const result = [];
-        classNames.forEach((item = '') => {
+        className.forEach((item = '') => {
             if (item && item !== 'null' && result.indexOf(item) === -1 && ignoreClassName.indexOf(item) === -1) {
                 result.push(item);
             }
         });
-        return result.join(' ');
+        return result;
     }
 };
 export default UTILS;

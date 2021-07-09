@@ -2,12 +2,9 @@ import Highlight from "./Highlight";
 import format from "xml-formatter";
 import Button from "../../component/Button";
 import clipboardCopy from "clipboard-copy";
-
-import {useState} from 'preact/hooks';
 import NoSelection from "./NoSelection";
+import toast from "../../component/Toast/toast";
 
-
-const DEFAULT_COPY = 'Copy';
 
 const InputJSX = ({disabled = true, isJSX}) => {
     const onChangeJSX = (e) => {
@@ -27,30 +24,22 @@ const InputJSX = ({disabled = true, isJSX}) => {
 }
 
 const RenderHtml = ({code = '', noSelection = true, isJSX}) => {
-    const [copyText, setCopyText] = useState(DEFAULT_COPY);
     const onCopy = (e) => {
         e.preventDefault();
         clipboardCopy(code).then(() => {
-            setCopyText(`HTML Copy Success`);
-            setTimeout(() => {
-                setCopyText('Copy');
-            }, 2000);
+            toast('Html Copy Success');
         });
     };
     return (
         <>
             {noSelection ? <NoSelection/> : (
-                <div className="f1 oa" style={{backgroundColor: '#282c34'}}>
-                    <Highlight language="xml">
-                        {code ? `${format(`<div>${code}</div>`)}` : ''}
-                    </Highlight>
-                </div>
+                <Highlight className="f1" language="xml">
+                    {code ? format(code) : ''}
+                </Highlight>
             )}
             <div className="g_row df aic jcsb pt8 pb8 bc:fff">
                 <InputJSX disabled={noSelection} isJSX={isJSX}/>
-                <Button
-                    disabled={noSelection || copyText !== DEFAULT_COPY}
-                    onClick={onCopy}>{copyText}</Button>
+                <Button onClick={onCopy}>Copy</Button>
             </div>
         </>
     );

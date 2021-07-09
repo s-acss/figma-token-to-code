@@ -1,9 +1,14 @@
 import CONFIG from "../CONFIG";
+import objMerge from "../../ui/utils/objMerge";
 
 const EFFECT = {
-    getInfo: (node: SceneNode) => {
+    getInfo: (node: SceneNode, nodeInfo) => {
         // @ts-ignore
-        return CONFIG.getInfoById(node.effectStyleId);
+        const result = CONFIG.getInfoById(node.effectStyleId);
+        if (!result) {
+            return nodeInfo;
+        }
+        return objMerge(nodeInfo, result);
     }
 };
 

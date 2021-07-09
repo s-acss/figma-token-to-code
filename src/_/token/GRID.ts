@@ -1,9 +1,14 @@
 import CONFIG from "../CONFIG";
+import objMerge from "../../ui/utils/objMerge";
 
 const GRID = {
-    getInfo: (node: SceneNode) => {
+    getInfo: (node: SceneNode, nodeInfo) => {
         // @ts-ignore
-        return CONFIG.getInfoById(node.gridStyleId);
+        const result = CONFIG.getInfoById(node.gridStyleId);
+        if (!result) {
+            return nodeInfo;
+        }
+        return objMerge(nodeInfo, result);
     }
 };
 

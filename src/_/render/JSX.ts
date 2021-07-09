@@ -1,14 +1,11 @@
 import UTILS from "../UTILS";
 
 const JSX = {
-    getPropsString: ({className = '', props = {}} = {}) => {
+    getPropsString: (props) => {
         const arrProps = [];
-        const classNames = className ? className.split(' ') : [];
-        if (classNames.length) {
-            arrProps.push(`className="${classNames.join(' ')}"`)
-        }
         for (const [key, value] of Object.entries(props)) {
-            arrProps.push(`${key}="${value}"`);
+            const strValue = value instanceof Array ? value.join(' ') : value;
+            strValue && arrProps.push(`${key}="${strValue}"`);
         }
         return arrProps.join(' ');
     },
@@ -21,12 +18,8 @@ const JSX = {
             return item;
         }
         // console.log({item});
-        const {children = [], componentProps = {}, className = ''} = item;
-        const tagName = item.componentName || item.tagName || 'div';
-        const strProps = JSX.getPropsString({
-            props: componentProps,
-            className
-        });
+        const {tagName = 'div', children = [], ...props} = item;
+        const strProps = JSX.getPropsString(props);
         const tagStart = `${tagName}${strProps ? ` ${strProps}` : ''}`;
         if (UTILS.isSelfTag(tagName)) {
             return `<${tagStart}/>`;

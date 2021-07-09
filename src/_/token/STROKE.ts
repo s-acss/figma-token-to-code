@@ -1,10 +1,15 @@
 import CONFIG from "../CONFIG";
+import objMerge from "../../ui/utils/objMerge";
 
 const STROKE = {
     // 文本组件
-    getInfo: (node: SceneNode) => {
+    getInfo: (node: SceneNode, nodeInfo) => {
         // @ts-ignore
-        return CONFIG.getInfoById(node.strokeStyleId);
+        const result = CONFIG.getInfoById(node.strokeStyleId);
+        if (!result) {
+            return nodeInfo;
+        }
+        return objMerge(nodeInfo, result);
     },
 };
 

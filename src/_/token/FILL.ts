@@ -1,6 +1,7 @@
 import COLOR from "./COLOR";
 import CONFIG from "../CONFIG";
 import SACSS from "../SACSS";
+import objMerge from "../../ui/utils/objMerge";
 
 const FILL = {
     getFill: (node: SceneNode) => {
@@ -9,33 +10,30 @@ const FILL = {
         // 没有设置任何颜色, 目前不支持渐变
         // @ts-ignore
         if (!firstFill || firstFill.type !== 'SOLID') {
-            return null;
+            return "";
         }
         const color = COLOR.getRgbaByFill(firstFill);
         if (!color) {
-            return null;
+            return "";
         }
         const className = node.type === 'TEXT' ? SACSS.addColor(color) : SACSS.addBgColor(color);
         // 文本是用颜色，其它理解为背景色
-        return {
-            className
-        }
+        return className;
     },
     // 获取填充信息
-    getInfo: (node: SceneNode) => {
+    getInfo: (node: SceneNode, nodeInfo = {}) => {
         // console.log(node);
         // @ts-ignore
         const id = typeof node.getRangeFillStyleId === 'function' ? node.getRangeFillStyleId(0, 1) : node.fillStyleId;
         //@ts-ignore
-        const {textClassName = '', className = '', ...rest} = CONFIG.getInfoById(id) || {};
-        const renderClassName = node.type === 'TEXT' ? textClassName : className;
-        if (!renderClassName) {
-            return FILL.getFill(node);
+        const token = CONFIG.getInfoById(id, node.type) || {};
+        if (token) {
+            return objMerge(nodeInfo, token);
         }
-        return {
-            className: renderClassName,
-            ...rest
-        };
+        const classColor = FILL.getFill(node);
+        return objMerge(nodeInfo, {
+            className: [classColor]
+        });
     },
 };
 

@@ -2,11 +2,11 @@ import HTML from "./HTML";
 import JSX from "./JSX";
 
 const DOM = {
-    render: (obj = [], isJSX) => {
+    render: (obj, isJSX) => {
         if (isJSX) {
-            return JSX.getDomByArray(obj);
+            return JSX.getItemDom(obj);
         }
-        return HTML.getDomByArray(obj);
+        return HTML.getItemDom(obj);
     }
 };
 

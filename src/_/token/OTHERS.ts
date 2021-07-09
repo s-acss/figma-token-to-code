@@ -1,4 +1,5 @@
 import SACSS from "../SACSS";
+import objMerge from "../../ui/utils/objMerge";
 
 const OTHERS = {
     gerBorderRadiusClassName: (node) => {
@@ -30,12 +31,12 @@ const OTHERS = {
             node.paddingLeft > 1 ? SACSS.add('pl', node.paddingLeft) : '',
         ];
     },
-    getInfo: (node) => {
+    getInfo: (node, nodeInfo) => {
         const padding = OTHERS.getPaddingClassName(node);
         const radius = OTHERS.gerBorderRadiusClassName(node);
-        return {
-            className: [...padding, ...radius].join(' ')
-        };
+        return objMerge(nodeInfo, {
+            className: [...padding, ...radius]
+        });
     }
 };
 export default OTHERS;

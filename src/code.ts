@@ -19,7 +19,7 @@ const API = {
             figma.ui.postMessage({noSelection: true});
             return null;
         }
-        return selection;
+        return selection[0];
     },
     /**
      * 当 Tab 切换的时候会出发这个方法
@@ -58,7 +58,7 @@ const API = {
         }
         SACSS.init();
         // @ts-ignore
-        const Info = NODE.getNodesInfo(selection);
+        const Info = NODE.getNodeInfo(selection);
         // console.log(Info);
         const isJSX = CONFIG.isJSX();
         setTimeout(() => {
@@ -73,12 +73,12 @@ const API = {
     runConfig: () => {
         setTimeout(() => {
             figma.ui.postMessage({
-                getConfig: CONFIG.getAll()
+                getConfig: CONFIG.getCurrent()
             });
         }, 10);
     },
     runToken: () => {
-        const [selection] = API.getSelection() || [];
+        const selection = API.getSelection();
         setTimeout(() => {
             figma.ui.postMessage(CONFIG.getSelectionTokens(selection));
         }, 16);
