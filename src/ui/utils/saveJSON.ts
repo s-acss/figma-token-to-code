@@ -1,7 +1,7 @@
 // @ts-ignore
 import saveFile from "save-as-file";
 
-const saveJSON = (data, filename = 'sacss-project') => {
+const saveJSON = (data, filename = 'token-to-code') => {
     if (!data) {
         return;
     }

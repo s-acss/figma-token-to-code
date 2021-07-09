@@ -2,6 +2,7 @@ import NODE from "./_/NODE";
 import CONFIG from "./_/CONFIG";
 import SACSS from "./_/SACSS";
 import DOM from "./_/render/DOM";
+import tryOldConfig from "./ui/utils/tryOldConfig.js";
 
 const API = {
     /**
@@ -89,6 +90,11 @@ const API = {
         if (type === null) {
             return;
         }
+        // 尝试检测旧代码
+        if (type === 'testOldConfig') {
+            tryOldConfig();
+            return;
+        }
         const [name, action] = type.split('.');
         // console.log('API onmessage', name, action, value);
         if (name === 'API' && (action in API)) {
@@ -97,11 +103,13 @@ const API = {
         }
         if (name === 'CONFIG' && (action in CONFIG)) {
             CONFIG[action](value);
+            // 为了触发重新渲染
             if (action === 'changeJSX') {
                 API.runHome();
                 return;
             }
-            if (action === 'appendToken') {
+            // 为了触发重新渲染
+            if (action === 'addToken') {
                 API.runToken();
                 return;
             }

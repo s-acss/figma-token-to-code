@@ -84,7 +84,7 @@ const FLEX = {
         }
         return {
             className,
-            ignoreClassName
+            ignoreClassName:ignoreClassName
         };
     },
     getInfo: (node: SceneNode, nodeInfo) => {
@@ -95,7 +95,7 @@ const FLEX = {
 
         return objMerge(nodeInfo, {
             className: [...baseClassName, ...c2],
-            ignoreClassName: ic2
+            _ignoreClassName: ic2
         });
     }
 };

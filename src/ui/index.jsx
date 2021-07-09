@@ -9,7 +9,6 @@ import './index.less';
 
 const DATA_TAB = ['HTML', 'CSS', 'Token', 'Project'];
 
-
 const APP = () => {
     const [tabIndex, setTabIndex] = useState(0);
 
@@ -29,7 +28,7 @@ const APP = () => {
                 extra={
                     <a className="c:s c:primary:h fs14 fw500 pl8 pr8 pt8 pb8 fw700"
                        href="https://github.com/s-acss/figma-token-to-code" target="_blank" title="Help">
-                        <img src="https://img.shields.io/github/stars/s-acss/figma-token-to-code.svg?style=social"
+                        <img className="vam" src="https://img.shields.io/github/stars/s-acss/figma-token-to-code.svg?style=social"
                              alt="figma-token-to-code"/>
                     </a>
                 }>

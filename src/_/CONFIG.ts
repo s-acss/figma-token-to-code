@@ -2,11 +2,12 @@ import COMPONENT from "./COMPONENT";
 
 const CONFIG_DEFAULT = {
     isJSX: false,
-    ignoreClassName: [],
+    _ignoreClassName: [],
     tokens: {}
 };
 
 const VERSION = "1.0";
+
 
 const CONFIG = {
     key: `TokenToCode-${VERSION}`,
@@ -21,6 +22,16 @@ const CONFIG = {
     edit: (data) => {
         CONFIG.store = data;
         figma.clientStorage.setAsync(CONFIG.key, data);
+        figma.ui.postMessage({
+            // @ts-ignore
+            alertMsg: `Save success`
+        });
+    },
+    addToken: (data) => {
+        const {tokens, ...rest} = CONFIG.getCurrent();
+        const newStore = {...rest, tokens: {...tokens, ...data}};
+        CONFIG.store = newStore;
+        figma.clientStorage.setAsync(CONFIG.key, newStore);
         figma.ui.postMessage({
             // @ts-ignore
             alertMsg: `Save success`
@@ -47,10 +58,10 @@ const CONFIG = {
         return CONFIG.store;
     },
     getToken: () => {
-        const {tokens = null} = CONFIG.store ||{};
+        const {tokens = null} = CONFIG.store || {};
         return tokens ? JSON.parse(JSON.stringify(tokens)) : null;
     },
-    getInfoById: (id, type="DEFAULT") => {
+    getInfoById: (id, type = "DEFAULT") => {
         if (!(id && (typeof id === 'string'))) {
             return null;
         }
@@ -79,7 +90,10 @@ const CONFIG = {
             const findToken = tokens[key] || {};
             matchToken[key] = {
                 DEFAULT: {
-                    className: []
+                    className: [],
+                    _ignoreClassName: [],
+                    _renderWidth: false,
+                    _renderHeight: false,
                 },
                 ...findToken,
                 _tokenName: name,
@@ -101,17 +115,19 @@ const CONFIG = {
                 extraToken = {
                     // 可以额外对文字进行设置
                     "TEXT": {
-                        className: []
+                        className: [],
+                        _ignoreClassName: []
                     }
                 }
             }
             matchToken[styleKey] = {
                 DEFAULT: {
-                    className: []
+                    className: [],
+                    _ignoreClassName: []
                 },
                 ...extraToken,
                 ...tokens[styleKey],
-                _nodeName: name,
+                _tokenName: name,
                 _tokenType: type
             }
         });

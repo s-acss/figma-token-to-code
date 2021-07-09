@@ -12,41 +12,6 @@ import CONFIG from "./CONFIG";
 
 const NODE = {
     /**
-     * 合并两个info
-     * @param a
-     * @param b
-     */
-    extendInfo: (a, b) => {
-        if (!b) {
-            return a;
-        }
-        const {
-            className: classNameA = '',
-            ignoreClassName: ignoreClassNameA = '',
-            componentProps: componentPropsA = {},
-            props: propsA = {},
-            htmlProps: htmlPropsA = {},
-            ...restA
-        } = a;
-        const {
-            className: classNameB = '',
-            ignoreClassName: ignoreClassNameB = '',
-            componentProps: componentPropsB = {},
-            props: propsB = {},
-            htmlProps: htmlPropsB = {},
-            children,
-            ...restB
-        } = b;
-        return {
-            className: `${classNameA} ${classNameB}`.trim(),
-            ignoreClassName: `${ignoreClassNameA} ${ignoreClassNameB}`.trim(),
-            htmlProps: {...htmlPropsA, ...htmlPropsB},
-            componentProps: {...componentPropsA, ...componentPropsB},
-            ...restA,
-            ...restB
-        };
-    },
-    /**
      * 如果一个元素内部只有几何图形，那么只显示其结构
      */
     isStructNode: (node: SceneNode) => {
@@ -96,7 +61,7 @@ const NODE = {
         }
         const isStructNode = NODE.isStructNode(node);
         let nodeInfo = {
-            ignoreClassName: [],
+            _ignoreClassName: [],
             className: [],
             children: []
         };
@@ -114,11 +79,11 @@ const NODE = {
         nodeInfo = FLEX.getInfo(node, nodeInfo);
 
         // @ts-ignore
-        if ((isStructNode && String(nodeInfo?.renderHeight) !== '0') || String(nodeInfo?.renderWidth) === '1') {
+        if ((isStructNode && String(nodeInfo?._renderHeight) !== false) || String(nodeInfo?._renderWidth) === true) {
             nodeInfo.className.push(SACSS.add('w', parseInt(String(node.width))));
         }
         // @ts-ignore
-        if ((isStructNode && String(nodeInfo?.renderHeight) !== '0') || String(nodeInfo?.renderHeight) === '1') {
+        if ((isStructNode && String(nodeInfo?._renderHeight) !== false) || String(nodeInfo?._renderHeight) === true) {
             nodeInfo.className.push(SACSS.add('h', parseInt(String(node.height))));
         }
 
@@ -136,27 +101,21 @@ const NODE = {
             if (isStructNode || nodeInfo.children === null) {
                 return [];
             }
-            // 渲染文字节点
-            // if (String(nodeInfo.children) === 'TEXT') {
-            //     // @ts-ignore
-            //     return node.findAll(c => c.type === 'TEXT' && c.visible).map((c) => c.characters);
-            // }
             // @ts-ignore
             return NODE.getNodesInfo(node.children);
         })();
 
         // 整个项目都忽略的 className
         // @ts-ignore
-        const {ignoreClassName = []} = CONFIG.getCurrent() || {};
-        nodeInfo.className = UTILS.clearClassName(nodeInfo.className, [...nodeInfo.ignoreClassName, ...ignoreClassName]);
-        delete nodeInfo.ignoreClassName;
+        const {_ignoreClassName = []} = CONFIG.getCurrent() || {};
+        nodeInfo.className = UTILS.clearClassName(nodeInfo.className, [...nodeInfo._ignoreClassName, ..._ignoreClassName]);
 
         if ((nodeInfo.children instanceof Array) && nodeInfo.children.length === 1) {
             const childrenInfo = nodeInfo.children[0];
             // 如果父元素和子元素 tagName 相同合并 className
             // @ts-ignore
-            if (typeof childrenInfo !=='string' && childrenInfo.tagName === nodeInfo.tagName) {
-                childrenInfo.className =[...childrenInfo.className, ...nodeInfo.className];
+            if (typeof childrenInfo !== 'string' && childrenInfo.tagName === nodeInfo.tagName) {
+                childrenInfo.className = [...childrenInfo.className, ...nodeInfo.className];
                 return childrenInfo;
             }
         }

@@ -1,45 +1,53 @@
 import {useEffect, useState} from 'preact/compat';
 import "./index.less";
 import toast from "../../component/Toast/toast";
-import Highlight from "../Home/Highlight";
 import Button from "../../component/Button";
-import clipboardCopy from "clipboard-copy";
+import Textarea from "../../component/Textarea";
+import _postConfig from "../Config/_postConfig";
+import {useRef} from "preact/hooks";
 
 const Token = () => {
     const [selectionTokens, setSelectionTokens] = useState({});
-    const selectionIds = Object.keys(selectionTokens);
+    const isEmpty = Object.keys(selectionTokens).length === 0;
+    const form = useRef(null);
 
     useEffect(() => {
         onmessage = (({data: {pluginMessage} = {}}) => {
-            const {alertMsg = null} = pluginMessage;
-            setSelectionTokens(pluginMessage.selectionTokens || {});
-            (alertMsg !== null) && alertMsg && toast(alertMsg);
+            const {selectionTokens = null, alertMsg = null} = pluginMessage;
+            (selectionTokens !== null) && setSelectionTokens(selectionTokens || {});
+            alertMsg && toast(alertMsg);
         });
     }, []);
 
-    const onCopy = (e) => {
+    const onSave = (e) => {
         e.preventDefault();
-        clipboardCopy(JSON.stringify(selectionTokens, null, 2)).then(() => {
-            toast('Token Copy Success');
-        });
-    };
+        const data = e.target.data.value;
+        try {
+            const objData = JSON.parse(data);
+            if (objData) {
+                _postConfig({
+                    action: 'addToken',
+                    value: objData
+                });
+            }
+        } catch (error) {
+            toast('Save error');
+        }
+    }
 
     return (
-        <>
-            {selectionIds.length ? (
-                <Highlight language="json" className="f1">
-                    {JSON.stringify(selectionTokens, null, 2)}
-                </Highlight>
-            ) : (
-                <div className="f1 dif aic jcc" style={{backgroundColor: '#282c34', color:'rgba(255, 255, 255, 0.8)'}}>
-                    The node you selected without any token
-                </div>
-            )}
+        <form className="f1 df fdc" rel={form} onSubmit={onSave}>
+            <Textarea
+                style={{backgroundColor: '#282c34', color: 'rgba(255, 255, 255, 0.8)', borderRadius: 0}}
+                name="data"
+                className="f1"
+                defaultValue={isEmpty ? "" : JSON.stringify(selectionTokens, null, 2)}
+                placeholder="The node you selected without any token"/>
             <div className="g_row df aic jcsb tac pt8 pb8 lh24 bc:fff">
-                <p className="fs12 c:s g_ell">Copy the token to the project panel and change them</p>
-                <Button onClick={onCopy}>Copy</Button>
+                <Button type="reset" className="mla">Reset</Button>
+                <Button disabled={isEmpty} type="submit" className="ml8">Save</Button>
             </div>
-        </>
+        </form>
     );
 };
 export default Token;

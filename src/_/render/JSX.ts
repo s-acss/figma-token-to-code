@@ -4,8 +4,11 @@ const JSX = {
     getPropsString: (props) => {
         const arrProps = [];
         for (const [key, value] of Object.entries(props)) {
-            const strValue = value instanceof Array ? value.join(' ') : value;
-            strValue && arrProps.push(`${key}="${strValue}"`);
+            // 忽略 '_' 开头的属性
+            if (!key.startsWith('_')) {
+                const strValue = value instanceof Array ? value.join(' ') : value;
+                strValue && arrProps.push(`${key}="${strValue}"`);
+            }
         }
         return arrProps.join(' ');
     },
