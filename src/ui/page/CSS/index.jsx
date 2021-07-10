@@ -1,7 +1,7 @@
-import Highlight from "./Highlight";
+import Highlight from "../../component/Highlight";
 import Button from "../../component/Button";
 import clipboardCopy from "clipboard-copy";
-import NoSelection from "./NoSelection";
+import NoSelection from "../../component/NoSelection";
 import toast from "../../component/Toast/toast";
 
 const CODE_PRE = `/*
@@ -12,7 +12,7 @@ const CODE_PRE = `/*
  */\n
 `;
 
-const RenderCSS = ({noSelection = true, code}) => {
+const CSS = ({noSelection = true, code}) => {
 
     const onCopy = (e) => {
         e.preventDefault();
@@ -37,4 +37,4 @@ const RenderCSS = ({noSelection = true, code}) => {
     )
 };
 
-export default RenderCSS;
+export default CSS;

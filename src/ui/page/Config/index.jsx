@@ -1,33 +1,15 @@
-import {useEffect, useRef, useState} from 'preact/hooks';
+import {useRef} from 'preact/hooks';
 import Button from "../../component/Button";
 import _postConfig from "./_postConfig.js";
 import Textarea from "../../component/Textarea";
 import toast from "../../component/Toast/toast";
 import saveJSON from "../../utils/saveJSON";
 import "./index.less";
-import OldConfigBar from "./OldConfigBar";
 
-const Config = () => {
-    const [config, setConfig] = useState({});
-    const [oldConfig, setOldConfig] = useState({});
+const Config = ({config}) => {
+
     const form = useRef(null);
     const isEmpty = Object.keys(config).length === 0;
-
-    useEffect(() => {
-        // 测试有没有旧的配置文件
-        parent.postMessage({
-            pluginMessage: {
-                type: "testOldConfig"
-            }
-        }, '*');
-
-        onmessage = (({data: {pluginMessage} = {}}) => {
-            const {getConfig = null, alertMsg = null, getOldConfig = null} = pluginMessage;
-            (getConfig !== null) && setConfig(getConfig || {});
-            (getOldConfig !== null) && setOldConfig(getOldConfig || {});
-            alertMsg && toast(alertMsg);
-        });
-    }, []);
 
     // 下载 JSON
     const onDownLoad = (e) => {
@@ -88,7 +70,6 @@ const Config = () => {
                 <Button type="reset" className="mla">Reset</Button>
                 <Button type="submit" className="ml8">Save</Button>
             </div>
-            <OldConfigBar data={oldConfig}/>
         </form>
     );
 };

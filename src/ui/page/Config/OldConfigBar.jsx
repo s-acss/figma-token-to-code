@@ -76,9 +76,9 @@ function OldConfigBar({data = {}}) {
     };
     return (
         <div className="g_row df aic pt8 pb8 g_hr_t">
-            <p className="fs12 c:s">Token to code had a devastating upgrade, download the old config and upload them
+            <p className="fs12 c:s">Devastating upgrade, download the old config and upload them
                 again</p>
-            <Button onClick={onSaveOld} className="c:m ml8">Download Old</Button>
+            <Button onClick={onSaveOld} className="c:m ml8">Download</Button>
         </div>
     )
 }

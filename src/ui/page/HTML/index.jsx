@@ -1,8 +1,8 @@
-import Highlight from "./Highlight";
+import Highlight from "../../component/Highlight";
 import format from "xml-formatter";
 import Button from "../../component/Button";
 import clipboardCopy from "clipboard-copy";
-import NoSelection from "./NoSelection";
+import NoSelection from "../../component/NoSelection";
 import toast from "../../component/Toast/toast";
 
 
@@ -23,7 +23,7 @@ const InputJSX = ({disabled = true, isJSX}) => {
     )
 }
 
-const RenderHtml = ({code = '', noSelection = true, isJSX}) => {
+const HTML = ({code = '', noSelection = true, isJSX}) => {
     const onCopy = (e) => {
         e.preventDefault();
         clipboardCopy(code).then(() => {
@@ -45,4 +45,4 @@ const RenderHtml = ({code = '', noSelection = true, isJSX}) => {
     );
 }
 
-export default RenderHtml;
+export default HTML;

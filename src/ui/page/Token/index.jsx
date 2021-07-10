@@ -1,4 +1,3 @@
-import {useEffect, useState} from 'preact/compat';
 import "./index.less";
 import toast from "../../component/Toast/toast";
 import Button from "../../component/Button";
@@ -6,18 +5,9 @@ import Textarea from "../../component/Textarea";
 import _postConfig from "../Config/_postConfig";
 import {useRef} from "preact/hooks";
 
-const Token = () => {
-    const [selectionTokens, setSelectionTokens] = useState({});
+const Token = ({selectionTokens}) => {
     const isEmpty = Object.keys(selectionTokens).length === 0;
     const form = useRef(null);
-
-    useEffect(() => {
-        onmessage = (({data: {pluginMessage} = {}}) => {
-            const {selectionTokens = null, alertMsg = null} = pluginMessage;
-            (selectionTokens !== null) && setSelectionTokens(selectionTokens || {});
-            alertMsg && toast(alertMsg);
-        });
-    }, []);
 
     const onSave = (e) => {
         e.preventDefault();
