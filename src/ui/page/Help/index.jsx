@@ -1,7 +1,7 @@
-import OldConfigBar from "../Config/OldConfigBar/index";
+import OldConfigBar from "./OldConfigBar/index";
 import toast from "../../component/Toast/toast";
 import saveJSON from "../../utils/saveJSON";
-import transProject from "../Config/OldConfigBar/transProject";
+import transProject from "./OldConfigBar/transProject";
 
 const Help = ({oldConfig}) => {
 
@@ -52,8 +52,8 @@ const Help = ({oldConfig}) => {
                         <input className="o0 pa w100% h100% l0 t0" type="file" onChange={onReplace}/>
                     </label>
                 </div>
-                <OldConfigBar className="g_hr" data={oldConfig}/>
             </div>
+            <OldConfigBar data={oldConfig}/>
         </div>
     )
 };

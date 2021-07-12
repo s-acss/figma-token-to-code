@@ -3,26 +3,33 @@ import saveJSON from "../../../utils/saveJSON";
 import transProject from "./transProject";
 
 
-function transOld(data = {}) {
-    const {projects = [], isJSX = false} = data;
-    return projects.map((props) => transProject({isJSX, ...props}));
-}
-
 function OldConfigBar({data = {}, className = ""}) {
-    const isEmpty = Object.keys(data).length === 0;
-    if (isEmpty) {
+    const {projects = []} = data;
+    if (!projects.length) {
         return null;
     }
     // 下载文件
-    const onDownload = (e) => {
-        e.preventDefault();
-        saveJSON(transOld(data), 'token-to-code');
+    const onDownload = (key) => {
+        saveJSON(transProject(projects[key]), 'token-to-code');
     };
 
     return (
-        <div className="df jcsb aic">
-            <p className="fs12 c:s">Download all the configs in your localstorage and parse one of them to use</p>
-            <Button onClick={onDownload} className="c:m ml8">Download</Button>
+        <div className="g_row g_hr pt8 pb8">
+            <p className="fs12 c:s mb8">There are {projects.length} project in your localstorage. Download and parse one
+                of them to use.</p>
+            {projects.map((projects, key) => {
+                return (
+                    <div className="df mt8 aic">
+                        <p className="g_ell f1 fs12 c:s">
+                            {projects.name}
+                        </p>
+                        <Button onClick={(e) => {
+                            e.preventDefault();
+                            onDownload(key);
+                        }} className="c:m ml8">Download</Button>
+                    </div>
+                )
+            })}
         </div>
     )
 };
