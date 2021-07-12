@@ -1,4 +1,5 @@
 import SACSS from "../SACSS";
+import objMerge from "../../ui/utils/objMerge";
 // import CONFIG from "./CONFIG";
 
 const FLEX = {
@@ -7,9 +8,11 @@ const FLEX = {
         if (['TEXT'].indexOf(node.type) > -1) {
             return false;
         }
-        return node?.layoutMode !== "NONE";
+
+        return node?.layoutMode && node?.layoutMode !== "NONE";
     },
     getThisInfo: (node: FrameNode) => {
+        // console.log(node.name, node.layoutMode, FLEX.isFlex(node));
         if (!FLEX.isFlex(node)) {
             return null;
         }
@@ -43,9 +46,7 @@ const FLEX = {
 
             className.push('df');
         }
-        return {
-            className: className.join(' ')
-        };
+        return className;
     },
     getInfoFromParent: (node: FrameNode) => {
         const parent = node.parent;
@@ -66,7 +67,7 @@ const FLEX = {
 
         // 父元素是纵向的flex 布局，因为忽略掉了 df
         // 这里让自己有 db 实现纵向布局
-        if(layoutMode=== 'VERTICAL'){
+        if (layoutMode === 'VERTICAL') {
             className.push('db');
         }
         // 为子元素添加间距
@@ -82,19 +83,20 @@ const FLEX = {
             ignoreClassName.push(`w${node.width}`);
         }
         return {
-            className: className.join(' '),
-            ignoreClassName: ignoreClassName.join(' ')
+            className,
+            ignoreClassName:ignoreClassName
         };
     },
-    getInfo: (node: SceneNode) => {
+    getInfo: (node: SceneNode, nodeInfo) => {
         // @ts-ignore
-        const {className: c1 = '', ignoreClassName: ic1 = ''} = FLEX.getThisInfo(node) || {};
+        const baseClassName = FLEX.getThisInfo(node) || [];
         // @ts-ignore
-        const {className: c2 = '', ignoreClassName: ic2 = ''} = FLEX.getInfoFromParent(node) || {};
-        return {
-            className: `${c1} ${c2}`,
-            ignoreClassName: `${ic1} ${ic2}`
-        };
+        const {className: c2 = [], ignoreClassName: ic2 = []} = FLEX.getInfoFromParent(node) || {};
+
+        return objMerge(nodeInfo, {
+            className: [...baseClassName, ...c2],
+            _ignoreClassName: ic2
+        });
     }
 };
 

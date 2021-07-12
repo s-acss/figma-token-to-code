@@ -1,0 +1,22 @@
+
+.toast-box {
+  z-index: 100;
+}
+
+.toast {
+  background-color: rgba(0, 0, 0, 0.8);
+  word-break: break-all;
+}
+
+.toast-box {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0);
+}
+
+.toast-box._show {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(-10px);
+  transition: 200ms;
+}

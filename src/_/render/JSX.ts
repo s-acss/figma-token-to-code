@@ -1,14 +1,14 @@
 import UTILS from "../UTILS";
 
 const JSX = {
-    getPropsString: ({className = '', props = ''} = {}) => {
+    getPropsString: (props) => {
         const arrProps = [];
-        const classNames = className ? className.split(' ') : [];
-        if (classNames.length) {
-            arrProps.push(`className="${classNames.join(' ')}"`)
-        }
-        if (props) {
-            arrProps.push(props.trim());
+        for (const [key, value] of Object.entries(props)) {
+            // 忽略 '_' 开头的属性
+            if (!key.startsWith('_')) {
+                const strValue = value instanceof Array ? value.join(' ') : value;
+                strValue && arrProps.push(`${key}="${strValue}"`);
+            }
         }
         return arrProps.join(' ');
     },
@@ -20,12 +20,9 @@ const JSX = {
         if (typeof item === 'string') {
             return item;
         }
-        const {children = [], componentProps = '', className = ''} = item;
-        const tagName = item.componentName || item.tagName || 'div';
-        const strProps = JSX.getPropsString({
-            props: componentProps,
-            className
-        });
+        // console.log({item});
+        const {tagName = 'div', children = [], ...props} = item;
+        const strProps = JSX.getPropsString(props);
         const tagStart = `${tagName}${strProps ? ` ${strProps}` : ''}`;
         if (UTILS.isSelfTag(tagName)) {
             return `<${tagStart}/>`;

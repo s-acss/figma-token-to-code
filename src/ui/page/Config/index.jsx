@@ -1,95 +1,77 @@
-import {useEffect, useRef, useState} from 'preact/hooks';
+import {useRef} from 'preact/hooks';
 import Button from "../../component/Button";
-import Input from "../../component/Input";
-import "./index.less";
-import ProjectItem from "./ProjectItem";
 import _postConfig from "./_postConfig.js";
+import Textarea from "../../component/Textarea";
+import toast from "../../component/Toast/toast";
+import saveJSON from "../../utils/saveJSON";
+import "./index.less";
 
-const Config = () => {
-    const [config, setConfig] = useState({});
-    const {projects = [], currentIndex} = config;
-    const currentProject = projects[currentIndex];
+const Config = ({config}) => {
+
     const form = useRef(null);
+    const isEmpty = Object.keys(config).length === 0;
 
-    useEffect(() => {
-        // console.log('config useEffect');
-        onmessage = (({data: {pluginMessage} = {}}) => {
-            const {getConfig = null, alertMsg = null} = pluginMessage;
-            (getConfig !== null) && setConfig(getConfig);
-            (alertMsg !== null) && alertMsg && alert(alertMsg);
-        });
-    }, []);
+    // 下载 JSON
+    const onDownLoad = (e) => {
+        e.preventDefault();
+        saveJSON(config, config.name);
+    };
 
-    const addNew = (value = {}) => {
-        // 没有名字
-        if (!value.name) {
-            alert(`Project Name is required!`);
-            return false;
+    const save = (data) => {
+        if (!data.trimStart().trimEnd()) {
+            toast("Config can't empty");
+            return;
         }
-        // 已经存在
-        if (projects.find((item) => item.name === value.name)) {
-            alert(`${value.name} is exist!`);
-            return false;
+        try {
+            const objData = JSON.parse(data);
+            if (objData) {
+                _postConfig({
+                    action: 'edit',
+                    value: objData
+                });
+            }
+        } catch (error) {
+            toast('Save error');
         }
-        _postConfig({
-            action: 'addNewProject',
-            value
-        });
     };
 
     // 上传文件
-    const onUpFile = (e) => {
+    const onReplace = (e) => {
         const files = e.target.files || [];
         if (!files.length) {
             return;
         }
         var fr = new FileReader();
         fr.onload = function (e) {
-            var result = JSON.parse(e.target.result);
-            addNew(result);
+            save(e.target.result);
         }
         fr.readAsText(files.item(0));
     };
 
-    // 添加
-    const onAdd = (e) => {
+    // 修改
+    const onEdit = (e) => {
         e.preventDefault();
-        const form = e.target;
-        const newName = form.name.value.trim();
-        const result = addNew({name: newName});
-        (result !== false) && form.reset();
-    };
-
-    const onChangeCurrent = (e) => {
-        _postConfig({
-            action: 'changeCurrent',
-            value: e.target.value
-        });
-        form.current.reset();
+        const dataSave = e.target.data.value;
+        save(dataSave);
     };
     return (
-        <>
-            <div className="g_row g_hr df jcsb aic fs14 pt12 pb12">
-                <strong className="c:s">Current Project: </strong>
-                <select onChange={onChangeCurrent} value={currentIndex}>
-                    {projects.map((project, key) => (<option key={project.name} value={key}>{project.name}</option>))}
-                </select>
-            </div>
-            <div className="f1 oa">
-                {currentProject ?
-                    <ProjectItem ref={form} index={currentIndex} checked data={currentProject}
-                                 projects={projects}/> : null}
-            </div>
-            <form onSubmit={onAdd} action="" className="g_row pt12 pb12 bc:fff df aic g_hr_t">
-                <Input placeholder="Enter new project name" className="f1 mr8" required type="text" name="name"/>
-                <label htmlFor="inputFile" className="dib btn pr oh g_tip mr8" data-title="Add New By Upload JSON" >
+        <form onSubmit={onEdit} ref={form} className="f1 df fdc">
+            <Textarea style={{backgroundColor: '#282c34', color: 'rgba(255, 255, 255, 0.8)', borderRadius: 0}}
+                      name="data" className="f1" defaultValue={isEmpty ? "" : JSON.stringify(config, null, 2)}
+                      placeholder="Parse your config here"/>
+            <div className="df aic g_row pt8 pb8">
+                <Button title="Download" className="g_tip mr8" data-title="Download JSON" onClick={onDownLoad}>
+                    DownLoad
+                </Button>
+                <label className="btn pr oh g_tip mr8" data-title="Replace By Upload JSON">
                     Upload
-                    <input className="o0 pa vh" id="inputFile" type="file" onChange={onUpFile}/>
+                    <input className="o0 pa w100% h100%" type="file" onChange={onReplace}/>
                 </label>
-                <Button type="submit">Add</Button>
-            </form>
-        </>
-    )
+                <Button type="reset" className="mla">Reset</Button>
+                <Button type="submit" className="ml8">Save</Button>
+            </div>
+        </form>
+    );
 };
 
 export default Config;

@@ -12,41 +12,6 @@ import CONFIG from "./CONFIG";
 
 const NODE = {
     /**
-     * 合并两个info
-     * @param a
-     * @param b
-     */
-    extendInfo: (a, b) => {
-        if (!b) {
-            return a;
-        }
-        const {
-            className: classNameA = '',
-            ignoreClassName: ignoreClassNameA = '',
-            componentProps: componentPropsA = '',
-            props: propsA = {},
-            htmlProps: htmlPropsA = "",
-            ...restA
-        } = a;
-        const {
-            className: classNameB = '',
-            ignoreClassName: ignoreClassNameB = '',
-            componentProps: componentPropsB = '',
-            props: propsB = {},
-            htmlProps: htmlPropsB = "",
-            children,
-            ...restB
-        } = b;
-        return {
-            className: `${classNameA} ${classNameB}`.trim(),
-            ignoreClassName: `${ignoreClassNameA} ${ignoreClassNameB}`.trim(),
-            htmlProps: `${htmlPropsA} ${htmlPropsB}`.trim(),
-            componentProps: `${componentPropsA} ${componentPropsB}`.trim(),
-            ...restA,
-            ...restB
-        };
-    },
-    /**
      * 如果一个元素内部只有几何图形，那么只显示其结构
      */
     isStructNode: (node: SceneNode) => {
@@ -96,87 +61,72 @@ const NODE = {
         }
         const isStructNode = NODE.isStructNode(node);
         let nodeInfo = {
-            ignoreClassName: '',
-            className: '',
+            _ignoreClassName: [],
+            className: [],
             children: []
         };
         if (isStructNode) {
             // @ts-ignore
             nodeInfo.tagName = 'i';
         }
-        const component = COMPONENT.getInfo(node);
-        const fill = FILL.getInfo(node);
-        const text = TEXT.getInfo(node);
-        const stroke = STROKE.getInfo(node);
-        const grid = GRID.getInfo(node);
-        const effect = EFFECT.getInfo(node);
-        const others = OTHERS.getInfo(node);
-        const flex = FLEX.getInfo(node);
-        // console.log({component, fill, text, stroke, grid, effect});
-        nodeInfo = NODE.extendInfo(nodeInfo, fill);
-        nodeInfo = NODE.extendInfo(nodeInfo, text);
-        nodeInfo = NODE.extendInfo(nodeInfo, stroke);
-        nodeInfo = NODE.extendInfo(nodeInfo, grid);
-        nodeInfo = NODE.extendInfo(nodeInfo, effect);
-        nodeInfo = NODE.extendInfo(nodeInfo, component);
-        nodeInfo = NODE.extendInfo(nodeInfo, flex);
-        nodeInfo = NODE.extendInfo(nodeInfo, others);
+        nodeInfo = COMPONENT.getInfo(node, nodeInfo);
+        nodeInfo = FILL.getInfo(node, nodeInfo);
+        nodeInfo = TEXT.getInfo(node, nodeInfo);
+        nodeInfo = STROKE.getInfo(node, nodeInfo);
+        nodeInfo = GRID.getInfo(node, nodeInfo);
+        nodeInfo = EFFECT.getInfo(node, nodeInfo);
+        nodeInfo = OTHERS.getInfo(node, nodeInfo);
+        nodeInfo = FLEX.getInfo(node, nodeInfo);
 
         // @ts-ignore
-        if ((isStructNode && String(nodeInfo?.renderHeight) !== '0') || String(nodeInfo?.renderWidth) === '1') {
-            nodeInfo.className += ' ' + SACSS.add('w', parseInt(String(node.width)));
+        if ((isStructNode && String(nodeInfo?._renderHeight) !== false) || String(nodeInfo?._renderWidth) === true) {
+            nodeInfo.className.push(SACSS.add('w', parseInt(String(node.width))));
         }
         // @ts-ignore
-        if ((isStructNode && String(nodeInfo?.renderHeight) !== '0') || String(nodeInfo?.renderHeight) === '1') {
-            nodeInfo.className += ' ' + SACSS.add('h', parseInt(String(node.height)));
+        if ((isStructNode && String(nodeInfo?._renderHeight) !== false) || String(nodeInfo?._renderHeight) === true) {
+            nodeInfo.className.push(SACSS.add('h', parseInt(String(node.height))));
         }
+
         nodeInfo.children = (() => {
             if (node.type === 'TEXT') {
-                const texts=TEXT.getTextChildren(node);
+                const texts = TEXT.getTextChildren(node);
                 // 多段文本这里要修复一下嵌套的标签，有可能变成 strong > p 这样的结构
                 // @ts-ignore
-                if(texts[0]?.tagName ==='p'){
+                if (texts[0]?.tagName === 'p') {
                     // @ts-ignore
                     nodeInfo.tagName = "div";
                 }
                 return texts;
             }
-            const {renderChildren = 1} = component || {};
-            if (isStructNode || String(renderChildren) === '0') {
+            if (isStructNode || nodeInfo.children === null) {
                 return [];
-            }
-            // 渲染子节点
-            if (String(renderChildren) === '2') {
-                // @ts-ignore
-                return node.findAll(c => c.type === 'TEXT' && c.visible).map((c) => c.characters);
             }
             // @ts-ignore
             return NODE.getNodesInfo(node.children);
         })();
+
         // 整个项目都忽略的 className
         // @ts-ignore
-        const {ignoreClassName = ''} = CONFIG.getCurrent() || {};
-        nodeInfo.className = UTILS.clearClassName(nodeInfo.className, `${nodeInfo.ignoreClassName} ${ignoreClassName}`);
-        delete nodeInfo.ignoreClassName;
+        const {_ignoreClassName = []} = CONFIG.getCurrent() || {};
+        nodeInfo.className = UTILS.clearClassName(nodeInfo.className, [...nodeInfo._ignoreClassName, ..._ignoreClassName]);
 
-        // 减少嵌套
-        if (nodeInfo.children.length === 1) {
+        if ((nodeInfo.children instanceof Array) && nodeInfo.children.length === 1) {
             const childrenInfo = nodeInfo.children[0];
             // 如果父元素和子元素 tagName 相同合并 className
             // @ts-ignore
-            if (childrenInfo.tagName === nodeInfo.tagName && !nodeInfo.componentName && !childrenInfo.componentName) {
-                childrenInfo.className = UTILS.clearClassName(`${childrenInfo.className} ${nodeInfo.className}`);
+            if (typeof childrenInfo !== 'string' && childrenInfo.tagName === nodeInfo.tagName) {
+                childrenInfo.className = [...childrenInfo.className, ...nodeInfo.className];
                 return childrenInfo;
             }
         }
-        // console.log(node);
-        // console.log(nodeInfo);
+
+        // console.log({nodeInfo});
         return nodeInfo;
     },
     sort: (nodes = []) => {
         return [...nodes].sort((a, b) => {
-            const aY= a.y + a.height;
-            const bY= b.y + b.height;
+            const aY = a.y + a.height;
+            const bY = b.y + b.height;
             if (a.y === b.y) {
                 return a.x - b.x;
             }

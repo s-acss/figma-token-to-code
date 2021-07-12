@@ -1,4 +1,5 @@
 import CONFIG from "./CONFIG";
+import objMerge from "../ui/utils/objMerge.js";
 
 const COMPONENT = {
     isComponent: (node: SceneNode) => {
@@ -30,49 +31,15 @@ const COMPONENT = {
         }
         return firstChar + strName.slice(1);
     },
-    getComponentPropsByString: (strProp) => {
-        const props = {};
-        if (strProp && typeof strProp === 'string') {
-            // 去掉单双引号
-            const legalProps = strProp.replace(/\"/g, '').replace(/\'/g, '');
-            legalProps.split(",").forEach((item) => {
-                const [key, value] = item.split("=");
-                const trimValue = String(value).trim();
-                // false 表示没有这个值 不做处理
-                if (trimValue === "false") {
-                    return;
-                }
-                props[String(key).trim()] = value ? trimValue : 'true';
-            });
-        }
-        return props;
-    },
-    getInfo: (node: SceneNode) => {
+    getInfo: (node: SceneNode, nodeInfo = {}) => {
         // @ts-ignore
         const id = COMPONENT.getComponentId(node);
         const matchToken = id ? CONFIG.getToken()[id] : '';
-        // console.log({matchToken});
         if (!matchToken) {
-            return null;
+            return nodeInfo;
         }
-        matchToken.props = {
-            ...COMPONENT.getComponentPropsByString(matchToken.props || '')
-        };
-
-        // 用户没有指定表示要渲染
-        if (!('renderChildren' in matchToken)) {
-            matchToken.renderChildren = '1';
-        }
-        // 用户没有指定表示要渲染
-        if (!('renderWidth' in matchToken)) {
-            matchToken.renderWidth = '1';
-        }
-        // 用户没有指定表示要渲染
-        if (!('renderHeight' in matchToken)) {
-            matchToken.renderHeight = '1';
-        }
-        // console.log({matchToken});
-        return matchToken;
+        const {DEFAULT = {}} = matchToken;
+        return objMerge(nodeInfo, DEFAULT);
     }
 };
 

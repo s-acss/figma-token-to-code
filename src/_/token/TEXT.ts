@@ -1,5 +1,6 @@
 import CONFIG from "../CONFIG";
 import SACSS from "../SACSS";
+import objMerge from "../../ui/utils/objMerge";
 
 // @ts-ignore
 const TEXT = {
@@ -123,7 +124,7 @@ const TEXT = {
         const strClassName = className.join(' ');
         const isStrong = ['fw500', 'fw600', 'fw700', 'fw800', 'fw900'].findIndex((item) => strClassName.indexOf(item) > -1) > -1;
         return {
-            className: strClassName,
+            className,
             tagName: isStrong ? 'strong' : 'span'
         };
     },
@@ -146,20 +147,18 @@ const TEXT = {
         return [characters];
     },
     // 文本组件
-    getInfo: (node: SceneNode) => {
+    getInfo: (node: SceneNode, nodeInfo = {}) => {
         if (node.type !== 'TEXT') {
-            return null;
+            return nodeInfo;
         }
         const id = TEXT.getPropByNode(node, 'textStyleId');
         // @ts-ignore
-        const getInfo = CONFIG.getInfoById(id) || {};
+        const getInfo = CONFIG.getInfoById(id);
+        if (getInfo) {
+            return objMerge(nodeInfo, getInfo);
+        }
         const acssInfo = TEXT.getACSSSInfo(node);
-        const result = {
-            className: getInfo.className || acssInfo.className || '',
-            tagName: getInfo.tagName || acssInfo.tagName || '',
-            ignoreClassName: getInfo.ignoreClassName || ''
-        };
-        return result;
+        return objMerge(nodeInfo, acssInfo);
     },
 };
 

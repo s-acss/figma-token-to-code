@@ -3,15 +3,19 @@
 @import '~sacss/less/Helpers.less';
 
 
-#SACSS(margin-top; mt; -1, 4, 8, 12, 16; 1/16rem);
-#SACSS(margin-bottom; mb; -1, 4, 8, 12, 16; 1/16rem);
-#SACSS(margin-right; mr; -1, 4, 8, 12, 16; 1/16rem);
-#SACSS(margin-left; ml; -1, 4, 8, 12, 16; 1/16rem);
+@rem: 1/16rem;
 
-#SACSS(padding-top; pt; 4, 8, 12, 16; 1/16rem);
-#SACSS(padding-right; pt; 4, 8, 12, 16; 1/16rem);
-#SACSS(padding-bottom; pb; 4, 8, 12, 16; 1/16rem);
-#SACSS(padding-left; pl; 4, 8, 12, 16; 1/16rem);
+@margins: -1, 4, 8, 12, 16;
+#SACSS(margin-top; mt; @margins; @rem);
+#SACSS(margin-bottom; mb; @margins; @rem);
+#SACSS(margin-right; mr; @margins; @rem);
+#SACSS(margin-left; ml; @margins; @rem);
+
+@paddings: 4, 8, 12, 16;
+#SACSS(padding-top; pt; @paddings; @rem);
+#SACSS(padding-right; pr; @paddings; @rem);
+#SACSS(padding-bottom; pb; @paddings; @rem);
+#SACSS(padding-left; pl; @paddings; @rem);
 
 #SACSS(font-weight; fw; 600);
 #SACSS(font-weight; fw; 600);
@@ -158,4 +162,11 @@ body, html {
 
 .g_tip[data-title]:hover {
   outline: none;
+}
+
+select{
+  font-size: 12/16*1rem;
+  height: 24/16*1rem;
+  border-color: #000000;
+  border-radius: 3px;
 }

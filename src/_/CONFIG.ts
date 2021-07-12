@@ -1,95 +1,48 @@
 import COMPONENT from "./COMPONENT";
 
-const PRO_DEFAULT = {
-    name: 'default',
-    ignoreClassName: '',
-    token: {}
+const CONFIG_DEFAULT = {
+    isJSX: false,
+    _ignoreClassName: [],
+    tokens: {}
 };
 
-const CONFIG_DEFAULT = {
-    currentIndex: 0,
-    isJSX: false,
-    projects: [PRO_DEFAULT]
-};
+const VERSION = "1.0";
 
 const CONFIG = {
-    key: 'SACSS',
+    key: `TokenToCode-${VERSION}`,
     store: CONFIG_DEFAULT,
-    changeCurrent: (index) => {
-        const store = CONFIG.getAll();
-        store.currentIndex = index;
-        figma.clientStorage.setAsync(CONFIG.key, store);
-    },
     changeJSX: (value) => {
-        const store = CONFIG.getAll();
+        const store = CONFIG.getCurrent();
         // 重置回第一个
         store.isJSX = value;
         // console.log(store);
         figma.clientStorage.setAsync(CONFIG.key, store);
     },
-    remove: (index) => {
-        const store = CONFIG.getAll();
-        // 重置回第一个
-        store.currentIndex = 0;
-        store.projects.splice(index, 1);
-        if (!store.projects.length) {
-            store.projects.push(PRO_DEFAULT);
-        }
-        figma.clientStorage.setAsync(CONFIG.key, store);
-    },
-    addNewProject: ({name = '', token = {}} = {}) => {
-        const store = CONFIG.getAll();
-        store.projects.push({
-            name,
-            ignoreClassName: '',
-            token
-        });
-        store.currentIndex = store.projects.length - 1;
-        figma.clientStorage.setAsync(CONFIG.key, store);
-    },
-    editByIndex: ({data, index}) => {
-        const store = CONFIG.getAll();
-        const current = store.projects[index];
-        store.projects[index] = {
-            name: data.name,
-            ignoreClassName: data.ignoreClassName,
-            token: data.token ? data.token : current.token
-        };
-        figma.clientStorage.setAsync(CONFIG.key, store);
-        // console.log(store);
+    edit: (data) => {
+        CONFIG.store = data;
+        figma.clientStorage.setAsync(CONFIG.key, data);
         figma.ui.postMessage({
             // @ts-ignore
-            alertMsg: `${data.name} save success`
+            alertMsg: `Save success`
         });
     },
-    replaceByIndex: ({data, index}) => {
-        const store = CONFIG.getAll();
-        store.projects[index] = data || {};
-        figma.clientStorage.setAsync(CONFIG.key, store);
+    addToken: (data) => {
+        const {tokens, ...rest} = CONFIG.getCurrent();
+        const newStore = {...rest, tokens: {...tokens, ...data}};
+        CONFIG.store = newStore;
+        figma.clientStorage.setAsync(CONFIG.key, newStore);
         figma.ui.postMessage({
-            alertMsg: `${data.name} replace success`
-        });
-    },
-    appendToken: (appendToken = {}) => {
-        const current = CONFIG.getCurrent();
-        const {token = {}} = current;
-        current.token = {...token, ...appendToken};
-        // console.log(appendToken, CONFIG.store);
-        figma.clientStorage.setAsync(CONFIG.key, CONFIG.store);
-        figma.ui.postMessage({
-            alertMsg: `${current.name} save success`
+            // @ts-ignore
+            alertMsg: `Save success`
         });
     },
     isJSX: () => {
         return !!CONFIG.store.isJSX;
     },
-    getAll: () => {
-        return CONFIG.store;
-    },
     init: () => {
         return new Promise(((resolve, reject) => {
-            figma.clientStorage.getAsync(CONFIG.key).then((ret) => {
-                if (ret && ret.projects && ret.projects.length) {
+            figma.clientStorage.getAsync(CONFIG.key).then((ret = null) => {
+                if (ret && Object.keys(ret).length !== 0) {
                     CONFIG.store = ret;
                 } else {
                     // 没有缓存创建一个新的
@@ -98,18 +51,16 @@ const CONFIG = {
                 }
                 resolve(CONFIG.getToken());
             }).catch(reject);
-        }))
+        }));
     },
     getCurrent: () => {
-        const currentIndex = CONFIG.store.currentIndex;
-        const current = CONFIG.store.projects[currentIndex];
-        return current;
+        return CONFIG.store;
     },
     getToken: () => {
-        const {token = null} = CONFIG.getCurrent() || {};
-        return token ? JSON.parse(JSON.stringify(token)) : null;
+        const {tokens = null} = CONFIG.store || {};
+        return tokens ? JSON.parse(JSON.stringify(tokens)) : null;
     },
-    getInfoById: (id) => {
+    getInfoById: (id, type = "DEFAULT") => {
         if (!(id && (typeof id === 'string'))) {
             return null;
         }
@@ -118,17 +69,16 @@ const CONFIG = {
             return null;
         }
         const tokenConfig = CONFIG.getToken() || {};
+        const matchToken = tokenConfig[key] || {};
+        // console.log('getInfoById', matchToken, type)
         // 如果有自定义用自定义的
-        return tokenConfig[key];
+        return matchToken[type] || matchToken.DEFAULT || null;
     },
     getSelectionTokens: (selection) => {
-        const {name = '', token = {}} = CONFIG.getCurrent() || {};
-        // console.log('runToken getSelectionTokens');
+        const {tokens = {}} = CONFIG.store;
         if (!selection) {
             return {
-                getSelectionInfo: {
-                    name
-                }
+                selectionTokens: null
             };
         }
         const matchToken = {};
@@ -136,11 +86,17 @@ const CONFIG = {
         if (COMPONENT.isComponent(selection)) {
             //@ts-ignore
             const {key, name, type} = COMPONENT.getMainComponent(selection);
-            const findToken = token[key] || {};
+            const findToken = tokens[key] || {};
             matchToken[key] = {
+                DEFAULT: {
+                    className: [],
+                    _ignoreClassName: [],
+                    _renderWidth: false,
+                    _renderHeight: false,
+                },
                 ...findToken,
-                name,
-                type
+                _tokenName: name,
+                _tokenType: type
             };
         }
         //@ts-ignore
@@ -152,17 +108,30 @@ const CONFIG = {
             if (!styleKey) {
                 return '';
             }
+            let extraToken = null;
+            // 如果有 fillStyleId
+            if (key === 0) {
+                extraToken = {
+                    // 可以额外对文字进行设置
+                    "TEXT": {
+                        className: [],
+                        _ignoreClassName: []
+                    }
+                }
+            }
             matchToken[styleKey] = {
-                ...token[styleKey],
-                name,
-                type
+                DEFAULT: {
+                    className: [],
+                    _ignoreClassName: []
+                },
+                ...extraToken,
+                ...tokens[styleKey],
+                _tokenName: name,
+                _tokenType: type
             }
         });
         return {
-            getSelectionInfo: {
-                name,
-                token: matchToken
-            }
+            selectionTokens: matchToken
         };
     },
     /**

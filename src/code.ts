@@ -2,6 +2,7 @@ import NODE from "./_/NODE";
 import CONFIG from "./_/CONFIG";
 import SACSS from "./_/SACSS";
 import DOM from "./_/render/DOM";
+import tryOldConfig from "./ui/utils/tryOldConfig.js";
 
 const API = {
     /**
@@ -19,7 +20,7 @@ const API = {
             figma.ui.postMessage({noSelection: true});
             return null;
         }
-        return selection;
+        return selection[0];
     },
     /**
      * 当 Tab 切换的时候会出发这个方法
@@ -58,7 +59,7 @@ const API = {
         }
         SACSS.init();
         // @ts-ignore
-        const Info = NODE.getNodesInfo(selection);
+        const Info = NODE.getNodeInfo(selection);
         // console.log(Info);
         const isJSX = CONFIG.isJSX();
         setTimeout(() => {
@@ -73,12 +74,12 @@ const API = {
     runConfig: () => {
         setTimeout(() => {
             figma.ui.postMessage({
-                getConfig: CONFIG.getAll()
+                getConfig: CONFIG.getCurrent()
             });
         }, 10);
     },
     runToken: () => {
-        const [selection] = API.getSelection() || [];
+        const selection = API.getSelection();
         setTimeout(() => {
             figma.ui.postMessage(CONFIG.getSelectionTokens(selection));
         }, 16);
@@ -89,6 +90,11 @@ const API = {
         if (type === null) {
             return;
         }
+        // 尝试检测旧代码
+        if (type === 'testOldConfig') {
+            tryOldConfig();
+            return;
+        }
         const [name, action] = type.split('.');
         // console.log('API onmessage', name, action, value);
         if (name === 'API' && (action in API)) {
@@ -97,11 +103,13 @@ const API = {
         }
         if (name === 'CONFIG' && (action in CONFIG)) {
             CONFIG[action](value);
+            // 为了触发重新渲染
             if (action === 'changeJSX') {
                 API.runHome();
                 return;
             }
-            if (action === 'appendToken') {
+            // 为了触发重新渲染
+            if (action === 'addToken') {
                 API.runToken();
                 return;
             }
