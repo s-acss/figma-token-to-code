@@ -2,7 +2,7 @@ function objMerge(a = {}, b) {
     const result = a;
     for (const [key, value] of Object.entries(b)) {
         const item = a[key];
-        if (!item || !value) {
+        if (!item || !value || typeof item !== typeof value) {
             result[key] = value;
         } else if ((item instanceof Array) && (value instanceof Array)) {
             result[key] = [...item, ...value];

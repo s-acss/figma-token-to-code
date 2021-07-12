@@ -79,11 +79,11 @@ const NODE = {
         nodeInfo = FLEX.getInfo(node, nodeInfo);
 
         // @ts-ignore
-        if ((isStructNode && String(nodeInfo?._renderHeight) !== false) || String(nodeInfo?._renderWidth) === true) {
+        if ((isStructNode && String(nodeInfo?._renderHeight) !== "false") || String(nodeInfo?._renderWidth) === "true") {
             nodeInfo.className.push(SACSS.add('w', parseInt(String(node.width))));
         }
         // @ts-ignore
-        if ((isStructNode && String(nodeInfo?._renderHeight) !== false) || String(nodeInfo?._renderHeight) === true) {
+        if ((isStructNode && String(nodeInfo?._renderHeight) !== "false") || String(nodeInfo?._renderHeight) === "true") {
             nodeInfo.className.push(SACSS.add('h', parseInt(String(node.height))));
         }
 
@@ -98,8 +98,13 @@ const NODE = {
                 }
                 return texts;
             }
-            if (isStructNode || nodeInfo.children === null) {
+            if (isStructNode || !nodeInfo.children) {
                 return [];
+            }
+            // 只渲染文字节点
+            if (String(nodeInfo.children) === 'TEXT') {
+                // @ts-ignore
+                return node.findAll(c => c.type === 'TEXT' && c.visible).map((c) => c.characters);
             }
             // @ts-ignore
             return NODE.getNodesInfo(node.children);
