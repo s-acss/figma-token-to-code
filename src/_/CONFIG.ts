@@ -8,7 +8,6 @@ const CONFIG_DEFAULT = {
 
 const VERSION = "1.0";
 
-
 const CONFIG = {
     key: `TokenToCode-${VERSION}`,
     store: CONFIG_DEFAULT,
@@ -43,7 +42,7 @@ const CONFIG = {
     init: () => {
         return new Promise(((resolve, reject) => {
             figma.clientStorage.getAsync(CONFIG.key).then((ret = null) => {
-                if (ret) {
+                if (ret && Object.keys(ret).length !== 0) {
                     CONFIG.store = ret;
                 } else {
                     // 没有缓存创建一个新的
