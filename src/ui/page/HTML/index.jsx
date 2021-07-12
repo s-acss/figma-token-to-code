@@ -5,7 +5,6 @@ import clipboardCopy from "clipboard-copy";
 import NoSelection from "../../component/NoSelection";
 import toast from "../../component/Toast/toast";
 
-
 const InputJSX = ({disabled = true, isJSX}) => {
     const onChangeJSX = (e) => {
         parent.postMessage({

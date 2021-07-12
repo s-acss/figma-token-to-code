@@ -75,7 +75,7 @@ const APP = () => {
                     return <PageCSS noSelection={noSelection} code={CSS}/>
                 }
                 if (tabIndex === 2) {
-                    return <Token selectionTokens={selectionTokens}/>;
+                    return <Token noSelection={noSelection} selectionTokens={selectionTokens}/>;
                 }
                 if (tabIndex === 3) {
                     return <Config config={config}/>;

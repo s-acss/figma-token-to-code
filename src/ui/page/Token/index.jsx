@@ -5,8 +5,8 @@ import Textarea from "../../component/Textarea";
 import _postConfig from "../Config/_postConfig";
 import {useRef} from "preact/hooks";
 
-const Token = ({selectionTokens}) => {
-    const isEmpty = Object.keys(selectionTokens).length === 0;
+const Token = ({selectionTokens, noSelection}) => {
+    const isEmpty = noSelection || Object.keys(selectionTokens).length === 0;
     const form = useRef(null);
 
     const onSave = (e) => {

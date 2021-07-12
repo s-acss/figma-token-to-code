@@ -77,9 +77,7 @@ const CONFIG = {
     getSelectionTokens: (selection) => {
         const {tokens = {}} = CONFIG.store;
         if (!selection) {
-            return {
-                selectionTokens: null
-            };
+            return null;
         }
         const matchToken = {};
         // 如果是组件
@@ -93,6 +91,8 @@ const CONFIG = {
                     _ignoreClassName: [],
                     _renderWidth: false,
                     _renderHeight: false,
+                    tagName:'div',
+                    children:true
                 },
                 ...findToken,
                 _tokenName: name,
@@ -130,9 +130,7 @@ const CONFIG = {
                 _tokenType: type
             }
         });
-        return {
-            selectionTokens: matchToken
-        };
+        return matchToken;
     },
     /**
      * 获取所有的 Token 包括 Component

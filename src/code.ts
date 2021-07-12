@@ -80,8 +80,14 @@ const API = {
     },
     runToken: () => {
         const selection = API.getSelection();
+        if (!selection) {
+            return;
+        }
         setTimeout(() => {
-            figma.ui.postMessage(CONFIG.getSelectionTokens(selection));
+            figma.ui.postMessage({
+                selectionTokens: CONFIG.getSelectionTokens(selection),
+                noSelection: false
+            });
         }, 16);
     },
     onmessage: (msg = {}) => {
