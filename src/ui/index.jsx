@@ -20,7 +20,6 @@ const APP = () => {
     const [noSelection, setNoSelection] = useState(true);
     const [selectionTokens, setSelectionTokens] = useState({});
     const [config, setConfig] = useState({});
-    const [oldConfig, setOldConfig] = useState({});
 
     useEffect(() => {
         // 测试有没有旧的配置文件
@@ -37,8 +36,7 @@ const APP = () => {
                 noSelection = null,
                 selectionTokens = null,
                 alertMsg = null,
-                getConfig = null,
-                getOldConfig = null
+                getConfig = null
             } = pluginMessage;
             // console.log({getHTML, getCSS});
             getHTML !== null && setHtml(getHTML);
@@ -48,7 +46,6 @@ const APP = () => {
             selectionTokens !== null && setSelectionTokens(selectionTokens || {});
             alertMsg !== null && alertMsg && toast(alertMsg);
             (getConfig !== null) && setConfig(getConfig || {});
-            (getOldConfig !== null) && setOldConfig(getOldConfig || {});
         });
     }, []);
 
@@ -81,7 +78,7 @@ const APP = () => {
                     return <Config config={config}/>;
                 }
                 if (tabIndex === 4) {
-                    return <PageHelp oldConfig={oldConfig}/>;
+                    return <PageHelp/>;
                 }
                 return null;
             })()}

@@ -2,7 +2,6 @@ import NODE from "./_/NODE";
 import CONFIG from "./_/CONFIG";
 import SACSS from "./_/SACSS";
 import DOM from "./_/render/DOM";
-import tryOldConfig from "./ui/utils/tryOldConfig.js";
 
 const API = {
     /**
@@ -94,11 +93,6 @@ const API = {
         // @ts-ignore
         const {type = null, value = null} = msg;
         if (type === null) {
-            return;
-        }
-        // 尝试检测旧代码
-        if (type === 'testOldConfig') {
-            tryOldConfig();
             return;
         }
         const [name, action] = type.split('.');

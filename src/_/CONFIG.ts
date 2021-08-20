@@ -75,7 +75,6 @@ const CONFIG = {
         return matchToken[type] || matchToken.DEFAULT || null;
     },
     getSelectionTokens: (selection) => {
-        const {tokens = {}} = CONFIG.store;
         if (!selection) {
             return null;
         }
@@ -84,17 +83,7 @@ const CONFIG = {
         if (COMPONENT.isComponent(selection)) {
             //@ts-ignore
             const {key, name, type} = COMPONENT.getMainComponent(selection);
-            const findToken = tokens[key] || {};
             matchToken[key] = {
-                DEFAULT: {
-                    className: [],
-                    _ignoreClassName: [],
-                    _renderWidth: false,
-                    _renderHeight: false,
-                    tagName:'div',
-                    children:true
-                },
-                ...findToken,
                 _tokenName: name,
                 _tokenType: type
             };
@@ -108,24 +97,7 @@ const CONFIG = {
             if (!styleKey) {
                 return '';
             }
-            let extraToken = null;
-            // 如果有 fillStyleId
-            if (key === 0) {
-                extraToken = {
-                    // 可以额外对文字进行设置
-                    "TEXT": {
-                        className: [],
-                        _ignoreClassName: []
-                    }
-                }
-            }
             matchToken[styleKey] = {
-                DEFAULT: {
-                    className: [],
-                    _ignoreClassName: []
-                },
-                ...extraToken,
-                ...tokens[styleKey],
                 _tokenName: name,
                 _tokenType: type
             }

@@ -1,60 +1,105 @@
-import OldConfigBar from "./OldConfigBar/index";
-import toast from "../../component/Toast/toast";
-import saveJSON from "../../utils/saveJSON";
-import transProject from "./OldConfigBar/transProject";
+import Highlight from "../../component/Highlight";
 
-const Help = ({oldConfig}) => {
-
-    // 上传文件
-    const onReplace = (e) => {
-        const files = e.target.files || [];
-        if (!files.length) {
-            return;
+const CODE= `/* base config */
+{
+  "isJSX": true, /* is jsx in html */
+  "_ignoreClassName": [], /* ignore in html*/
+  "tokens": {
+    /* Config default token */
+    "$tokenId":{
+        "DEFAULT":{
+          "className": [],   /* ignore in html*/
+          "_ignoreClassName": [] /* ignore in html*/
         }
-        var fr = new FileReader();
-        fr.onload = function (e) {
-            const valueUp = e.target.result;
-            if (!valueUp.trimStart().trimEnd()) {
-                toast("Config can't empty");
-                return;
-            }
-            const objData = JSON.parse(valueUp);
-            saveJSON(transProject(objData), 'token-to-code');
+        /* 
+        * just help you to know 
+        * what's this token mean 
+        */
+        "_tokenName": "***", 
+        "_tokenType": "***"
+    },
+    /* Config Text token */
+    "$tokenId":{
+        /* When Token match the TEXT Element */
+        "TEXT":{
+          "className": [],   /* ignore in html*/
+          "_ignoreClassName": [] /* ignore in html*/
         }
-        fr.readAsText(files.item(0));
-    };
+        /* When Token match the other Element */
+        "DEFAULT":{
+          "className": [],   /* ignore in html*/
+          "_ignoreClassName": [] /* ignore in html*/
+        },
+        /* 
+        * just help you to know 
+        * what's this token mean 
+        */
+        "_tokenName": "***", 
+        /* 
+         * PAINT Token can work on 
+         * color, background-color, fill 
+         */
+        "_tokenType": "PAINT"
+    },  
+    /* Config Component token */
+    "$tokenId": {
+        "DEFAULT":{
+          "tagName": "Button", /* tag name of element */
+          "className": [],   /* class in html*/
+          /*
+           * TEXT: only render text in this element
+           * false: ignore children in this component
+           */
+          "children": "TEXT",    
+          "_ignoreClassName": [], /* ignore in html*/
+          "_renderWidth": false,  /* is render width */
+          "_renderHeight": false, /* is render height*/
+          /* 
+           * The rest below 
+           * will render as component props 
+           */
+          "size": "middle",
+          "type": "primary",
+        },
+        /* 
+        * just help you to know 
+        * what's this token mean 
+        */
+        "_tokenName": "Button",
+        "_tokenType": "COMPONENT"
+    }
+  }
+}`;
 
+const Help = () => {
     return (
-        <div className="f1">
-            <a className="g_row df jcsb aic g_hr pt8 pb8 c:s c:primary:h fs14 fw500 pl8 pr8 fw700 lh24"
-               href="https://github.com/s-acss/figma-token-to-code" target="_blank" title="Help">
-                <strong>Github 👉</strong>
-                <span>
-                <img className="db"
-                     src="https://img.shields.io/github/stars/s-acss/figma-token-to-code.svg?style=social"
-                     alt="figma-token-to-code"/>
-            </span>
-            </a>
-            <a className="g_row df jcsb aic g_hr pt8 pb8 c:s c:primary:h fs14 fw500 pl8 pr8 fw700 lh24"
-               href="https://www.npmjs.com/package/sacss" target="_blank">
-                <strong>NPM 👉</strong>
-                <span>
-                    <img className="db" src="https://img.shields.io/npm/v/sacss.svg" width="80" height="20"
-                         alt="sacss"/>
-                </span>
-            </a>
-            <div className="g_row pt8 pb8 g_hr">
-                <h4 className="fs14 fw700 mb8 m0">Devastating upgrade</h4>
-                <div className="df jcsb aic mb8">
-                    <p className="fs12 c:s mb4">Upload the old config and convert them</p>
-                    <label className="btn dib pr oh g_tip" data-title="Upload old config and get new">
-                        Upload and Convert
-                        <input className="o0 pa w100% h100% l0 t0" type="file" onChange={onReplace}/>
-                    </label>
-                </div>
+        <>
+            <div className="f1 oa">
+                <Highlight className="fs12" language="json">
+                    {CODE}
+                </Highlight>
             </div>
-            <OldConfigBar data={oldConfig}/>
-        </div>
+            <div className="g_row df pt8 pb8 jcsb aic jcsb fs12 lh16">
+                <a className="df jcsb aic c:s c:primary:h"
+                   href="https://github.com/s-acss/figma-token-to-code" target="_blank" title="Help">
+                    <strong className="mr4">Github</strong>
+                    <span>
+                        <img className="db"
+                             src="https://img.shields.io/github/stars/s-acss/figma-token-to-code.svg?style=social"
+                             alt="figma-token-to-code"/>
+                    </span>
+                </a>
+                <a className="df jcsb aic c:s c:primary:h"
+                   href="https://www.npmjs.com/package/sacss" target="_blank">
+                    <strong className="mr4">NPM</strong>
+                    <span>
+                        <img className="db" src="https://img.shields.io/npm/v/sacss.svg" width="80" height="20"
+                             alt="sacss"/>
+                    </span>
+                </a>
+            </div>
+        </>
+
     )
 };
 

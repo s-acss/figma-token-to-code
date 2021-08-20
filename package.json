@@ -1,6 +1,6 @@
 {
   "name": "figma-token-to-code",
-  "version": "1.2.7",
+  "version": "2.6.0",
   "description": "Generate the text element to Html with css.",
   "main": "code.js",
   "repository": "https://github.com/s-acss/figma-token-to-code.git",
